@@ -1,0 +1,42 @@
+<div class="main">
+  <div class="w--wrapper" [ngStyle]="{width: widget.style.width, height: widget.style.height}">
+    <div class="w--topbar">
+      <div class="title">
+        <div class="shield" [ngStyle]="{background: widget.style.colors.active_item}"></div>
+        <div class="name">{{widget.artist_name}}</div>
+      </div>
+      <div class="social">
+        <div class="link" *ngFor="let social of widget.social">
+          <a href="{{social.link}}"><img src="../../../assets/icons/{{social.logo}}.svg" alt="{{social.logo}}"></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="w--screen">
+      <div class="background"></div>
+    </div>
+
+    <div class="w--search">
+      <input type="search">
+    </div>
+
+    <div class="w--player-list">
+      <div
+        class="track"
+        *ngFor="let track of widget.songs; index as i"
+        [ngStyle]="{color: widget.style.colors.active_item}"
+      >
+        {{i+1}}. {{track}}
+      </div>
+    </div>
+
+    <div class="w--player-bottom">
+      <div class="ctrls">
+        <div class="ctrl prev"><span class="line"></span><span class="triangle"></span></div>
+        <div class="ctrl play" [ngClass]="{'pause': !playTrack}" (click)="play()"><span class="triangle left"></span><span class="triangle right"></span></div>
+        <div class="ctrl next"><span class="triangle"></span><span class="line"></span></div>
+      </div>
+      <div class="cart-and-price"></div>
+    </div>
+  </div>
+</div>
