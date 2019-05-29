@@ -1,0 +1,96 @@
+<div
+  class="widget-wrapper"
+  [ngStyle]="{width: widget.style.width, height: widget.style.height}"
+  (window:resize)="onResize($event)"
+>
+  <div class="widget-item wi-topbar">
+    <div class="title">
+      <div class="shield" [ngStyle]="{background: widget.style.colors.active_item, borderColor: widget.style.colors.active_accent}"></div>
+      <div class="name">{{widget.artist_name}}</div>
+    </div>
+    <div class="social">
+      <div class="link" *ngFor="let social of widget.social">
+        <a href="{{social.link}}"><img src="../../../assets/icons/{{social.logo}}.svg" alt="{{social.logo}}"></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="widget-item wi-screen">
+    <div class="background"></div>
+  </div>
+
+  <div class="widget-item wi-search">
+    <input type="search">
+  </div>
+
+  <div class="widget-item wi-player-list">
+    <div
+      class="track"
+      *ngFor="let track of widget.songs; index as i"
+      [ngClass]="{'in-cart': track.in_cart}"
+      [ngStyle]="{color: widget.style.colors.text}"
+      (click)="play()"
+    >
+      <div class="name">{{i+1}}. {{track.title}}</div>
+      <div class="controls">
+        <div class="rights-carousel">
+          <div class="rc-control prev"></div>
+          <div class="rc-rights">
+            <div class="right">{{track.rights}} {{widget.songs[0].price}}</div>
+          </div>
+          <div class="rc-control next"></div>
+        </div>
+        <div class="btn-cart-add"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="widget-item wi-player-bottom">
+    <div class="block-music">
+      <div class="ctrls">
+        <div class="ctrl prev">
+          <span class="line"></span>
+          <span class="triangle"></span>
+        </div>
+        <div
+          class="ctrl play"
+          [ngClass]="{'pause': !playTrack}"
+          (click)="play()"
+        >
+          <span
+            class="triangle left"
+            [ngStyle]="{borderLeftColor: widget.style.colors.active_item}"
+          ></span>
+          <span
+            class="triangle right"
+            [ngStyle]="{borderLeftColor: widget.style.colors.active_item}"
+          ></span>
+        </div>
+        <div class="ctrl next">
+          <span class="triangle"></span>
+          <span class="line"></span>
+        </div>
+      </div>
+      <div class="title">
+        <div class="track-name" [ngStyle]="{color: widget.style.colors.text}">{{widget.songs[0].title}}</div>
+        <div class="tags">
+          <div class="tag" [ngStyle]="{color: widget.style.colors.active_item}">Reggae</div>
+          <div class="tag" [ngStyle]="{color: widget.style.colors.active_item}">Roots</div>
+        </div>
+      </div>
+    </div>
+    <div class="block-money">
+      <div class="payment-types">
+        <div class="pt paypal"></div>
+        <div class="pt card"></div>
+      </div>
+      <div class="cart-and-price">
+        <div class="price" [ngStyle]="{color: widget.style.colors.text}">
+          <span class="label">total</span>
+          <span class="val">$99999.99</span>
+        </div>
+        <div class="icon-cart"><span class="count">2</span></div>
+      </div>
+    </div>
+  </div>
+</div>
