@@ -4,11 +4,15 @@ import { AppRoutingModule } from './app-routing.module';
 
 import { AppComponent } from './app.component';
 import { MainComponent } from './components/main/main.component';
+import { WidgetComponent } from './components/main/widget/widget.component';
+import { SettingsComponent } from './components/main/settings/settings.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    MainComponent
+    MainComponent,
+    WidgetComponent,
+    SettingsComponent
   ],
   imports: [
     BrowserModule,
