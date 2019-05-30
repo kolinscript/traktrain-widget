@@ -9,7 +9,7 @@
       <div class="name">{{widget.artist_name}}</div>
     </div>
     <div class="social">
-      <div class="link" *ngFor="let social of widget.social">
+      <div class="link " [ngClass]="social.logo" *ngFor="let social of widget.social">
         <a href="{{social.link}}"><img src="../../../assets/icons/{{social.logo}}.svg" alt="{{social.logo}}"></a>
       </div>
     </div>
@@ -29,7 +29,8 @@
       *ngFor="let track of widget.songs; index as i"
       [ngClass]="{'in-cart': track.in_cart}"
       [ngStyle]="{color: widget.style.colors.text}"
-      (click)="play()"
+      (click)="trackPlay()"
+      (mouseenter)="trackHover($event, track, i)"
     >
       <div class="name">{{i+1}}. {{track.title}}</div>
       <div class="controls">
@@ -86,8 +87,7 @@
       </div>
       <div class="cart-and-price">
         <div class="price" [ngStyle]="{color: widget.style.colors.text}">
-          <span class="label">total</span>
-          <span class="val">$99999.99</span>
+          <span class="val">$999.99</span>
         </div>
         <div class="icon-cart"><span class="count">2</span></div>
       </div>

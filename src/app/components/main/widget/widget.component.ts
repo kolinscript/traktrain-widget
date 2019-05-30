@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Colors, Style, Widget } from '../../../models/widget.model';
+import { WidgetService } from '../../../services/widget.service';
 
 @Component({
   selector: 'app-widget',
@@ -10,16 +11,27 @@ export class WidgetComponent implements OnInit {widget: Widget;
   playTrack = false;
   innerWidth: any;
 
-  constructor() { }
+  constructor(
+    private widgetService: WidgetService
+  ) { }
 
   ngOnInit() {
+    this.widgetService.getWidget(13).subscribe((widget) => {
+      console.log(widget);
+    });
     this.widget = this.createWidget();
     this.innerWidth = window.innerWidth;
     console.log('innerWidth', this.innerWidth);
     console.log(this.widget);
   }
 
-  public play(): void {
+  public trackHover(event, track, i): void {
+    console.log(event);
+    console.log(track);
+    console.log(i);
+  }
+
+  public trackPlay(): void {
     this.playTrack = !this.playTrack;
   }
 

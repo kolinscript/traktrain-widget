@@ -1,0 +1,6 @@
+{
+  "/api/*": {
+    "target": "https://test.traktrain.com/",
+    "secure": true
+  }
+}
