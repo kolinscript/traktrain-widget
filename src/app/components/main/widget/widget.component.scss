@@ -157,6 +157,17 @@
                 background-size: 100%;
               }
             }
+            .rc-rights {
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              .right {
+                margin: 0 10px;
+                &.active {
+                  display: block;
+                }
+              }
+            }
           }
           .btn-cart-add {
             position: relative;

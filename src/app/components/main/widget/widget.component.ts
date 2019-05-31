@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Colors, Style, Widget } from '../../../models/widget.model';
+import { Colors, LicensePriceMapper, Style, Widget } from '../../../models/widget.model';
 import { WidgetService } from '../../../services/widget.service';
 
 @Component({
@@ -7,7 +7,8 @@ import { WidgetService } from '../../../services/widget.service';
   templateUrl: './widget.component.html',
   styleUrls: ['./widget.component.scss']
 })
-export class WidgetComponent implements OnInit {widget: Widget;
+export class WidgetComponent implements OnInit {
+  widget: Widget;
   playTrack = false;
   innerWidth: any;
 
@@ -16,14 +17,17 @@ export class WidgetComponent implements OnInit {widget: Widget;
   ) { }
 
   ngOnInit() {
-    this.widgetService.getWidget(13).subscribe((widget) => {
-      console.log(widget);
+    this.initWidget(() => {
+      console.log(this.widget);
     });
-    this.widget = this.createWidget();
+
     this.innerWidth = window.innerWidth;
     console.log('innerWidth', this.innerWidth);
-    console.log(this.widget);
   }
+
+  public rcPrev() {}
+
+  public rcNext() {}
 
   public trackHover(event, track, i): void {
     console.log(event);
@@ -35,35 +39,36 @@ export class WidgetComponent implements OnInit {widget: Widget;
     this.playTrack = !this.playTrack;
   }
 
-  public onResize(event) {
+  public onResize(event): void {
     console.log(event.target.innerWidth);
   }
 
-  private createWidget(): Widget {
-    const widget = {
-      id_widget: 1,
-      artist_name: 'Cutoffurmind',
-      social: [{link: 'twitter.com', logo: 'twitter'}, {link: 'instagram.com', logo: 'instagram'}],
-      songs: [
-        {title: 'CUTOFFURMIND - BROKE AS HELL', rights: 'MP3 Leasing', price: '$30.00', in_cart: true},
-        {title: 'CUTOFFURMIND - CVE800', rights: 'MP3 Leasing', price: '$30.00', in_cart: false},
-        {title: 'CUTOFFURMIND - TRICK', rights: 'MP3 Leasing', price: '$30.00', in_cart: false},
-        {title: 'CUTOFFURMIND - LETS GET HIGH', rights: 'MP3 Leasing', price: '$30.00', in_cart: true},
-        {title: 'CUTOFFURMIND - WASSUP FOOL', rights: 'MP3 Leasing', price: '$30.00', in_cart: false},
-        {title: 'CUTOFFURMIND - UNDERBAR', rights: 'MP3 Leasing', price: '$30.00', in_cart: true},
-      ],
-      style: {
-        width: '920px',
-        height: '756px',
-        colors: {
-          background: '#FFFFFF',
-          text: '#4A4A4A',
-          active_item: '#695FFC',
-          active_accent: '#524fc4'
-        } as Colors
-      } as Style,
-    } as Widget;
-    return widget;
+  private initWidget(completed): void {
+    this.widgetService.getWidget(13).subscribe((widget: Widget) => {
+      if (widget) {
+        widget.tracks.forEach((track) => {
+          track.sliderData = Object.keys(track.prices).map((price) => LicensePriceMapper[price]);
+          // track.prices = {
+          //   ...track.prices,
+          //   labels: [Object.keys(track.prices).map((price) => LicensePriceMapper[price])]
+          // };
+        });
+        this.widget = {
+          ...widget,
+          style: {
+            width: '920px',
+            height: '756px',
+            colors: {
+              background: '#FFFFFF',
+              text: '#4A4A4A',
+              active_item: '#695FFC',
+              active_accent: '#524fc4'
+            } as Colors
+          } as Style,
+        };
+        completed();
+       }
+    });
   }
 
 }
