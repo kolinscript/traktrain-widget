@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>iframe test - TraktrainWidget</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        html {
+            box-sizing: border-box;
+        }
+        *, *:before, *:after {
+            box-sizing: inherit;
+        }
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        .wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            min-width: 100vw;
+            min-height: 100vh;
+            background: rgb(255,39,168);
+            background: linear-gradient(90deg, rgba(255,39,168,1) 0%, rgba(165,25,181,1) 22%, rgba(0,255,207,1) 100%);
+        }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+    <iframe src="http://0.0.0.0:4200/" width="900px" height="720px" style="border: none;"></iframe>
+</div>
+</body>
+</html>
