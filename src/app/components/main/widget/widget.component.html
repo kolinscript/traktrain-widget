@@ -9,14 +9,16 @@
       <div class="name">{{widget.producer.artistName}}</div>
     </div>
     <div class="social">
-      <div class="link " [ngClass]="social.logo" *ngFor="let social of widget.social">
-        <a href="{{social.link}}"><img src="../../../assets/icons/{{social.logo}}.svg" alt="{{social.logo}}"></a>
+      <div class="link instagram">
+        <a href="{{widget.socials.instagram}}" target="_blank"><img src="../../../assets/icons/instagram.svg" alt="instagram"></a>
       </div>
     </div>
   </div>
 
   <div class="widget-item wi-screen">
-    <div class="background"></div>
+    <div class="screen">
+      <div class="banner" [ngStyle]="{'background-image':'url(' + SDN_LINK_IMG + '' + widget.producer.lbImage + ')'}"></div>
+    </div>
   </div>
 
   <div class="widget-item wi-search">
@@ -28,12 +30,13 @@
       class="track"
       *ngFor="let track of widget.tracks; index as indexTrack"
       [ngStyle]="{color: widget.style.colors.text}"
+      [ngClass]="{'active': track.active}"
       (mouseenter)="trackHover($event, track, indexTrack)"
+      (mouseleave)="trackLeave($event, track, indexTrack)"
     >
       <div class="click-area" (click)="trackPlay($event, track, indexTrack)"></div>
       <div class="name">{{indexTrack + 1}}. {{track.name}}</div>
       <div class="controls">
-
         <div class="rights-carousel" *ngIf="track.active">
           <div
             class="rc-control prev"
@@ -60,7 +63,10 @@
           </div>
         </div>
 
-        <div class="btn-cart-add"></div>
+        <div
+          class="btn-cart-add"
+          *ngIf="track.active || track.hovered"
+        ></div>
       </div>
     </div>
   </div>
@@ -92,7 +98,7 @@
         </div>
       </div>
       <div class="title">
-        <div class="track-name" [ngStyle]="{color: widget.style.colors.text}">{{widget.tracks[0].name}}</div>
+        <div class="track-name" [ngStyle]="{color: widget.style.colors.text}">{{widget.producer.artistName}} - {{widget.tracks[0].name}}</div>
         <div class="tags">
           <div class="tag" [ngStyle]="{color: widget.style.colors.active_item}">Reggae</div>
           <div class="tag" [ngStyle]="{color: widget.style.colors.active_item}">Roots</div>

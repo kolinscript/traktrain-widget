@@ -40,6 +40,7 @@
         justify-content: flex-end;
         align-items: center;
         .link {
+          cursor: pointer;
           margin-left: 20px;
           a {
             display: block;
@@ -65,12 +66,13 @@
 
     &.wi-screen {
       flex: 1;
-      .background {
+      .screen {
         height: 100%;
-        //background: linear-gradient(270deg, rgba(235,100,100,0.5) 0%, rgba(81,144,174,0.5) 100%);
-        background: url('../../../../assets/icons/background.png') no-repeat;
-        background-size: cover;
-        background-position: 50% 50%;
+        .banner {
+          height: 100%;
+          background-size: cover;
+          background-position: 50% 50%;
+        }
       }
     }
 
@@ -110,7 +112,11 @@
         padding: 20px 15px;
         font: 600 14px/16px 'Work Sans';
         border-bottom: 1px solid #E6E6E6;
+        min-height: 66px;
         &:hover {
+          background-color: #F5F5F5;
+        }
+        &.active {
           background-color: #F5F5F5;
         }
         &.in-cart {
@@ -432,6 +438,86 @@
             }
           }
         }
+      }
+    }
+  }
+}
+
+// iPad
+@media (max-width: 768px) {
+  .widget-wrapper {
+    .widget-item {
+      &.wi-screen {
+        max-height: 260px;
+      }
+    }
+  }
+}
+// iPhone 6/7/8 PLUS
+@media (max-width: 414px) {
+  .widget-wrapper {
+    .widget-item {
+      &.wi-screen {
+        max-height: 160px;
+      }
+    }
+  }
+}
+// extra-point
+@media (max-width: 600px) {
+  .widget-wrapper {
+    .widget-item {
+      &.wi-player-bottom {
+        height: 180px;
+        flex-direction: column-reverse;
+        .block-money {
+          width: 100%;
+          height: 48px;
+          .payment-types {
+            display: none;
+          }
+          .cart-and-price {
+            justify-content: center;
+            width: 100%;
+          }
+        }
+        .block-music {
+          flex: 1;
+          flex-direction: column;
+          width: 100%;
+          .ctrls {
+            padding: 0;
+          }
+          .title {
+            margin: 0;
+            text-align: center;
+            .track-name {
+              font-size: 16px;
+              list-style: 18px;
+              margin: 14px 0;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+// iPhone 6/7/8
+@media (max-width: 375px) {
+  .widget-wrapper {
+    .widget-item {
+      &.wi-screen {
+        max-height: 120px;
+      }
+    }
+  }
+}
+// iPhone 4
+@media (max-width: 320px) {
+  .widget-wrapper {
+    .widget-item {
+      &.wi-screen {
+        max-height: 100px;
       }
     }
   }
