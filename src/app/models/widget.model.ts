@@ -81,6 +81,7 @@ export interface Track {
   sliderData?: any[];
   sliderIndex?: number;
   active?: boolean;
+  hovered?: boolean;
 }
 
 export interface DrumKitInfo {

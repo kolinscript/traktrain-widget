@@ -125,16 +125,21 @@ export class WidgetComponent implements OnInit {
   }
   // Carousel : end
 
-  public trackHover(event, track, id): void {
-    // console.log(event);
-    // console.log(track);
-    // console.log(id);
+  public trackHover(event, track, trackId): void {
+    console.log(event);
+    console.log(track);
+    console.log(trackId);
+    this.widget.tracks[trackId].hovered = true;
+  }
+
+  public trackLeave(event, track, trackId): void {
+    this.widget.tracks[trackId].hovered = false;
   }
 
   public trackPlay(event, track, trackId): void {
     // console.log(event);
     console.log(track);
-    // console.log(id);
+    // console.log(trackId);
     this.playTrack = !this.playTrack;
     this.widget.tracks.forEach((tr) => tr.active = false);
     this.widget.tracks[trackId].active = true;
@@ -152,6 +157,7 @@ export class WidgetComponent implements OnInit {
           track.sliderData = this.priceTransformer(track.prices);
           track.sliderIndex = 0;
           track.active = false;
+          track.hovered = false;
         });
         this.widget = {
           ...widget,

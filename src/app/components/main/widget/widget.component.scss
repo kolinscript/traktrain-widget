@@ -40,6 +40,7 @@
         justify-content: flex-end;
         align-items: center;
         .link {
+          cursor: pointer;
           margin-left: 20px;
           a {
             display: block;
@@ -110,7 +111,11 @@
         padding: 20px 15px;
         font: 600 14px/16px 'Work Sans';
         border-bottom: 1px solid #E6E6E6;
+        min-height: 66px;
         &:hover {
+          background-color: #F5F5F5;
+        }
+        &.active {
           background-color: #F5F5F5;
         }
         &.in-cart {
