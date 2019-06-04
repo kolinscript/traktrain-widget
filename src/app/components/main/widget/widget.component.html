@@ -16,7 +16,9 @@
   </div>
 
   <div class="widget-item wi-screen">
-    <div class="background"></div>
+    <div class="screen">
+      <div class="banner" [ngStyle]="{'background-image':'url(' + SDN_LINK_IMG + '' + widget.producer.lbImage + ')'}"></div>
+    </div>
   </div>
 
   <div class="widget-item wi-search">
@@ -96,7 +98,7 @@
         </div>
       </div>
       <div class="title">
-        <div class="track-name" [ngStyle]="{color: widget.style.colors.text}">{{widget.tracks[0].name}}</div>
+        <div class="track-name" [ngStyle]="{color: widget.style.colors.text}">{{widget.producer.artistName}} - {{widget.tracks[0].name}}</div>
         <div class="tags">
           <div class="tag" [ngStyle]="{color: widget.style.colors.active_item}">Reggae</div>
           <div class="tag" [ngStyle]="{color: widget.style.colors.active_item}">Roots</div>

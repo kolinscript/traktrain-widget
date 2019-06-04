@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Colors, LicensePriceMapper, Style, Track, Widget } from '../../../models/widget.model';
+import { Colors, LicensePriceMapper, Style, Track, Widget, SDN_LINK_IMG } from '../../../models/widget.model';
 import { WidgetService } from '../../../services/widget.service';
 
 @Component({
@@ -10,6 +10,7 @@ import { WidgetService } from '../../../services/widget.service';
 export class WidgetComponent implements OnInit {
   widget: Widget;
   playTrack = false;
+  SDN_LINK_IMG = SDN_LINK_IMG;
 
   constructor(
     private widgetService: WidgetService
