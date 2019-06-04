@@ -1,57 +1,188 @@
 import { Component, OnInit } from '@angular/core';
-import { Colors, Style, Widget } from '../../../models/widget.model';
+import { Colors, LicensePriceMapper, Style, Track, Widget } from '../../../models/widget.model';
+import { WidgetService } from '../../../services/widget.service';
 
 @Component({
   selector: 'app-widget',
   templateUrl: './widget.component.html',
   styleUrls: ['./widget.component.scss']
 })
-export class WidgetComponent implements OnInit {widget: Widget;
+export class WidgetComponent implements OnInit {
+  widget: Widget;
   playTrack = false;
-  innerWidth: any;
 
-  constructor() { }
+  constructor(
+    private widgetService: WidgetService
+  ) { }
 
   ngOnInit() {
-    this.widget = this.createWidget();
-    this.innerWidth = window.innerWidth;
-    console.log('innerWidth', this.innerWidth);
-    console.log(this.widget);
+    this.widgetInit(() => {
+      console.log(this.widget);
+    });
+    console.log('innerWidth', window.innerWidth);
   }
 
-  public play(): void {
+  // Carousel : start
+  private carouselInit(startIndex: number, trackId: number): void {
+    const carouselLength = this.widget.tracks[trackId].sliderData.length;
+    this.widget.tracks[trackId].sliderData.forEach(slide => (slide.style = ''));
+    // console.log('carouselLength ', carouselLength);
+    // console.log('Carousel start index ', startIndex);
+    if (carouselLength > 3) {
+      this.widget.tracks[trackId].sliderData[carouselLength - 1].style = 'prev';
+      this.widget.tracks[trackId].sliderData[0].style = 'initial';
+      this.widget.tracks[trackId].sliderData[1].style = 'next';
+    } else if (carouselLength === 2) {
+      this.widget.tracks[trackId].sliderData[0].style = 'initial';
+      this.widget.tracks[trackId].sliderData[1].style = 'next';
+    } else if (carouselLength === 1) {
+      this.widget.tracks[trackId].sliderData[0].style = 'initial';
+    }
+    setInterval(() => {
+      this.carouselSlide(this.widget.tracks[trackId], trackId, 'next');
+    }, 3000);
+  }
+
+  public carouselSlide(track: Track, trackId: number, direction: string): void {
+    const carouselLength = track.sliderData.length;
+    const activeIndex = track.sliderData.findIndex(el => el.style === 'initial');
+    // console.log('track ', track);
+    // console.log('sliderDataLength ', sliderDataLength);
+    // console.log('activeIndex ', activeIndex);
+    switch (direction) {
+      case 'prev': {
+        if (carouselLength === 2) {
+          if (activeIndex === 1) {
+            track.sliderData[0].style =  'initial';
+            track.sliderData[1].style =  'next';
+          } else if (activeIndex === 0) {
+            track.sliderData[0].style =  'next';
+            track.sliderData[1].style =  'initial';
+          }
+        } else if (activeIndex === 0) {
+          // console.log('activeIndex ', activeIndex);
+          track.sliderData[activeIndex].style =  'next';
+          track.sliderData[activeIndex + 1].style =  '';
+          track.sliderData[carouselLength - 1].style =  'initial';
+          track.sliderData[carouselLength - 2].style =  'prev';
+        } else if (activeIndex === carouselLength - 1) {
+          track.sliderData[activeIndex - 2].style =  'prev';
+          track.sliderData[activeIndex - 1].style =  'initial';
+          track.sliderData[activeIndex].style =  'next';
+          track.sliderData[0].style =  '';
+        } else if (activeIndex === 1) {
+          track.sliderData[carouselLength - 1].style =  'prev';
+          track.sliderData[0].style =  'initial';
+          track.sliderData[1].style =  'next';
+          track.sliderData[2].style =  '';
+        } else if (activeIndex !== 0) {
+          // console.log('activeIndex ', activeIndex);
+          track.sliderData[activeIndex - 2].style =  'prev';
+          track.sliderData[activeIndex - 1].style =  'initial';
+          track.sliderData[activeIndex].style =  'next';
+          track.sliderData[activeIndex + 1].style =  '';
+        }
+        break;
+      }
+      case 'next': {
+        if (carouselLength === 1) {
+          track.sliderData[0].style =  'initial';
+        } else if (carouselLength === 2) {
+          if (activeIndex === 1) {
+            track.sliderData[0].style =  'initial';
+            track.sliderData[1].style =  'next';
+          } else if (activeIndex === 0) {
+            track.sliderData[0].style =  'next';
+            track.sliderData[1].style =  'initial';
+          }
+        } else if (activeIndex === 0) {
+          // console.log('activeIndex ', activeIndex);
+          track.sliderData[activeIndex].style =  'prev';
+          track.sliderData[activeIndex + 1].style =  'initial';
+          track.sliderData[activeIndex + 2].style =  'next';
+          track.sliderData[carouselLength - 1].style =  '';
+        } else if (activeIndex === carouselLength - 1) {
+          track.sliderData[activeIndex - 1].style =  '';
+          track.sliderData[activeIndex].style =  'prev';
+          track.sliderData[0].style =  'initial';
+          track.sliderData[1].style =  'next';
+        } else if (activeIndex === carouselLength - 2) {
+          track.sliderData[activeIndex - 1].style =  '';
+          track.sliderData[activeIndex].style =  'prev';
+          track.sliderData[activeIndex + 1].style =  'initial';
+          track.sliderData[0].style =  'next';
+        } else if (activeIndex !== 0) {
+          // console.log('activeIndex ', activeIndex);
+          track.sliderData[activeIndex - 1].style =  '';
+          track.sliderData[activeIndex].style =  'prev';
+          track.sliderData[activeIndex + 1].style =  'initial';
+          track.sliderData[activeIndex + 2].style =  'next';
+        }
+        break;
+      }
+    }
+    this.widget.tracks[trackId].sliderData = track.sliderData;
+  }
+  // Carousel : end
+
+  public trackHover(event, track, id): void {
+    // console.log(event);
+    // console.log(track);
+    // console.log(id);
+  }
+
+  public trackPlay(event, track, trackId): void {
+    // console.log(event);
+    console.log(track);
+    // console.log(id);
     this.playTrack = !this.playTrack;
+    this.widget.tracks.forEach((tr) => tr.active = false);
+    this.widget.tracks[trackId].active = true;
+    this.carouselInit(this.widget.tracks[trackId].sliderIndex, trackId);
   }
 
-  public onResize(event) {
+  public onResize(event): void {
     console.log(event.target.innerWidth);
   }
 
-  private createWidget(): Widget {
-    const widget = {
-      id_widget: 1,
-      artist_name: 'Cutoffurmind',
-      social: [{link: 'twitter.com', logo: 'twitter'}, {link: 'instagram.com', logo: 'instagram'}],
-      songs: [
-        {title: 'CUTOFFURMIND - BROKE AS HELL', rights: 'MP3 Leasing', price: '$30.00', in_cart: true},
-        {title: 'CUTOFFURMIND - CVE800', rights: 'MP3 Leasing', price: '$30.00', in_cart: false},
-        {title: 'CUTOFFURMIND - TRICK', rights: 'MP3 Leasing', price: '$30.00', in_cart: false},
-        {title: 'CUTOFFURMIND - LETS GET HIGH', rights: 'MP3 Leasing', price: '$30.00', in_cart: true},
-        {title: 'CUTOFFURMIND - WASSUP FOOL', rights: 'MP3 Leasing', price: '$30.00', in_cart: false},
-        {title: 'CUTOFFURMIND - UNDERBAR', rights: 'MP3 Leasing', price: '$30.00', in_cart: true},
-      ],
-      style: {
-        width: '920px',
-        height: '756px',
-        colors: {
-          background: '#FFFFFF',
-          text: '#4A4A4A',
-          active_item: '#695FFC',
-          active_accent: '#524fc4'
-        } as Colors
-      } as Style,
-    } as Widget;
-    return widget;
+  private widgetInit(completed): void {
+    this.widgetService.getWidget(13).subscribe((widget: Widget) => {
+      if (widget) {
+        widget.tracks.forEach((track) => {
+          track.sliderData = this.priceTransformer(track.prices);
+          track.sliderIndex = 0;
+          track.active = false;
+        });
+        this.widget = {
+          ...widget,
+          style: {
+            width: '920px',
+            height: '756px',
+            colors: {
+              background: '#FFFFFF',
+              text: '#4A4A4A',
+              active_item: '#695FFC',
+              active_accent: '#524fc4'
+            } as Colors,
+          } as Style,
+        };
+        completed();
+       }
+    });
+  }
+
+  private priceTransformer(INPUT_PRICES: {}): {}[] {
+    const OUTPUT_ARRAY = [];
+    for (const key in INPUT_PRICES) {
+      if (INPUT_PRICES.hasOwnProperty(key)) {
+        OUTPUT_ARRAY.push({
+          style: '',
+          right: LicensePriceMapper[key],
+          price: INPUT_PRICES[key]
+        });
+      }
+    }
+    return OUTPUT_ARRAY;
   }
 
 }

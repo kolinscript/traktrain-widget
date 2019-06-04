@@ -1,15 +1,15 @@
 <div
+  *ngIf="widget"
   class="widget-wrapper"
-  [ngStyle]="{width: widget.style.width, height: widget.style.height}"
   (window:resize)="onResize($event)"
 >
   <div class="widget-item wi-topbar">
     <div class="title">
       <div class="shield" [ngStyle]="{background: widget.style.colors.active_item, borderColor: widget.style.colors.active_accent}"></div>
-      <div class="name">{{widget.artist_name}}</div>
+      <div class="name">{{widget.producer.artistName}}</div>
     </div>
     <div class="social">
-      <div class="link" *ngFor="let social of widget.social">
+      <div class="link " [ngClass]="social.logo" *ngFor="let social of widget.social">
         <a href="{{social.link}}"><img src="../../../assets/icons/{{social.logo}}.svg" alt="{{social.logo}}"></a>
       </div>
     </div>
@@ -26,20 +26,40 @@
   <div class="widget-item wi-player-list">
     <div
       class="track"
-      *ngFor="let track of widget.songs; index as i"
-      [ngClass]="{'in-cart': track.in_cart}"
+      *ngFor="let track of widget.tracks; index as indexTrack"
       [ngStyle]="{color: widget.style.colors.text}"
-      (click)="play()"
+      (mouseenter)="trackHover($event, track, indexTrack)"
     >
-      <div class="name">{{i+1}}. {{track.title}}</div>
+      <div class="click-area" (click)="trackPlay($event, track, indexTrack)"></div>
+      <div class="name">{{indexTrack + 1}}. {{track.name}}</div>
       <div class="controls">
-        <div class="rights-carousel">
-          <div class="rc-control prev"></div>
-          <div class="rc-rights">
-            <div class="right">{{track.rights}} {{widget.songs[0].price}}</div>
+
+        <div class="rights-carousel" *ngIf="track.active">
+          <div
+            class="rc-control prev"
+            *ngIf="track.sliderData.length !== 1"
+            (click)="carouselSlide(track, indexTrack, 'prev')"
+          >
+            <div class="icon"></div>
           </div>
-          <div class="rc-control next"></div>
+          <div class="rc-rights">
+            <div
+              class="right"
+              *ngFor="let right of track.sliderData ; index as indexRight"
+              [ngClass]="{'prev': right.style === 'prev', 'next': right.style === 'next', 'initial': right.style === 'initial'}"
+            >
+              {{right.right}}<span class="val"> ${{right.price}}</span>
+            </div>
+          </div>
+          <div
+            class="rc-control next"
+            *ngIf="track.sliderData.length !== 1"
+            (click)="carouselSlide(track, indexTrack, 'next')"
+          >
+            <div class="icon"></div>
+          </div>
         </div>
+
         <div class="btn-cart-add"></div>
       </div>
     </div>
@@ -55,7 +75,7 @@
         <div
           class="ctrl play"
           [ngClass]="{'pause': !playTrack}"
-          (click)="play()"
+          (click)="trackPlay()"
         >
           <span
             class="triangle left"
@@ -72,7 +92,7 @@
         </div>
       </div>
       <div class="title">
-        <div class="track-name" [ngStyle]="{color: widget.style.colors.text}">{{widget.songs[0].title}}</div>
+        <div class="track-name" [ngStyle]="{color: widget.style.colors.text}">{{widget.tracks[0].name}}</div>
         <div class="tags">
           <div class="tag" [ngStyle]="{color: widget.style.colors.active_item}">Reggae</div>
           <div class="tag" [ngStyle]="{color: widget.style.colors.active_item}">Roots</div>
@@ -86,8 +106,7 @@
       </div>
       <div class="cart-and-price">
         <div class="price" [ngStyle]="{color: widget.style.colors.text}">
-          <span class="label">total</span>
-          <span class="val">$99999.99</span>
+          <span class="val">$999.99</span>
         </div>
         <div class="icon-cart"><span class="count">2</span></div>
       </div>
