@@ -1,7 +1,6 @@
 <div
   *ngIf="widget"
   class="widget-wrapper"
-  [ngStyle]="{width: widget.style.width, height: widget.style.height}"
   (window:resize)="onResize($event)"
 >
   <div class="widget-item wi-topbar">
@@ -27,20 +26,40 @@
   <div class="widget-item wi-player-list">
     <div
       class="track"
-      *ngFor="let track of widget.tracks; index as i"
+      *ngFor="let track of widget.tracks; index as indexTrack"
       [ngStyle]="{color: widget.style.colors.text}"
-      (click)="trackPlay()"
-      (mouseenter)="trackHover($event, track, i)"
+      (mouseenter)="trackHover($event, track, indexTrack)"
     >
-      <div class="name">{{i+1}}. {{track.name}}</div>
+      <div class="click-area" (click)="trackPlay($event, track, indexTrack)"></div>
+      <div class="name">{{indexTrack + 1}}. {{track.name}}</div>
       <div class="controls">
-        <div class="rights-carousel">
-          <div class="rc-control prev" (click)="rcPrev()"></div>
-          <div class="rc-rights">
-            <div class="right" *ngFor="let right of track.sliderData">{{right}}</div>
+
+        <div class="rights-carousel" *ngIf="track.active">
+          <div
+            class="rc-control prev"
+            *ngIf="track.sliderData.length !== 1"
+            (click)="carouselSlide(track, indexTrack, 'prev')"
+          >
+            <div class="icon"></div>
           </div>
-          <div class="rc-control next" (click)="rcNext()"></div>
+          <div class="rc-rights">
+            <div
+              class="right"
+              *ngFor="let right of track.sliderData ; index as indexRight"
+              [ngClass]="{'prev': right.style === 'prev', 'next': right.style === 'next', 'initial': right.style === 'initial'}"
+            >
+              {{right.right}}<span class="val"> ${{right.price}}</span>
+            </div>
+          </div>
+          <div
+            class="rc-control next"
+            *ngIf="track.sliderData.length !== 1"
+            (click)="carouselSlide(track, indexTrack, 'next')"
+          >
+            <div class="icon"></div>
+          </div>
         </div>
+
         <div class="btn-cart-add"></div>
       </div>
     </div>
@@ -56,7 +75,7 @@
         <div
           class="ctrl play"
           [ngClass]="{'pause': !playTrack}"
-          (click)="play()"
+          (click)="trackPlay()"
         >
           <span
             class="triangle left"

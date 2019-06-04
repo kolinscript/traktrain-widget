@@ -73,12 +73,14 @@ export interface Track {
   userId: number;
   name: string;
   prices: Prices;
-  sliderData?: any[];
   image: string;
   lbImage: null | string;
   drumKit: boolean;
   drumKitInfo: DrumKitInfo;
   tags: string;
+  sliderData?: any[];
+  sliderIndex?: number;
+  active?: boolean;
 }
 
 export interface DrumKitInfo {

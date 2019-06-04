@@ -1,14 +1,18 @@
 .widget-wrapper {
+  overflow: hidden;
   position: relative;
   display: flex;
   justify-content: flex-start;
   align-items: center;
   flex-direction: column;
   border: 1px solid #E6E6E6;
-  overflow: auto;
+  background-color: #ffffff;
+  width: 100%;
+  height: 100%;
   .widget-item {
     width: 100%;
     &.wi-topbar {
+      height: 50px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -60,8 +64,7 @@
     }
 
     &.wi-screen {
-      min-height: 30%;
-      max-height: 266px;
+      flex: 1;
       .background {
         height: 100%;
         //background: linear-gradient(270deg, rgba(235,100,100,0.5) 0%, rgba(81,144,174,0.5) 100%);
@@ -96,9 +99,10 @@
     }
 
     &.wi-player-list {
-      min-height: 20%;
+      flex: 1;
       overflow: scroll;
       .track {
+        position: relative;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -130,45 +134,101 @@
             }
           }
         }
+        .click-area {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          top: 0;
+          left: 0;
+          background: transparent;
+        }
         .name {
+          position: relative;
           white-space: nowrap;
           overflow: hidden;
         }
         .controls {
+          position: relative;
           display: flex;
           justify-content: center;
           align-items: center;
+
           .rights-carousel {
             display: flex;
             justify-content: center;
             align-items: center;
             .rc-control {
+              overflow: hidden;
               cursor: pointer;
+              width: 20px;
+              height: 20px;
+              border-radius: 50%;
+              transition: background-color 200ms ease-in-out;
+              .icon {
+                width: 100%;
+                height: 100%;
+              }
+              &:hover {
+                background-color: #b8b8b82e;
+              }
               &.prev {
-                width: 20px;
-                height: 20px;
-                background: url('../../../../assets/icons/chevron-left.svg') no-repeat;
-                background-size: 100%;
+                .icon {
+                  background: url('../../../../assets/icons/chevron-left.svg') no-repeat;
+                  background-size: 100%;
+                }
               }
               &.next {
-                width: 20px;
-                height: 20px;
-                background: url('../../../../assets/icons/chevron-right.svg') no-repeat;
-                background-size: 100%;
+                .icon {
+                  background: url('../../../../assets/icons/chevron-right.svg') no-repeat;
+                  background-size: 100%;
+                }
               }
             }
             .rc-rights {
+              position: relative;
+              overflow: hidden;
               display: flex;
               justify-content: center;
               align-items: center;
+              transform-style: preserve-3d;
               .right {
-                margin: 0 10px;
-                &.active {
+                z-index: 100;
+                opacity: 0;
+                position: absolute;
+                top:0;
+                width: 100%;
+                min-width: 140px;
+                margin: auto;
+                padding: 0 5px;
+                transition: transform .5s, opacity .5s, z-index .5s;
+                font: 500 12px/14px 'Arial';
+                color: #2E2E2E;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                .val {
                   display: block;
+                  margin-left: 5px;
+                  font: 600 14px/16px 'Work Sans';
+                }
+                &.initial, &.active{
+                  opacity: 1;
+                  position: relative;
+                  z-index: 900;
+                }
+                &.prev, &.next {
+                  z-index: 800;
+                }
+                &.prev {
+                  transform: translateX(-100%);
+                }
+                &.next {
+                  transform: translateX(100%);
                 }
               }
             }
           }
+
           .btn-cart-add {
             position: relative;
             margin-left: 20px;
@@ -182,6 +242,7 @@
     }
 
     &.wi-player-bottom {
+      height: 70px;
       z-index: 9999;
       position: sticky;
       display: flex;
@@ -190,7 +251,6 @@
       background: #ffffff;
       left: 0;
       top: 100%;
-      min-height: 70px;
       border-top: 1px solid #E6E6E6;
       .block-music {
         display: flex;
