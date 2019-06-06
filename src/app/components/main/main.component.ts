@@ -9,8 +9,6 @@ export class MainComponent implements OnInit {
 
   constructor() { }
 
-  ngOnInit() {
-  //  todo setup onresize func
-  }
+  ngOnInit() {}
 
 }

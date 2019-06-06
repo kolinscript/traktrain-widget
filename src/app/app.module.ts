@@ -9,13 +9,15 @@ import { WidgetComponent } from './components/main/widget/widget.component';
 import { SettingsComponent } from './components/main/settings/settings.component';
 
 import { WidgetService } from './services/widget.service';
+import { ModalComponent } from './components/shared/modal/modal.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     MainComponent,
     WidgetComponent,
-    SettingsComponent
+    SettingsComponent,
+    ModalComponent
   ],
   imports: [
     BrowserModule,
