@@ -1,5 +1,6 @@
-<div class="modal-wrapper">
-  <div class="content">
+<div class="modal-wrapper" *ngIf="modal.modalOpen">
+
+  <div class="modal">
     <div class="confirmation">
       <div class="close" (click)="modalClose()">close</div>
       <div class="title">
@@ -17,4 +18,5 @@
       </form>
     </div>
   </div>
+
 </div>

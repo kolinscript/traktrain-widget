@@ -75,6 +75,7 @@
         <div
           class="btn-cart-add"
           *ngIf="track.active || track.hovered"
+          (click)="trackAddToCart($event, track, indexTrack)"
         ></div>
       </div>
     </div>
@@ -127,9 +128,3 @@
     </div>
   </div>
 </div>
-
-<app-modal
-  *ngIf="modalOpen"
-  [content]="modalContent"
-  (close)="modalOpen = !modalOpen"
-></app-modal>
