@@ -1,4 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Modal } from '../../../models/modal.model';
+import { ModalService } from '../../../services/modal.service';
 
 @Component({
   selector: 'app-modal',
@@ -6,16 +8,19 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
   styleUrls: ['./modal.component.scss']
 })
 export class ModalComponent implements OnInit {
-  @Input()  content: any;
-  @Output() close: EventEmitter<boolean> = new EventEmitter<boolean>();
+  @Input()  modal: Modal;
+  @Output() modalResult: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-  constructor() { }
+  constructor(
+    public modalService: ModalService
+  ) { }
 
   ngOnInit() {
   }
 
   modalClose(): void {
-    this.close.emit();
+    this.modalService.modal.modalOpen = false;
+    // this.modal.emit();
   }
 
 }

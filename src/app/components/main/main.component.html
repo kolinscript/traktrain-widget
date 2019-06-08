@@ -1,4 +1,8 @@
 <div class="main">
   <!--<app-settings></app-settings>-->
   <app-widget></app-widget>
+  <app-modal
+    [modal]="modalService.modal"
+    (close)="modalService.modal[0].modalOpen = !modalService.modal[0].modalOpen"
+  ></app-modal>
 </div>

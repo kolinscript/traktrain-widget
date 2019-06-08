@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Colors, LicensePriceMapper, Style, Track, Widget, SDN_LINK_IMG, SDN_LINK_MP3 } from '../../../models/widget.model';
 import { WidgetService } from '../../../services/widget.service';
+import { ModalService } from '../../../services/modal.service';
 
 @Component({
   selector: 'app-widget',
@@ -14,7 +15,8 @@ export class WidgetComponent implements OnInit {
   SDN_LINK_MP3 = SDN_LINK_MP3;
 
   constructor(
-    private widgetService: WidgetService
+    private widgetService: WidgetService,
+    private modalService: ModalService
   ) { }
 
   ngOnInit() {
@@ -24,7 +26,7 @@ export class WidgetComponent implements OnInit {
     console.log('innerWidth', window.innerWidth);
   }
 
-  // todo highlight to shared folder
+  // todo highlight to components/shared folder
   // Carousel : start
   private carouselInit(startIndex: number, trackId: number): void {
     const carouselLength = this.widget.tracks[trackId].sliderData.length;
@@ -144,6 +146,13 @@ export class WidgetComponent implements OnInit {
     this.carouselInit(this.widget.tracks[trackId].sliderIndex, trackId);
   }
 
+  public trackAddToCart(event, track, trackId): void {
+    this.modalService.modal = {
+      modalOpen: true,
+      modalContent: ''
+    };
+  }
+
   public onResize(event): void {
     console.log(event.target.innerWidth);
   }
@@ -157,6 +166,7 @@ export class WidgetComponent implements OnInit {
           track.active = false;
           track.hovered = false;
           track.play = false;
+          track.inCart = false;
         });
         this.widget = {
           ...widget,
