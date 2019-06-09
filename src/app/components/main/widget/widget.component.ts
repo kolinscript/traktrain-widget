@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Colors, LicensePriceMapper, Style, Track, Widget, SDN_LINK_IMG, SDN_LINK_MP3 } from '../../../models/widget.model';
 import { WidgetService } from '../../../services/widget.service';
 import { ModalService } from '../../../services/modal.service';
+import { Modal, ModalContent } from '../../../models/modal.model';
 
 @Component({
   selector: 'app-widget',
@@ -9,10 +10,12 @@ import { ModalService } from '../../../services/modal.service';
   styleUrls: ['./widget.component.scss']
 })
 export class WidgetComponent implements OnInit {
-  widget: Widget;
-  modalOpen = false;
   SDN_LINK_IMG = SDN_LINK_IMG;
   SDN_LINK_MP3 = SDN_LINK_MP3;
+  widget: Widget;
+  modalOpen = false;
+  modalContent: ModalContent;
+  // modals: Modal[] = [];
 
   constructor(
     private widgetService: WidgetService,
@@ -147,10 +150,22 @@ export class WidgetComponent implements OnInit {
   }
 
   public trackAddToCart(event, track, trackId): void {
-    this.modalService.modal = {
-      modalOpen: true,
-      modalContent: ''
+    this.modalOpen = true;
+    this.modalContent = {
+      title: 'BUY TERMS',
+      paymentInfo: this.widget.producer.paymentInfo,
+      sliderData: track.sliderData,
+      mp3Leasing: this.widget.producer.mp3Leasing,
+      wavLeasing: this.widget.producer.wavLeasing,
+      wavTrackout: this.widget.producer.wavTrackout,
+      unlimited: this.widget.producer.unlimited,
+      exclusive: this.widget.producer.exclusive,
     };
+  }
+
+  public modalEvent($event) {
+    console.log($event);
+    this.modalOpen = false;
   }
 
   public onResize(event): void {
