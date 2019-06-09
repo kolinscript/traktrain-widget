@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { ModalService } from '../../services/modal.service';
 
 @Component({
   selector: 'app-main',
@@ -8,9 +7,7 @@ import { ModalService } from '../../services/modal.service';
 })
 export class MainComponent implements OnInit {
 
-  constructor(
-    public modalService: ModalService
-  ) { }
+  constructor() { }
 
   ngOnInit() {}
 

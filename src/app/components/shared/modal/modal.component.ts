@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Modal } from '../../../models/modal.model';
-import { ModalService } from '../../../services/modal.service';
+import { Modal, ModalContent, ModalTypes } from '../../../models/modal.model';
 
 @Component({
   selector: 'app-modal',
@@ -8,19 +7,47 @@ import { ModalService } from '../../../services/modal.service';
   styleUrls: ['./modal.component.scss']
 })
 export class ModalComponent implements OnInit {
-  @Input()  modal: Modal;
-  @Output() modalResult: EventEmitter<boolean> = new EventEmitter<boolean>();
+  ModalTypes = ModalTypes;
+  @Input() modalContent: ModalContent;
+  @Output() modalResult: EventEmitter<any> = new EventEmitter<any>();
 
-  constructor(
-    public modalService: ModalService
-  ) { }
+  constructor() { }
 
   ngOnInit() {
+    switch (this.modalContent.type) {
+      case ModalTypes.TERMS: {
+
+        break;
+      }
+      case ModalTypes.CART: {
+        break;
+      }
+    }
+    console.log(this.modalContent);
   }
 
   modalClose(): void {
-    this.modalService.modal.modalOpen = false;
-    // this.modal.emit();
+    this.modalResult.emit('close no result');
   }
+
+  private invoke() {
+
+  }
+
+  /*
+  * function block for buy-terms
+  */
+  public pickLease(right: any, i: number): void {
+    console.log(right);
+    console.log(i);
+    this.modalContent.contentTerms.sliderData.forEach((button) => button.activeInModal = false);
+    this.modalContent.contentTerms.rightsDescription.forEach((rights) => rights.activeInModal = false);
+    this.modalContent.contentTerms.sliderData[i].activeInModal = true;
+    this.modalContent.contentTerms.rightsDescription[i].activeInModal = true;
+  }
+
+  /*
+  * function block for ...
+  */
 
 }

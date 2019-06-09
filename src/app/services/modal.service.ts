@@ -5,7 +5,7 @@ import { Modal } from '../models/modal.model';
   providedIn: 'root'
 })
 export class ModalService {
-  modal: Modal = {};
+  // modals: Modal[] = [];
 
   constructor() { }
 }

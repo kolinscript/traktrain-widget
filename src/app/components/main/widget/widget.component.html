@@ -117,7 +117,7 @@
     <div class="block-money">
       <div class="payment-types">
         <div class="pt paypal"></div>
-        <div class="pt card" (click)="modalOpen = !modalOpen"></div>
+        <div class="pt card"></div>
       </div>
       <div class="cart-and-price">
         <div class="price" [ngStyle]="{color: widget.style.colors.text}">
@@ -127,4 +127,12 @@
       </div>
     </div>
   </div>
+</div>
+
+<div class="modals">
+  <app-modal
+    *ngIf="modalOpen"
+    [modalContent]="modalContent"
+    (modalResult)="modalEvent($event)"
+  ></app-modal>
 </div>

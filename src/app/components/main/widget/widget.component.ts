@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Colors, LicensePriceMapper, Style, Track, Widget, SDN_LINK_IMG, SDN_LINK_MP3 } from '../../../models/widget.model';
 import { WidgetService } from '../../../services/widget.service';
 import { ModalService } from '../../../services/modal.service';
+import { Modal, ModalContent, ModalTypes } from '../../../models/modal.model';
 
 @Component({
   selector: 'app-widget',
@@ -9,10 +10,12 @@ import { ModalService } from '../../../services/modal.service';
   styleUrls: ['./widget.component.scss']
 })
 export class WidgetComponent implements OnInit {
-  widget: Widget;
-  modalOpen = false;
   SDN_LINK_IMG = SDN_LINK_IMG;
   SDN_LINK_MP3 = SDN_LINK_MP3;
+  widget: Widget;
+  modalOpen = false;
+  modalContent: ModalContent;
+  // modals: Modal[] = [];
 
   constructor(
     private widgetService: WidgetService,
@@ -147,10 +150,23 @@ export class WidgetComponent implements OnInit {
   }
 
   public trackAddToCart(event, track, trackId): void {
-    this.modalService.modal = {
-      modalOpen: true,
-      modalContent: ''
+    this.modalOpen = true;
+    this.modalContent = {
+      title: 'BUY TERMS',
+      type: ModalTypes.TERMS,
+      contentTerms: {
+        paymentInfo: this.widget.producer.paymentInfo,
+        sliderData: track.sliderData,
+        rightsDescription: this.createRightsDescriptions(track.sliderData)
+      }
     };
+    this.modalContent.contentTerms.sliderData[0].activeInModal = true;
+    this.modalContent.contentTerms.rightsDescription[0].activeInModal = true;
+  }
+
+  public modalEvent($event) {
+    console.log($event);
+    this.modalOpen = false;
   }
 
   public onResize(event): void {
@@ -193,11 +209,62 @@ export class WidgetComponent implements OnInit {
         OUTPUT_ARRAY.push({
           style: '',
           right: LicensePriceMapper[key],
-          price: INPUT_PRICES[key]
+          price: INPUT_PRICES[key],
+          activeInModal: false
         });
       }
     }
     return OUTPUT_ARRAY;
+  }
+
+  private createRightsDescriptions(array: object[]): string[] {
+    const rdArray = [];
+    array.forEach((item) => {
+      console.log(Object.values(item));
+      switch (Object.values(item)[1]) {
+        case 'MP3 Leasing': {
+          rdArray.push({
+            label: 'MP3 Leasing rights',
+            rights: Object.values(this.widget.producer.mp3Leasing),
+            activeInModal: false
+          });
+          break;
+        }
+        case 'Wav Leasing': {
+          rdArray.push({
+            label: 'Wav Leasing rights',
+            rights: Object.values(this.widget.producer.wavLeasing),
+            activeInModal: false
+          });
+          break;
+        }
+        case 'Wav Trackout': {
+          rdArray.push({
+            label: 'Wav Trackout rights',
+            rights: Object.values(this.widget.producer.wavTrackout),
+            activeInModal: false
+          });
+          break;
+        }
+        case 'Unlimited': {
+          rdArray.push({
+            label: 'Unlimited rights',
+            rights: Object.values(this.widget.producer.unlimited),
+            activeInModal: false
+          });
+          break;
+        }
+        case 'Exclusive': {
+          rdArray.push({
+            label: 'Exclusive rights',
+            rights: Object.values(this.widget.producer.exclusive),
+            activeInModal: false
+          });
+          break;
+        }
+      }
+    });
+    return rdArray;
   }
 
 }
