@@ -101,7 +101,7 @@
         margin-top: 20px;
         display: flex;
         justify-content: center;
-        align-items: center;
+        align-items: flex-start;
         .rt-buttons {
           display: flex;
           justify-content: center;
@@ -118,7 +118,7 @@
             &:last-child {
               margin-bottom: 0;
             }
-            &.active, &:hover {
+            &.active{
               border-color: #695FFC;
               .label {
                 border-color: #695FFC;
@@ -139,6 +139,19 @@
           }
         }
         .rt-content {
+          .content {
+            display: none;
+            width: 280px;
+            margin-left: 20px;
+            &.active {
+              display: block;
+            }
+            .rights {
+              .right {
+
+              }
+            }
+          }
         }
       }
       .add2cart {

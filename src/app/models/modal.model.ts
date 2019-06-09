@@ -1,3 +1,7 @@
+export enum ModalTypes {
+  TERMS = 'TERMS', CART = 'CART'
+}
+
 export interface Modal {
   modalOpen?: boolean;
   modalType?: string;
@@ -5,13 +9,13 @@ export interface Modal {
 }
 
 export interface ModalContent {
+  type?: ModalTypes;
   title?: string;
+  contentTerms?: ContentTerms;
+}
 
+export interface ContentTerms {
   paymentInfo?: any;
   sliderData?: any;
-  mp3Leasing?: any;
-  wavLeasing?: any;
-  wavTrackout?: any;
-  unlimited?: any;
-  exclusive?: any;
+  rightsDescription?: any;
 }

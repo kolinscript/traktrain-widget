@@ -1,6 +1,6 @@
 <div class="modal-wrapper">
 
-  <div class="modal buy-terms">
+  <div class="modal buy-terms" *ngIf="modalContent.type === ModalTypes.TERMS">
     <div class="close" (click)="modalClose()"><span></span><span></span></div>
     <div class="title">
       <div class="shield"></div>
@@ -13,12 +13,27 @@
     </div>
     <div class="rights-toggler">
       <div class="rt-buttons">
-        <div class="button" *ngFor="let right of modalContent.sliderData">
+        <div
+          class="button"
+          (click)="pickLease(right, i)"
+          [ngClass]="{'active': right.activeInModal}"
+          *ngFor="let right of modalContent.contentTerms.sliderData; index as i"
+        >
           <div class="label">{{right.right}}</div>
           <div class="price">${{right.price}}.00</div>
         </div>
       </div>
-      <div class="rt-content"></div>
+      <div class="rt-content" *ngFor="let content of modalContent.contentTerms.rightsDescription">
+        <div
+          class="content"
+          [ngClass]="{'active': content.activeInModal}"
+        >
+          <div class="label">{{content.label}}</div>
+          <ul class="rights" *ngFor="let right of content.rights">
+            <li class="right">{{right}}</li>
+          </ul>
+        </div>
+      </div>
     </div>
     <button class="add2cart">Add to cart</button>
   </div>
