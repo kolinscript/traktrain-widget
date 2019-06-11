@@ -27,7 +27,6 @@
         width: 20px;
         cursor: pointer;
         border-radius: 50%;
-        background-color: rgba(255, 255, 255, 1);
         span {
           position: absolute;
           display: block;
@@ -40,17 +39,9 @@
           background: #95979c;
           border-radius: 1px;
           &:nth-child(1) {
-            -webkit-transform: rotate(45deg);
-            -moz-transform: rotate(45deg);
-            -ms-transform: rotate(45deg);
-            -o-transform: rotate(45deg);
             transform: rotate(45deg);
           }
           &:nth-child(2) {
-            -webkit-transform: rotate(-45deg);
-            -moz-transform: rotate(-45deg);
-            -ms-transform: rotate(-45deg);
-            -o-transform: rotate(-45deg);
             transform: rotate(-45deg);
           }
         }
@@ -85,15 +76,15 @@
           height: 20px;
           margin-left: 10px;
           &.paypal {
-            background: url('../../../../assets/icons/paypal.svg') no-repeat;
-            background-size: cover;
-            background-position: 50% 50%;
+            mask-image: url('../../../../assets/icons/paypal.svg');
+            mask-size: cover;
+            background-color: #695FFC;
           }
           &.card {
             margin-left: 7px;
-            background: url('../../../../assets/icons/credit-card.svg') no-repeat;
-            background-size: cover;
-            background-position: 50% 50%;
+            mask-image: url('../../../../assets/icons/credit-card.svg');
+            mask-size: cover;
+            background-color: #695FFC;
           }
         }
       }
@@ -113,7 +104,7 @@
             justify-content: center;
             align-items: center;
             margin-bottom: 10px;
-            border: 1px solid #95979c;
+            border: 1px solid #e6e6e6;
             border-radius: 3px;
             &:last-child {
               margin-bottom: 0;
@@ -129,7 +120,7 @@
               padding: 0 15px;
               font: 400 14px/38px 'Work Sans';
               text-transform: uppercase;
-              border-right: 1px solid #95979c;
+              border-right: 1px solid #e6e6e6;
             }
             .price {
               min-width: 100px;
@@ -146,9 +137,31 @@
             &.active {
               display: block;
             }
+            .label {
+              font: 500 16px/18px 'Work Sans';
+            }
             .rights {
+              margin: 0;
+              padding: 0;
               .right {
-
+                position: relative;
+                list-style: none;
+                margin-top: 12px;
+                padding-left: 30px;
+                font: 400 14px/16px 'Work Sans';
+                color: #787878;
+                &:before {
+                  position: absolute;
+                  display: block;
+                  content: '';
+                  width: 24px;
+                  height: 24px;
+                  top: -3px;
+                  left: 0;
+                  mask-image: url('../../../../assets/icons/done.svg');
+                  mask-size: cover;
+                  background-color: #695FFC;
+                }
               }
             }
           }

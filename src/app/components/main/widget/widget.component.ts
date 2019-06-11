@@ -3,6 +3,7 @@ import { Colors, LicensePriceMapper, Style, Track, Widget, SDN_LINK_IMG, SDN_LIN
 import { WidgetService } from '../../../services/widget.service';
 import { ModalService } from '../../../services/modal.service';
 import { Modal, ModalContent, ModalTypes } from '../../../models/modal.model';
+import { Howl } from 'howler';
 
 @Component({
   selector: 'app-widget',
@@ -16,6 +17,9 @@ export class WidgetComponent implements OnInit {
   modalOpen = false;
   modalContent: ModalContent;
   // modals: Modal[] = [];
+  sound: Howl;
+  playerActiveTrackIndex: number;
+  playerPlay = false;
 
   constructor(
     private widgetService: WidgetService,
@@ -141,12 +145,29 @@ export class WidgetComponent implements OnInit {
     this.widget.tracks[trackId].hovered = false;
   }
 
-  public trackPlay(event, track, trackId): void {
-    this.widget.tracks.forEach((tr) => tr.play = false);
+  public trackChoose(event, track, trackId): void {
     this.widget.tracks.forEach((tr) => tr.active = false);
-    this.widget.tracks[trackId].play = true;
     this.widget.tracks[trackId].active = true;
+    this.playerActiveTrackIndex = trackId;
     this.carouselInit(this.widget.tracks[trackId].sliderIndex, trackId);
+  }
+
+  public trackPlay() {
+    if (this.playerActiveTrackIndex && !this.playerPlay) {
+      this.playerPlay = !this.playerPlay;
+      this.widget.tracks.forEach((tr) => tr.play = false);
+      this.widget.tracks[this.playerActiveTrackIndex].play = true;
+      this.sound = new Howl({
+        src: [SDN_LINK_MP3 + this.widget.tracks[this.playerActiveTrackIndex].link],
+        html5: true
+      });
+      this.sound.play();
+    } else {
+
+      this.playerPlay = !this.playerPlay;
+      this.widget.tracks[this.playerActiveTrackIndex].play = false;
+      this.sound.pause();
+    }
   }
 
   public trackAddToCart(event, track, trackId): void {
@@ -217,6 +238,7 @@ export class WidgetComponent implements OnInit {
     return OUTPUT_ARRAY;
   }
 
+  // todo refactor switch to one-liner (simple rdArray.push())
   private createRightsDescriptions(array: object[]): string[] {
     const rdArray = [];
     array.forEach((item) => {
