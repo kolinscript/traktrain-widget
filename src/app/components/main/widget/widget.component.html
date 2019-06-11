@@ -34,7 +34,7 @@
       (mouseenter)="trackHover($event, track, indexTrack)"
       (mouseleave)="trackLeave($event, track, indexTrack)"
     >
-      <div class="click-area" (click)="trackPlay($event, track, indexTrack)"></div>
+      <div class="click-area" (click)="trackChoose($event, track, indexTrack)"></div>
       <div class="track-title">
         <div class="bars" *ngIf="track.play">
           <div class="bar"></div>
@@ -91,6 +91,7 @@
         <div
           class="ctrl play"
           (click)="trackPlay()"
+          [ngClass]="{'pause': playerPlay}"
         >
           <span
             class="triangle left"

@@ -29,8 +29,8 @@
           [ngClass]="{'active': content.activeInModal}"
         >
           <div class="label">{{content.label}}</div>
-          <ul class="rights" *ngFor="let right of content.rights">
-            <li class="right">{{right}}</li>
+          <ul class="rights">
+            <li class="right" *ngFor="let right of content.rights">{{right}}</li>
           </ul>
         </div>
       </div>
