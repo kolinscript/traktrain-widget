@@ -15,6 +15,7 @@ export interface ModalContent {
 }
 
 export interface ContentTerms {
+  track_id: number;
   paymentInfo?: any;
   sliderData?: any;
   rightsDescription?: any;

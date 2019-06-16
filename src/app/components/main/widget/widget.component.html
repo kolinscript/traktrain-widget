@@ -34,7 +34,7 @@
       (mouseenter)="trackHover($event, track, indexTrack)"
       (mouseleave)="trackLeave($event, track, indexTrack)"
     >
-      <div class="click-area" (click)="trackChoose($event, track, indexTrack)"></div>
+      <div class="click-area" (click)="trackPlay($event, track, indexTrack)"></div>
       <div class="track-title">
         <div class="bars" *ngIf="track.play">
           <div class="bar"></div>
@@ -72,16 +72,25 @@
           </div>
         </div>
 
-        <div
-          class="btn-cart-add"
-          *ngIf="track.active || track.hovered"
-          (click)="trackAddToCart($event, track, indexTrack)"
-        ></div>
+        <div class="btn-cart-add"
+             *ngIf="track.active || track.hovered"
+             (click)="trackAddToCart($event, track, indexTrack)"
+        >
+          <span class="add"><span class="line"></span><span class="line"></span></span>
+        </div>
       </div>
     </div>
   </div>
 
   <div class="widget-item wi-player-bottom">
+    <div class="progress" (click)="trackProgressClicked($event)">
+      <div class="bar">
+        <div class="active-area" [ngStyle]="{'width.%': playerProgressPercent}">
+          <div class="dot" *ngIf="playerProgressPercent"></div>
+          <div class="tooltip"></div>
+        </div>
+      </div>
+    </div>
     <div class="block-music">
       <div class="ctrls">
         <div class="ctrl prev">
@@ -108,7 +117,7 @@
         </div>
       </div>
       <div class="title">
-        <div class="track-name" [ngStyle]="{color: widget.style.colors.text}">{{widget.producer.artistName}} - {{widget.tracks[0].name}}</div>
+        <div class="track-name" [ngStyle]="{color: widget.style.colors.text}">{{widget.producer.artistName}} - {{playerTrackName}}</div>
         <div class="tags">
           <div class="tag" [ngStyle]="{color: widget.style.colors.active_item}">Reggae</div>
           <div class="tag" [ngStyle]="{color: widget.style.colors.active_item}">Roots</div>
@@ -120,7 +129,7 @@
         <div class="pt paypal"></div>
         <div class="pt card"></div>
       </div>
-      <div class="cart-and-price">
+      <div class="btn-cart-and-price">
         <div class="price" [ngStyle]="{color: widget.style.colors.text}">
           <span class="val">$999.99</span>
         </div>
