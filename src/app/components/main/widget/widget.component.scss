@@ -67,6 +67,10 @@
       flex: 1;
       .screen {
         height: 100%;
+        background-color: rgba(105, 95, 252, .75);
+        background-image: url('../../../../assets/icons/traktrain_logo.png');
+        background-size: 10%;
+        background-position: 50% 50%;
         .banner {
           height: 100%;
           background-size: cover;
@@ -108,10 +112,10 @@
         justify-content: space-between;
         align-items: center;
         cursor: pointer;
-        padding: 15px 15px;
+        height: 60px;
+        padding: 0 15px;
         font: 600 14px/16px 'Work Sans';
-        border-bottom: 1px solid #E6E6E6;
-        min-height: 70px;
+        //border-bottom: 1px solid #E6E6E6;
         &:hover {
           background-color: #F5F5F5;
         }
@@ -274,6 +278,7 @@
           .btn-cart-add {
             position: relative;
             margin-left: 20px;
+            margin-top: 8px;
             width: 25px;
             height: 25px;
             background: url('../../../../assets/icons/shopping-cart.svg') no-repeat;
@@ -402,6 +407,23 @@
                   border-right: 12px solid #b8b8b8;
                 }
               }
+              &:hover {
+                span {
+                  &.line {
+                    background-color: #695FFC;
+                  }
+                  &.triangle {
+                    border-right-color: #695FFC;
+                  }
+                }
+                &.next {
+                  span {
+                    &.triangle {
+                      border-left-color: #695FFC;
+                    }
+                  }
+                }
+              }
             }
             &.next {
               span {
@@ -466,6 +488,10 @@
           }
         }
         .title {
+          display: flex;
+          justify-content: flex-start;
+          align-items: flex-start;
+          flex-direction: column;
           margin-left: 20px;
           .track-name {
             font: 500 14px/16px 'Work Sans';
@@ -480,6 +506,23 @@
               border-radius: 10px;
               font: 500 12px/14px 'Arial';
             }
+          }
+        }
+        .timing {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          width: 100px;
+          margin-left: 20px;
+          font: 400 14px/16px 'Work Sans';
+          text-align: center;
+          color: #b8b8b8;
+          .curtime {
+            width: 50%;
+            border-right: 1px solid #b8b8b8;
+          }
+          .alltime {
+            width: 50%;
           }
         }
       }

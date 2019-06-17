@@ -1,10 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit } from '@angular/core';
 import { Colors, LicensePriceMapper, Style, Track, Widget, SDN_LINK_IMG, SDN_LINK_MP3 } from '../../../models/widget.model';
 import { WidgetService } from '../../../services/widget.service';
 import { ModalService } from '../../../services/modal.service';
 import { Modal, ModalContent, ModalTypes } from '../../../models/modal.model';
 import { Howl } from 'howler';
-import { el } from '@angular/platform-browser/testing/src/browser_util';
 
 @Component({
   selector: 'app-widget',
@@ -22,16 +21,20 @@ export class WidgetComponent implements OnInit {
   playerActiveTrackIndex = 0;
   playerPlay = false;
   playerProgressSec: number | any;
+  playerProgressMS = '00:00';
+  playerDurationMS = '00:00';
   playerProgressPercent: number;
   playerProgressInterval: any;
   playerHowl: Howl;
   playerTrackName: string;
+  playerTracklbImage: string;
   //
   cart: number[] = []; // track id's array
 
   constructor(
     private widgetService: WidgetService,
-    private modalService: ModalService
+    private modalService: ModalService,
+    public elRef: ElementRef
   ) { }
 
   ngOnInit() {
@@ -39,6 +42,7 @@ export class WidgetComponent implements OnInit {
     console.log('windowWidth', this.windowWidth);
     this.widgetInit(() => {
       console.log(this.widget);
+      this.playerHowlInit(this.playerActiveTrackIndex);
       this.carouselInit(this.widget.tracks[this.playerActiveTrackIndex].sliderIndex, this.playerActiveTrackIndex);
     });
   }
@@ -151,8 +155,8 @@ export class WidgetComponent implements OnInit {
     this.widget.tracks[trackIndex].hovered = true;
   }
 
-  public trackLeave(event, track, trackId): void {
-    this.widget.tracks[trackId].hovered = false;
+  public trackLeave(event, track, trackIndex): void {
+    this.widget.tracks[trackIndex].hovered = false;
   }
 
   public trackProgressClicked($event) {
@@ -163,23 +167,24 @@ export class WidgetComponent implements OnInit {
     this.playerProgressSec = ((this.playerHowl.duration() * this.playerProgressPercent) / 100);
     if (this.playerProgressSec) {
       this.playerHowl.seek(this.playerProgressSec);
-    } else {}
+    }
   }
 
-  public trackChoose(event, track, trackIndex): void {
-    console.log(trackIndex);
-    this.widget.tracks.forEach((tr) => tr.active = false);
-    this.widget.tracks[trackIndex].active = true;
-    this.playerActiveTrackIndex = trackIndex;
-    this.carouselInit(this.widget.tracks[trackIndex].sliderIndex, trackIndex);
-  }
+  // public trackChoose(event, track, trackIndex): void {
+  //   console.log(trackIndex);
+  //   this.widget.tracks.forEach((tr) => tr.active = false);
+  //   this.widget.tracks[trackIndex].active = true;
+  //   this.playerActiveTrackIndex = trackIndex;
+  //   this.carouselInit(this.widget.tracks[trackIndex].sliderIndex, trackIndex);
+  // }
 
   public trackPlay(event?, track?, trackIndex?): void {
     if (trackIndex || trackIndex === 0) { this.playerActiveTrackIndex = trackIndex; } // обновление активного трека (если клик по листу)
     this.carouselInit(this.widget.tracks[this.playerActiveTrackIndex].sliderIndex, this.playerActiveTrackIndex);
     this.playerTrackName = this.widget.tracks[this.playerActiveTrackIndex].name;
+    this.playerTracklbImage = this.widget.tracks[this.playerActiveTrackIndex].lbImage;
+    //
     if (this.widget.tracks[this.playerActiveTrackIndex].active === true) { // выбранный трек активный? - да
-      console.log(this.widget.tracks[0]);
       if (this.widget.tracks[this.playerActiveTrackIndex].play === true) { // выбранный трек играет? - да
         this.playerHowl.pause();                              // пауза ховлера
         this.playerPlay = false;
@@ -194,15 +199,21 @@ export class WidgetComponent implements OnInit {
           this.playerPlay = true;
           this.widget.tracks[this.playerActiveTrackIndex].play = true;
         } else {                                          // выбранный трек играл раньше? - нет
-          this.playerHowlInit(this.playerActiveTrackIndex);   // инициализируем инстанс ховлера
+          this.playerHowlInit(this.playerActiveTrackIndex);   // инициализируем ховлер
           this.playerHowl.play();                             // запускаем плеер
           this.playerPlay = true;
           this.widget.tracks[this.playerActiveTrackIndex].play = true;
         }
       }
     } else {                                              // выбранный трек активный? - нет
-      console.log(this.widget.tracks[0]);
+      this.playerProgressSec = 0;
+      this.playerProgressPercent = 0;
+      this.playerProgressMS = '00:00';
+      this.playerDurationMS = '00:00';
       if (this.playerHowl) {
+        if (this.playerProgressInterval) {
+          clearInterval(this.playerProgressInterval);         // чистка таймера
+        }
         this.playerHowl.stop();
         this.playerPlay = false;
       }
@@ -213,88 +224,61 @@ export class WidgetComponent implements OnInit {
       this.playerPlay = true;
       this.widget.tracks[this.playerActiveTrackIndex].active = true;
       this.widget.tracks[this.playerActiveTrackIndex].play = true;
+      setTimeout(() => {
+        this.elRef.nativeElement.querySelector('.active ').focus();
+        this.elRef.nativeElement.querySelector('.active').scrollIntoView({behavior: 'smooth'});
+      }, 100);
     }
-    console.log(this.widget);
+  }
+
+  public trackToggle(direction: string): void {
+    const tracksLength = this.widget.tracks.length;
+    direction === 'prev' ?
+      this.playerActiveTrackIndex > 0
+      ? this.trackPlay(null, null, this.playerActiveTrackIndex - 1)
+      : this.trackPlay(null, null, tracksLength - 1)
+      : this.playerActiveTrackIndex === tracksLength - 1
+      ? this.trackPlay(null, null, 0)
+      : this.trackPlay(null, null, this.playerActiveTrackIndex + 1);
   }
 
   private playerHowlInit(trackIndex: number): void {
     this.playerHowl = new Howl({
       src: [SDN_LINK_MP3 + this.widget.tracks[trackIndex].link],
       html5: true,
+      onload: () => {
+        this.playerDurationMS = new Date(Math.round(this.playerHowl.duration()) * 1000).toISOString().substr(14, 5);
+      },
       onplay: () => {
         this.playerProgressInterval = setInterval(() => {
           this.playerProgressSec
             = (typeof this.playerHowl.seek() === 'number')
             ? Math.round(+this.playerHowl.seek())
             : this.playerHowl.seek();
-          console.log(this.playerProgressSec);
           this.playerProgressPercent = ((this.playerProgressSec * 100) / this.playerHowl.duration());
+          this.playerProgressMS = new Date(this.playerProgressSec * 1000).toISOString().substr(14, 5);
         }, 1000);
+
+      },
+      onseek: () => {
+        this.playerProgressSec
+          = (typeof this.playerHowl.seek() === 'number')
+          ? Math.round(+this.playerHowl.seek())
+          : this.playerHowl.seek();
+        this.playerProgressMS = new Date(this.playerProgressSec * 1000).toISOString().substr(14, 5);
       },
       onpause: () => {},
       onend: () => {
         clearInterval(this.playerProgressInterval);
         this.playerProgressSec = 0;
         this.playerProgressPercent = 0;
+        this.playerProgressMS = '00:00';
+        this.playerDurationMS = '00:00';
         this.playerPlay = false;
         this.widget.tracks[trackIndex].play = false;
-        this.trackPlay(null, null, this.playerActiveTrackIndex + 1);
+        this.trackToggle('next');
       },
     });
-  }
-
-  public trackPlayOld(event?, track?, trackIndex?): void {
-    // this.widget.tracks.forEach((tr) => tr.active = false);
-    // this.widget.tracks[trackIndex].active = true;
-    if (this.playerPlay === false) {                                // НЕ ИГРАЕТ
-      this.playerPlay = !this.playerPlay;
-      this.widget.tracks.forEach((tr) => tr.play = false);
-      this.widget.tracks.forEach((tr) => tr.active = false);
-      this.widget.tracks[trackIndex].active = true;
-      this.widget.tracks[trackIndex].play = true;
-
-      if (this.playerProgressSec) {                                    // НЕ ИГРАЕТ И ЕСТЬ ПРОГРЕСС (ИГРАЛ РАНЬШЕ)
-        console.log(`progress: ${this.playerProgressSec} / duration: ${this.playerHowl.duration()}`);
-        this.playerHowl.seek(this.playerProgressSec);
-        this.playerHowl.play();
-      } else {                                                      // НЕ ИГРАЕТ И НЕТ ПРОГРЕССА (НЕ ИГРАЛ РАНЬШЕ)
-        // todo highlight to private function playerHowlInit() {}
-        this.playerHowl = new Howl({
-          src: [SDN_LINK_MP3 + this.widget.tracks[this.playerActiveTrackIndex].link],
-          html5: true,
-          onplay: () => {
-            this.playerProgressInterval = setInterval(() => {
-              this.playerProgressSec
-                = (typeof this.playerHowl.seek() === 'number')
-                ? Math.round(+this.playerHowl.seek())
-                : this.playerHowl.seek();
-              console.log(this.playerProgressSec);
-              this.playerProgressPercent = ((this.playerProgressSec * 100) / this.playerHowl.duration());
-            }, 1000);
-          },
-          onpause: () => {},
-          onend: () => {
-            clearInterval(this.playerProgressInterval);
-            this.playerProgressSec = 0;
-            this.playerProgressPercent = 0;
-            this.playerPlay = false;
-            this.widget.tracks[this.playerActiveTrackIndex].play = false;
-          },
-        });
-        this.playerHowl.play();
-        console.log(`progress: ${this.playerProgressSec} / duration: ${this.playerHowl.duration()}`);
-      }
-
-    } else {
-      this.playerPlay = !this.playerPlay;
-      this.widget.tracks.forEach((tr) => tr.play = false);
-      this.playerHowl.pause();
-      if (this.playerProgressInterval) {
-        clearInterval(this.playerProgressInterval);
-      }
-    }
-
-    console.log(this.playerProgressSec);
   }
 
   public trackAddToCart(event, track, trackId): void {
@@ -341,10 +325,12 @@ export class WidgetComponent implements OnInit {
           track.hovered = false;  // set default current track's hovered event status
           track.play = false;     // set default current track's play status
           track.inCart = false;   // set default current track's inCart status
+          track.tagsArr = track.tags.split('/');
         });
         //
         widget.tracks[this.playerActiveTrackIndex].active = true;
         this.playerTrackName = widget.tracks[this.playerActiveTrackIndex].name;
+        this.playerTracklbImage = widget.tracks[this.playerActiveTrackIndex].lbImage;
         //
         this.widget = {
           ...widget,

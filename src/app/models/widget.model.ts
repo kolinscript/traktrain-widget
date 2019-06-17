@@ -84,6 +84,7 @@ export interface Track {
   hovered?: boolean;
   play?: boolean;
   inCart?: boolean;
+  tagsArr?: string[];
 }
 
 export interface DrumKitInfo {
