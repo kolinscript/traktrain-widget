@@ -27,7 +27,7 @@ export class ModalComponent implements OnInit {
   }
 
   modalClose(): void {
-    this.modalResult.emit('close no result');
+    this.modalResult.emit({type: 'close'});
   }
 
   private invoke() {
@@ -44,6 +44,10 @@ export class ModalComponent implements OnInit {
     this.modalContent.contentTerms.rightsDescription.forEach((rights) => rights.activeInModal = false);
     this.modalContent.contentTerms.sliderData[i].activeInModal = true;
     this.modalContent.contentTerms.rightsDescription[i].activeInModal = true;
+  }
+
+  public addToCart() {
+    this.modalResult.emit({type: 'addToCart', track_id: this.modalContent.contentTerms.track_id});
   }
 
   /*

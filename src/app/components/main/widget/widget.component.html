@@ -17,7 +17,7 @@
 
   <div class="widget-item wi-screen">
     <div class="screen">
-      <div class="banner" [ngStyle]="{'background-image':'url(' + SDN_LINK_IMG + '' + widget.producer.lbImage + ')'}"></div>
+      <div class="banner" [ngStyle]="{'background-image':'url(' + SDN_LINK_IMG + '' + playerTracklbImage + ')'}"></div>
     </div>
   </div>
 
@@ -34,7 +34,7 @@
       (mouseenter)="trackHover($event, track, indexTrack)"
       (mouseleave)="trackLeave($event, track, indexTrack)"
     >
-      <div class="click-area" (click)="trackChoose($event, track, indexTrack)"></div>
+      <div class="click-area" (click)="trackPlay($event, track, indexTrack)"></div>
       <div class="track-title">
         <div class="bars" *ngIf="track.play">
           <div class="bar"></div>
@@ -72,19 +72,27 @@
           </div>
         </div>
 
-        <div
-          class="btn-cart-add"
-          *ngIf="track.active || track.hovered"
-          (click)="trackAddToCart($event, track, indexTrack)"
-        ></div>
+        <div class="btn-cart-add"
+             *ngIf="track.active || track.hovered"
+             (click)="trackAddToCart($event, track, indexTrack)"
+        >
+          <span class="add"><span class="line"></span><span class="line"></span></span>
+        </div>
       </div>
     </div>
   </div>
 
   <div class="widget-item wi-player-bottom">
+    <div class="progress" (click)="trackProgressClicked($event)">
+      <div class="bar">
+        <div class="active-area" [ngStyle]="{'width.%': playerProgressPercent}">
+          <div class="dot" *ngIf="playerProgressPercent"></div>
+        </div>
+      </div>
+    </div>
     <div class="block-music">
       <div class="ctrls">
-        <div class="ctrl prev">
+        <div class="ctrl prev" (click)="trackToggle('prev')">
           <span class="line"></span>
           <span class="triangle"></span>
         </div>
@@ -102,17 +110,26 @@
             [ngStyle]="{borderLeftColor: widget.style.colors.active_item}"
           ></span>
         </div>
-        <div class="ctrl next">
+        <div class="ctrl next" (click)="trackToggle('next')">
           <span class="triangle"></span>
           <span class="line"></span>
         </div>
       </div>
       <div class="title">
-        <div class="track-name" [ngStyle]="{color: widget.style.colors.text}">{{widget.producer.artistName}} - {{widget.tracks[0].name}}</div>
-        <div class="tags">
-          <div class="tag" [ngStyle]="{color: widget.style.colors.active_item}">Reggae</div>
-          <div class="tag" [ngStyle]="{color: widget.style.colors.active_item}">Roots</div>
+        <div class="track-name" [ngStyle]="{color: widget.style.colors.text}">{{widget.producer.artistName}} - {{playerTrackName}}</div>
+        <div class="tags" *ngIf="widget.tracks[playerActiveTrackIndex].tagsArr[0] !== ''">
+          <div
+            class="tag"
+            [ngStyle]="{color: widget.style.colors.active_item}"
+            *ngFor="let tag of widget.tracks[playerActiveTrackIndex].tagsArr"
+          >
+            {{tag}}
+          </div>
         </div>
+      </div>
+      <div class="timing">
+        <div class="curtime">{{playerProgressMS}}</div>
+        <div class="alltime">{{playerDurationMS}}</div>
       </div>
     </div>
     <div class="block-money">
@@ -120,7 +137,7 @@
         <div class="pt paypal"></div>
         <div class="pt card"></div>
       </div>
-      <div class="cart-and-price">
+      <div class="btn-cart-and-price">
         <div class="price" [ngStyle]="{color: widget.style.colors.text}">
           <span class="val">$999.99</span>
         </div>
