@@ -8,6 +8,7 @@ import { Modal, ModalContent, ModalTypes } from '../../../models/modal.model';
 })
 export class ModalComponent implements OnInit {
   ModalTypes = ModalTypes;
+  pickedLease: any;
   @Input() modalContent: ModalContent;
   @Output() modalResult: EventEmitter<any> = new EventEmitter<any>();
 
@@ -28,6 +29,8 @@ export class ModalComponent implements OnInit {
 
   modalClose(): void {
     this.modalResult.emit({type: 'close'});
+    this.modalContent.contentTerms.sliderData.forEach((button) => button.activeInModal = false);
+    this.modalContent.contentTerms.rightsDescription.forEach((rights) => rights.activeInModal = false);
   }
 
   private invoke() {
@@ -40,6 +43,7 @@ export class ModalComponent implements OnInit {
   public pickLease(right: any, i: number): void {
     console.log(right);
     console.log(i);
+    this.pickedLease = right;
     this.modalContent.contentTerms.sliderData.forEach((button) => button.activeInModal = false);
     this.modalContent.contentTerms.rightsDescription.forEach((rights) => rights.activeInModal = false);
     this.modalContent.contentTerms.sliderData[i].activeInModal = true;

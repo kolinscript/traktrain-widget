@@ -15,6 +15,7 @@ export interface ModalContent {
 }
 
 export interface ContentTerms {
+  artistName?: string;
   track?: any;
   paymentInfo?: any;
   sliderData?: any;

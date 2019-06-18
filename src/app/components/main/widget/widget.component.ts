@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit } from '@angular/core';
-import { Colors, LicensePriceMapper, Style, Track, Widget, SDN_LINK_IMG, SDN_LINK_MP3 } from '../../../models/widget.model';
+import { Colors, LicensePriceMapper, Style, Track, Widget, SDN_LINK_IMG, SDN_LINK_MP3, CartItem, Cart } from '../../../models/widget.model';
 import { WidgetService } from '../../../services/widget.service';
 import { ModalService } from '../../../services/modal.service';
 import { Modal, ModalContent, ModalTypes } from '../../../models/modal.model';
@@ -42,9 +42,10 @@ export class WidgetComponent implements OnInit {
     console.log('windowWidth', this.windowWidth);
     this.widgetInit(() => {
       console.log(this.widget);
+      console.log(this.widget.tracks.map(t => (t.drumKit)));
       this.playerHowlInit(this.playerActiveTrackIndex);
       this.carouselInit(this.widget.tracks[this.playerActiveTrackIndex].sliderIndex, this.playerActiveTrackIndex);
-    });
+    }, 9); // widgets id's: 2, 3, 5, 9(SESH) 13, 13319
   }
 
   // todo highlight to components/shared folder
@@ -170,14 +171,6 @@ export class WidgetComponent implements OnInit {
     }
   }
 
-  // public trackChoose(event, track, trackIndex): void {
-  //   console.log(trackIndex);
-  //   this.widget.tracks.forEach((tr) => tr.active = false);
-  //   this.widget.tracks[trackIndex].active = true;
-  //   this.playerActiveTrackIndex = trackIndex;
-  //   this.carouselInit(this.widget.tracks[trackIndex].sliderIndex, trackIndex);
-  // }
-
   public trackPlay(event?, track?, trackIndex?): void {
     if (trackIndex || trackIndex === 0) { this.playerActiveTrackIndex = trackIndex; } // обновление активного трека (если клик по листу)
     this.carouselInit(this.widget.tracks[this.playerActiveTrackIndex].sliderIndex, this.playerActiveTrackIndex);
@@ -287,6 +280,7 @@ export class WidgetComponent implements OnInit {
       title: 'BUY TERMS',
       type: ModalTypes.TERMS,
       contentTerms: {
+        artistName: this.widget.producer.artistName,
         track: {...track},
         paymentInfo: this.widget.producer.paymentInfo,
         sliderData: track.sliderData,
@@ -315,8 +309,8 @@ export class WidgetComponent implements OnInit {
     console.log(this.windowWidth);
   }
 
-  private widgetInit(completed): void {
-    this.widgetService.getWidget(13).subscribe((widget: Widget) => {
+  private widgetInit(completed, id): void {
+    this.widgetService.getWidget(id).subscribe((widget: Widget) => {
       if (widget) {
         widget.tracks.forEach((track) => {
           track.sliderData = this.priceTransformer(track.prices); // set default current track's sliderData array based on track's prices
@@ -343,7 +337,11 @@ export class WidgetComponent implements OnInit {
               active_item: '#695FFC',
               active_accent: '#524fc4',
             } as Colors,
-          } as Style, // add default Widget styles
+          } as Style,        // add default Widget styles
+          cart: {
+            totalCost: 0,   // setup an cart
+            tracks: [{}],
+          } as Cart,
         };
         completed();
        }
@@ -358,7 +356,8 @@ export class WidgetComponent implements OnInit {
           style: '',
           right: LicensePriceMapper[key],
           price: INPUT_PRICES[key],
-          activeInModal: false
+          activeInModal: false,
+          addedToCart: false
         });
       }
     }
