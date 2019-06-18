@@ -152,18 +152,18 @@ export class WidgetComponent implements OnInit {
   }
   // Carousel : end
 
-  public trackHover(event, track, trackIndex): void {
+  public trackHover(event, track: Track, trackIndex: number): void {
     this.widget.tracks[trackIndex].hovered = true;
   }
 
-  public trackLeave(event, track, trackIndex): void {
+  public trackLeave(event, track: Track, trackIndex: number): void {
     this.widget.tracks[trackIndex].hovered = false;
   }
 
-  public trackProgressClicked($event) {
-    console.log($event);
-    console.log($event.offsetX);
-    const playerProgressPx = $event.offsetX;
+  public trackProgressClicked(event): void {
+    console.log(event);
+    console.log(event.offsetX);
+    const playerProgressPx = event.offsetX;
     this.playerProgressPercent = ((playerProgressPx * 100) / this.windowWidth);
     this.playerProgressSec = ((this.playerHowl.duration() * this.playerProgressPercent) / 100);
     if (this.playerProgressSec) {
@@ -171,7 +171,7 @@ export class WidgetComponent implements OnInit {
     }
   }
 
-  public trackPlay(event?, track?, trackIndex?): void {
+  public trackPlay(event?, track?: Track, trackIndex?: number): void {
     if (trackIndex || trackIndex === 0) { this.playerActiveTrackIndex = trackIndex; } // обновление активного трека (если клик по листу)
     this.carouselInit(this.widget.tracks[this.playerActiveTrackIndex].sliderIndex, this.playerActiveTrackIndex);
     this.playerTrackName = this.widget.tracks[this.playerActiveTrackIndex].name;
@@ -274,7 +274,7 @@ export class WidgetComponent implements OnInit {
     });
   }
 
-  public trackAddToCart(event, track, trackId): void {
+  public trackAddToCart(event, track: Track, trackIndex: number): void {
     this.modalOpen = true;
     this.modalContent = {
       title: 'BUY TERMS',
@@ -291,7 +291,7 @@ export class WidgetComponent implements OnInit {
     this.modalContent.contentTerms.rightsDescription[0].activeInModal = true;
   }
 
-  public modalEvent(event) {
+  public modalEvent(event): void {
     this.modalOpen = false;
     switch (event.type) {
       case 'close': {
@@ -309,7 +309,7 @@ export class WidgetComponent implements OnInit {
     console.log(this.windowWidth);
   }
 
-  private widgetInit(completed, id): void {
+  private widgetInit(completed, id: number): void {
     this.widgetService.getWidget(id).subscribe((widget: Widget) => {
       if (widget) {
         widget.tracks.forEach((track) => {
