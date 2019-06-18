@@ -287,7 +287,7 @@ export class WidgetComponent implements OnInit {
       title: 'BUY TERMS',
       type: ModalTypes.TERMS,
       contentTerms: {
-        track_id: trackId,
+        track: {...track},
         paymentInfo: this.widget.producer.paymentInfo,
         sliderData: track.sliderData,
         rightsDescription: this.createRightsDescriptions(track.sliderData)

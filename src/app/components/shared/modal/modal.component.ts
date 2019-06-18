@@ -47,7 +47,7 @@ export class ModalComponent implements OnInit {
   }
 
   public addToCart() {
-    this.modalResult.emit({type: 'addToCart', track_id: this.modalContent.contentTerms.track_id});
+    this.modalResult.emit({type: 'addToCart', track: {...this.modalContent.contentTerms.track}});
   }
 
   /*
