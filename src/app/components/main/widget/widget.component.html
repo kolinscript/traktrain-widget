@@ -35,48 +35,55 @@
       (mouseleave)="trackLeave($event, track, indexTrack)"
     >
       <div class="click-area" (click)="trackPlay($event, track, indexTrack)"></div>
-      <div class="track-title">
-        <div class="bars" *ngIf="track.play">
-          <div class="bar"></div>
-          <div class="bar"></div>
-          <div class="bar"></div>
-          <div class="bar"></div>
-          <div class="bar"></div>
-        </div>
-        <div class="title">{{indexTrack + 1}}. {{widget.producer.artistName}} - {{track.name}}</div>
-      </div>
-      <div class="controls">
-        <div class="rights-carousel" *ngIf="track.active">
-          <div
-            class="rc-control prev"
-            *ngIf="track.sliderData.length !== 1"
-            (click)="carouselSlide(track, indexTrack, 'prev')"
-          >
-            <div class="icon"></div>
-          </div>
-          <div class="rc-rights">
-            <div
-              class="right"
-              *ngFor="let right of track.sliderData ; index as indexRight"
-              [ngClass]="{'prev': right.style === 'prev', 'next': right.style === 'next', 'initial': right.style === 'initial'}"
-            >
-              {{right.right}}<span class="val"> ${{right.price}}</span>
+      <div class="container">
+        <div class="track-title" (click)="trackPlay($event, track, indexTrack)">
+          <div class="cover">
+            <img [src]="SDN_LINK_IMG + track.lbImage" alt="">
+            <div class="fade" *ngIf="track.play || track.hovered"></div>
+            <div class="play" *ngIf="!track.play && track.hovered"></div>
+            <div class="bars" *ngIf="track.play">
+              <div class="bar"></div>
+              <div class="bar"></div>
+              <div class="bar"></div>
+              <div class="bar"></div>
+              <div class="bar"></div>
             </div>
           </div>
-          <div
-            class="rc-control next"
-            *ngIf="track.sliderData.length !== 1"
-            (click)="carouselSlide(track, indexTrack, 'next')"
-          >
-            <div class="icon"></div>
-          </div>
+          <div class="title">{{indexTrack + 1}}. {{widget.producer.artistName}} - {{track.name}}</div>
         </div>
+        <div class="controls">
+          <div class="rights-carousel" *ngIf="track.active">
+            <div
+              class="rc-control prev"
+              *ngIf="track.sliderData.length !== 1"
+              (click)="carouselSlide(track, indexTrack, 'prev')"
+            >
+              <div class="icon"></div>
+            </div>
+            <div class="rc-rights">
+              <div
+                class="right"
+                *ngFor="let right of track.sliderData ; index as indexRight"
+                [ngClass]="{'prev': right.style === 'prev', 'next': right.style === 'next', 'initial': right.style === 'initial'}"
+              >
+                {{right.right}}<span class="val"> ${{right.price}}</span>
+              </div>
+            </div>
+            <div
+              class="rc-control next"
+              *ngIf="track.sliderData.length !== 1"
+              (click)="carouselSlide(track, indexTrack, 'next')"
+            >
+              <div class="icon"></div>
+            </div>
+          </div>
 
-        <div class="btn-cart-add"
-             *ngIf="track.active || track.hovered"
-             (click)="trackAddToCart($event, track, indexTrack)"
-        >
-          <span class="add"><span class="line"></span><span class="line"></span></span>
+          <div class="btn-cart-add"
+               *ngIf="track.active || track.hovered"
+               (click)="trackAddToCart($event, track, indexTrack)"
+          >
+            <span class="add"><span class="line"></span><span class="line"></span></span>
+          </div>
         </div>
       </div>
     </div>
@@ -116,7 +123,7 @@
         </div>
       </div>
       <div class="title">
-        <div class="track-name" [ngStyle]="{color: widget.style.colors.text}">{{widget.producer.artistName}} - {{playerTrackName}}</div>
+        <div class="track-name" [ngStyle]="{color: widget.style.colors.text}">{{playerActiveTrackIndex + 1}}. {{widget.producer.artistName}} - {{playerTrackName}}</div>
         <div class="tags" *ngIf="widget.tracks[playerActiveTrackIndex].tagsArr[0] !== ''">
           <div
             class="tag"
@@ -139,7 +146,7 @@
       </div>
       <div class="btn-cart-and-price">
         <div class="price" [ngStyle]="{color: widget.style.colors.text}">
-          <span class="val">$999.99</span>
+          <span class="val">${{widget.cart.totalCost}}</span>
         </div>
         <div class="icon-cart"><span class="count">2</span></div>
       </div>

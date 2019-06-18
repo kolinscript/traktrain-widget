@@ -23,6 +23,7 @@ export interface Widget {
   producer: Producer;
   tracks: Track[];
   style?: Style;
+  cart?: Cart;
 }
 
 export interface Producer {
@@ -113,6 +114,17 @@ export interface UserMembership {
   ads: boolean;
   monthPlanId: string;
   yearPlanId: string;
+}
+
+export interface Cart {
+  totalCost: number;
+  tracks: CartItem[];
+}
+
+export interface CartItem {
+  trackId?: number;
+  name?: string;
+  price?: {}[]; // array of objects like {style: "", right: "Exclusive", price: 1000, activeInModal: false, addedToCart: false}
 }
 
 export interface Style {
