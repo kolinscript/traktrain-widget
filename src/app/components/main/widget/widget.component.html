@@ -40,8 +40,19 @@
           <div class="cover">
             <img [src]="SDN_LINK_IMG + track.lbImage" alt="">
             <div class="fade" *ngIf="track.play || track.hovered"></div>
-            <div class="play" *ngIf="!track.play && track.hovered"></div>
-            <div class="bars" *ngIf="track.play">
+            <div
+              class="play-pause"
+              *ngIf="track.hovered"
+              [ngClass]="{'pause': track.play}"
+            >
+              <span
+                class="triangle left"
+              ></span>
+              <span
+                class="triangle right"
+              ></span>
+            </div>
+            <div class="bars" *ngIf="track.play && !track.hovered">
               <div class="bar"></div>
               <div class="bar"></div>
               <div class="bar"></div>
