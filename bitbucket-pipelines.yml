@@ -17,5 +17,6 @@ pipelines:
             - old="http://0.0.0.0:4200/"
             - new="http://widget.traktrain.com/index.html"
             - sed -i 's/${old}/${new}/g' src/iframe-test.html
+            - cat src/iframe-test.html
             - scp -r src/iframe-test.html ubuntu@widget.traktrain.com:/var/www/html/traktrain-widget/
             
