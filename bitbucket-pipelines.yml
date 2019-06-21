@@ -13,4 +13,4 @@ pipelines:
             - npm install
             - npm install -g @angular/cli
             - ng build --prod
-            - scp -r dist/traktrain_widget/ ubuntu@widget.traktrain.com:/var/www/html/
+            - scp -r dist/traktrain-widget/ ubuntu@widget.traktrain.com:/var/www/html/
