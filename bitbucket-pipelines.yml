@@ -6,15 +6,11 @@ pipelines:
   branches:
     master:
       - step:
-          caches:
-            - node
           script:
-            - echo "$(ls -la)"
             - npm install
             - npm install -g @angular/cli
             - ng build --prod
             - scp -r dist/traktrain-widget ubuntu@widget.traktrain.com:/var/www/html
             - sed -i 's,http://0.0.0.0:4200/,http://widget.traktrain.com/index.html,g' src/iframe-test.html
-            - cat src/iframe-test.html
             - scp -r src/iframe-test.html ubuntu@widget.traktrain.com:/var/www/html/traktrain-widget/
             
