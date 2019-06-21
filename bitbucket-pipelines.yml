@@ -1,0 +1,16 @@
+# Sample build file
+# @author Suren Konathala
+# -----
+image: node:8
+pipelines:
+  branches:
+    master:
+      - step:
+          caches:
+            - node
+          script:
+            - echo "$(ls -la)"
+            - npm install
+            - npm install -g @angular/cli
+            - ng build --prod
+            - scp -r dist/traktrain_widget/ ubuntu@34.215.89.144:/var/www/html/
