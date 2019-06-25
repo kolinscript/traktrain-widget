@@ -335,7 +335,7 @@
                 }
               }
             }
-            .btn-cart-add {
+            .btn-cart {
               position: relative;
               margin-left: 20px;
               margin-top: 8px;
@@ -344,29 +344,60 @@
               background: url('../../../../assets/icons/shopping-cart.svg') no-repeat;
               background-size: 100%;
               background-position: 50% 50%;
-              .add {
+              .tip {
                 position: absolute;
                 display: block;
-                width: 15px;
-                height: 15px;
+                width: 16px;
+                height: 16px;
                 top: -6px;
                 right: -2px;
-                background: #695FFC;
+                background-color: #695FFC;
                 border-radius: 50%;
-                box-shadow: 0px 0px 0px 2px #f5f5f5;
+                box-shadow: 0 0 0 2px #f5f5f5;
                 .line {
                   position: absolute;
                   display: block;
-                  width: 2px;
-                  height: 10px;
-                  background-color: #ffffff;
-                  top: 50%;
-                  left: 50%;
-                  margin-left: -1px;
-                  margin-top: -5px;
-                  border-radius: 1px;
-                  &:nth-child(2) {
-                    transform: rotate(90deg);
+                }
+              }
+              &.add {
+                .tip {
+                  .line {
+                    width: 2px;
+                    height: 10px;
+                    background-color: #ffffff;
+                    top: 50%;
+                    left: 50%;
+                    margin-left: -1px;
+                    margin-top: -5px;
+                    border-radius: 1px;
+                    &:nth-child(2) {
+                      transform: rotate(90deg);
+                    }
+                  }
+                }
+              }
+              &.added {
+                .tip {
+                  background-color: rgb(70, 204, 54);
+                  box-shadow: 0 0 0 2px #ffffff;
+                  .line {
+                    width: 2px;
+                    height: 5px;
+                    background-color: #ffffff;
+                    top: 7px;
+                    left: 5px;
+                    transform: rotate(-45deg);
+                    &:nth-child(2) {
+                      height: 8px;
+                      top: 4px;
+                      left: 9px;
+                      transform: rotate(45deg);
+                    }
+                  }
+                }
+                &.active {
+                  .tip {
+                    box-shadow: 0 0 0 2px #f5f5f5;
                   }
                 }
               }
@@ -658,12 +689,28 @@
           }
         }
         .btn-cart-and-price {
+          cursor: pointer;
           display: flex;
           justify-content: space-between;
           align-items: center;
           background-color: #F5F5F5;
           height: 100%;
           padding: 20px 15px 20px 20px;
+          &:hover {
+            background-color: #695FFC;
+            .price {
+              .val {
+                color: #ffffff;
+              }
+            }
+            .icon-cart {
+              .count {
+                background-color: #ffffff;
+                color: #695FFC;
+                box-shadow: 0 0 0 2px #695FFC;
+              }
+            }
+          }
           .price {
             display: flex;
             justify-content: center;
@@ -671,10 +718,6 @@
             flex-direction: column;
             height: 100%;
             font: 500 16px/18px 'Work Sans';
-            .label {
-              font-size: 12px;
-            }
-            .val {}
           }
           .icon-cart {
             position: relative;
@@ -687,16 +730,16 @@
             .count {
               position: absolute;
               display: block;
-              width: 15px;
-              height: 15px;
+              width: 16px;
+              height: 16px;
               top: -6px;
               right: -2px;
-              background: #ffffff;
+              background: #695FFC;
               border-radius: 50%;
               font: 600 10px/16px 'Arial';
               text-align: center;
-              color: #000000;
-              box-shadow: 0px 0px 0px 2px #f5f5f5;
+              color: #ffffff;
+              box-shadow: 0 0 0 2px #f5f5f5;
             }
           }
         }

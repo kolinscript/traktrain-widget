@@ -29,7 +29,6 @@ export class WidgetComponent implements OnInit {
   playerTrackName: string;
   playerTracklbImage: string;
   //
-  cart: number[] = []; // track id's array
 
   constructor(
     private widgetService: WidgetService,
@@ -279,16 +278,26 @@ export class WidgetComponent implements OnInit {
     this.modalContent = {
       title: 'BUY TERMS',
       type: ModalTypes.TERMS,
+      artistName: this.widget.producer.artistName,
       contentTerms: {
-        artistName: this.widget.producer.artistName,
         track: {...track},
+        trackIndex: trackIndex,
         paymentInfo: this.widget.producer.paymentInfo,
         sliderData: track.sliderData,
-        rightsDescription: this.createRightsDescriptions(track.sliderData)
-      }
+        rightsDescription: this.createRightsDescriptions(track.sliderData),
+      },
     };
-    this.modalContent.contentTerms.sliderData[0].activeInModal = true;
-    this.modalContent.contentTerms.rightsDescription[0].activeInModal = true;
+  }
+
+  public cartOpen(): void {
+    console.log(this.widget.cart);
+    this.modalOpen = true;
+    this.modalContent = {
+      title: 'CART',
+      type: ModalTypes.CART,
+      artistName: this.widget.producer.artistName,
+      cart: this.widget.cart,
+    };
   }
 
   public modalEvent(event): void {
@@ -300,8 +309,16 @@ export class WidgetComponent implements OnInit {
       }
       case 'addToCart' : {
         console.log(event);
+        this.widget.tracks[event.trackIndex] = event.cartItem.track;
+        this.widget.cart = {
+          ...this.widget.cart,
+          totalCost: this.widget.cart.totalCost + event.cartItem.price,
+        };
+        this.widget.cart.cartItems.push(event.cartItem);
       }
     }
+    console.log(this.widget);
+    console.log(this.widget.cart);
   }
 
   public onResize(event): void {
@@ -329,8 +346,8 @@ export class WidgetComponent implements OnInit {
         this.widget = {
           ...widget,
           style: {
-            width: '920px',
-            height: '756px',
+            width: '920px', // deprecated
+            height: '756px', // deprecated
             colors: {
               background: '#FFFFFF',
               text: '#4A4A4A',
@@ -339,9 +356,9 @@ export class WidgetComponent implements OnInit {
             } as Colors,
           } as Style,        // add default Widget styles
           cart: {
-            totalCost: 0,   // setup an cart
-            tracks: [{}],
-          } as Cart,
+            totalCost: 0,
+            cartItems: [],
+          } as Cart,        // setup empty cart
         };
         completed();
        }
@@ -355,6 +372,7 @@ export class WidgetComponent implements OnInit {
         OUTPUT_ARRAY.push({
           style: '',
           right: LicensePriceMapper[key],
+          rightEnumVal: key,
           price: INPUT_PRICES[key],
           activeInModal: false,
           addedToCart: false

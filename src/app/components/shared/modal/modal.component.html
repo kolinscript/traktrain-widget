@@ -6,7 +6,7 @@
       <div class="shield"></div>
       <div class="text">{{modalContent.title}}</div>
     </div>
-    <div class="track-name">{{modalContent.contentTerms.artistName}} - {{modalContent.contentTerms.track.name}}</div>
+    <div class="track-name">{{modalContent.artistName}} - {{modalContent.contentTerms.track.name}}</div>
     <div class="payment-types">
       <div class="label">Payment methods:</div>
       <div class="pt paypal"></div>
@@ -16,11 +16,11 @@
       <div class="rt-buttons">
         <div
           class="button"
-          (click)="pickLease(right, i)"
-          [ngClass]="{'active': right.activeInModal}"
           *ngFor="let right of modalContent.contentTerms.sliderData; index as i"
+          [ngClass]="{'active': right.activeInModal}"
+          (click)="pickLease(right, i)"
         >
-          <div class="label">{{right.right}}</div>
+          <div class="label">{{right.right}}<div class="in-cart-icon" *ngIf="right.addedToCart"></div></div>
           <div class="price">${{right.price}}.00</div>
         </div>
       </div>
@@ -39,15 +39,59 @@
     <button class="add2cart" (click)="addToCart()">Add to cart</button>
   </div>
 
+  <div class="modal cart" *ngIf="modalContent.type === ModalTypes.CART">
+    <div class="close" (click)="modalClose()"><span></span><span></span></div>
+    <div class="title">
+      <div class="shield"></div>
+      <div class="text">{{modalContent.title}}</div>
+    </div>
+    <div class="cart-content" *ngIf="modalContent.cart.cartItems.length > 0">
+      <div class="cart-header">
 
-  <!--FOR OTHER MODAL-->
-  <!--<ul class="tips">-->
-    <!--<li></li>-->
-    <!--<li></li>-->
-    <!--<li></li>-->
-  <!--</ul>-->
-  <!--<form class="form">-->
-
-  <!--</form>-->
+      </div>
+      <div class="cart-tracks">
+        <div class="track"
+             *ngFor="let cartItem of modalContent.cart.cartItems; index as indexTrack"
+        >
+          <div class="cover">
+            <img [src]="SDN_LINK_IMG + cartItem.track.lbImage" alt="">
+          </div>
+          <!--<div class="index">{{indexTrack + 1}}. </div>-->
+          <div class="description">
+            <div class="row">
+              <div class="title">
+                {{modalContent.artistName}} -
+                {{cartItem.track.name}} ({{LicensePriceMapper[cartItem.cartItemServer.right]}})
+              </div>
+              <div class="price">
+                ${{cartItem.price}}.00
+              </div>
+            </div>
+            <div class="row">
+              <div class="sub-title">
+                Promotional Offer:
+              </div>
+              <div class="sub-price">
+                ${{cartItem.price}}.00
+              </div>
+            </div>
+            <div class="row">
+              <div class="del" (click)="deleteTrackFromCart(indexTrack)">DEL</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="cart-bottom">
+        <div class="faq">
+          Note: please visit FAQ page if you have any questions regarding credit card checkout.
+        </div>
+        <div class="check-out">
+          <div class="total">Total: <span class="val">${{modalContent.cart.totalCost}}.00</span></div>
+          <button class="cta">Check out with PayPal</button>
+        </div>
+      </div>
+    </div>
+    <div class="placeholder" *ngIf="modalContent.cart.cartItems.length <= 0">cart is empty...</div>
+  </div>
 
 </div>
