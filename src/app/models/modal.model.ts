@@ -1,3 +1,5 @@
+import { Cart, Track } from './widget.model';
+
 export enum ModalTypes {
   TERMS = 'TERMS', CART = 'CART'
 }
@@ -11,12 +13,14 @@ export interface Modal {
 export interface ModalContent {
   type?: ModalTypes;
   title?: string;
-  contentTerms?: ContentTerms;
+  artistName?: string;
+  contentTerms?: ContentTerms; // content for type TERMS
+  cart?: Cart;                 // content for type CART
 }
 
 export interface ContentTerms {
-  artistName?: string;
-  track?: any;
+  track?: Track;
+  trackIndex: number;
   paymentInfo?: any;
   sliderData?: any;
   rightsDescription?: any;

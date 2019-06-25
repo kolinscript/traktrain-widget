@@ -40,8 +40,19 @@
           <div class="cover">
             <img [src]="SDN_LINK_IMG + track.lbImage" alt="">
             <div class="fade" *ngIf="track.play || track.hovered"></div>
-            <div class="play" *ngIf="!track.play && track.hovered"></div>
-            <div class="bars" *ngIf="track.play">
+            <div
+              class="play-pause"
+              *ngIf="track.hovered"
+              [ngClass]="{'pause': track.play}"
+            >
+              <span
+                class="triangle left"
+              ></span>
+              <span
+                class="triangle right"
+              ></span>
+            </div>
+            <div class="bars" *ngIf="track.play && !track.hovered">
               <div class="bar"></div>
               <div class="bar"></div>
               <div class="bar"></div>
@@ -78,11 +89,18 @@
             </div>
           </div>
 
-          <div class="btn-cart-add"
-               *ngIf="track.active || track.hovered"
+          <div class="btn-cart add"
+               *ngIf="(track.active || track.hovered) && !track.inCart"
                (click)="trackAddToCart($event, track, indexTrack)"
           >
-            <span class="add"><span class="line"></span><span class="line"></span></span>
+            <span class="tip"><span class="line"></span><span class="line"></span></span>
+          </div>
+          <div class="btn-cart added"
+               *ngIf="track.inCart"
+               (click)="cartOpen()"
+               [ngClass]="{'active': track.active || track.hovered}"
+          >
+            <span class="tip"><span class="line"></span><span class="line"></span></span>
           </div>
         </div>
       </div>
@@ -144,11 +162,11 @@
         <div class="pt paypal"></div>
         <div class="pt card"></div>
       </div>
-      <div class="btn-cart-and-price">
+      <div class="btn-cart-and-price" (click)="cartOpen()">
         <div class="price" [ngStyle]="{color: widget.style.colors.text}">
           <span class="val">${{widget.cart.totalCost}}</span>
         </div>
-        <div class="icon-cart"><span class="count">2</span></div>
+        <div class="icon-cart"><span class="count" *ngIf="widget.cart.cartItems.length > 0">{{widget.cart.cartItems.length}}</span></div>
       </div>
     </div>
   </div>

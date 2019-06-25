@@ -118,13 +118,18 @@ export interface UserMembership {
 
 export interface Cart {
   totalCost: number;
-  tracks: CartItem[];
+  cartItems: CartItem[];
 }
 
 export interface CartItem {
+  track: Track;
+  price: number;
+  cartItemServer: CartItemServer;
+}
+
+export interface CartItemServer {
   trackId?: number;
-  name?: string;
-  price?: {}[]; // array of objects like {style: "", right: "Exclusive", price: 1000, activeInModal: false, addedToCart: false}
+  right: LicensePrice;
 }
 
 export interface Style {
