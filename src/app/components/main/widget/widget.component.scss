@@ -110,7 +110,6 @@
         margin: 0 15px;
         position: relative;
         padding: 3px 0;
-        font: 600 14px/16px 'Work Sans';
         .click-area {
           position: absolute;
           width: 100%;
@@ -128,12 +127,12 @@
           border-radius: 5px;
           padding: 5px 15px 5px 5px;
           cursor: pointer;
-          .track-title {
+          .track-info {
             position: relative;
             display: flex;
             justify-content: center;
             align-items: center;
-            .cover {
+            .track-cover {
               position: relative;
               overflow: hidden;
               width: 48px;
@@ -249,10 +248,33 @@
                 .bar:nth-child(10) { left: 37px; animation-duration: 442ms; }
               }
             }
-            .title {
+            .track-text {
+              display: flex;
+              justify-content: center;
+              align-items: flex-start;
+              flex-direction: column;
               margin-left: 15px;
-              white-space: nowrap;
-              overflow: hidden;
+              .track-title {
+                white-space: nowrap;
+                overflow: hidden;
+                span {
+                  font: 600 14px/16px 'Work Sans';
+                  &.track-number {}
+                  &.track-artist-name {}
+                  &.track-dash {}
+                  &.track-name {}
+                }
+              }
+              .track-tags {
+                .tag {
+                  display: inline-block;
+                  margin-right: 5px;
+                  padding: 1px 5px;
+                  background-color: #F5F5F5;
+                  border-radius: 10px;
+                  font: 500 10px/12px 'Arial';
+                }
+              }
             }
           }
           .controls {
@@ -407,6 +429,15 @@
         &.active {
           .container {
             background-color: #F5F5F5;
+            .track-info {
+              .track-text {
+                .track-tags {
+                  .tag {
+                    background-color: #ffffff;
+                  }
+                }
+              }
+            }
             .controls {
               .btn-cart-add {
                 .add {
@@ -419,6 +450,15 @@
         &:hover {
           .container {
             background-color: #f5f5f580;
+            .track-info {
+              .track-text {
+                .track-tags {
+                  .tag {
+                    background-color: #ffffff;
+                  }
+                }
+              }
+            }
             .controls {
               .btn-cart-add {
                 .add {
@@ -434,16 +474,6 @@
                 .add {
                   box-shadow: 0 0 0 2px #F5F5F5;
                 }
-              }
-            }
-          }
-        }
-
-        &.in-cart {
-          .container {
-            .controls {
-              .btn-cart-add {
-                .add {}
               }
             }
           }
@@ -515,6 +545,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
+        flex: 1;
         .ctrls {
           display: flex;
           justify-content: center;
@@ -628,9 +659,36 @@
           justify-content: flex-start;
           align-items: flex-start;
           flex-direction: column;
+          flex: 1;
           margin-left: 20px;
           .track-name {
-            font: 500 14px/16px 'Work Sans';
+            position: relative;
+            white-space: nowrap;
+            overflow: hidden;
+            width: 100%;
+            height: 16px;
+            span {
+              display: block;
+              position: absolute;
+              font: 500 14px/16px 'Work Sans';
+            }
+            @keyframes slide {
+              0% {
+                left: 0;
+              }
+              25% {
+                left: -50%;
+              }
+              50% {
+                left: 0;
+              }
+              75% {
+                left: 50%;
+              }
+              100% {
+                left: 0;
+              }
+            }
           }
           .tags {
             margin-top: 5px;
@@ -644,56 +702,64 @@
             }
           }
         }
-        .timing {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          width: 100px;
-          margin-left: 20px;
-          font: 400 14px/16px 'Work Sans';
-          text-align: center;
-          color: #b8b8b8;
-          .curtime {
-            width: 50%;
-            border-right: 1px solid #b8b8b8;
-          }
-          .alltime {
-            width: 50%;
-          }
-        }
       }
       .block-money {
         display: flex;
         justify-content: space-between;
         align-items: center;
         height: 100%;
-        .payment-types {
-          margin-right: 40px;
+        margin-left: 20px;
+        .timing-and-types {
           display: flex;
-          justify-content: space-between;
+          justify-content: center;
           align-items: center;
-          .pt {
-            width: 20px;
-            height: 20px;
-            &.paypal {
-              background: url('../../../../assets/icons/paypal.svg') no-repeat;
-              background-size: cover;
-              background-position: 50% 50%;
+          flex-direction: column;
+          margin-right: 40px;
+          .timing {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100px;
+            font: 400 14px/16px 'Work Sans';
+            text-align: center;
+            color: #b8b8b8;
+            .curtime {
+              width: 50%;
+              border-right: 1px solid #b8b8b8;
             }
-            &.card {
-              margin-left: 10px;
-              background: url('../../../../assets/icons/credit-card.svg') no-repeat;
-              background-size: cover;
-              background-position: 50% 50%;
+            .alltime {
+              width: 50%;
+            }
+          }
+          .payment-types {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 5px;
+            .pt {
+              width: 20px;
+              height: 20px;
+              &.paypal {
+                background: url('../../../../assets/icons/paypal.svg') no-repeat;
+                background-size: cover;
+                background-position: 50% 50%;
+              }
+              &.card {
+                margin-left: 10px;
+                background: url('../../../../assets/icons/credit-card.svg') no-repeat;
+                background-size: cover;
+                background-position: 50% 50%;
+              }
             }
           }
         }
         .btn-cart-and-price {
           cursor: pointer;
           display: flex;
-          justify-content: space-between;
+          justify-content: flex-end;
           align-items: center;
           background-color: #F5F5F5;
+          min-width: 120px;
           height: 100%;
           padding: 20px 15px 20px 20px;
           &:hover {
@@ -755,15 +821,33 @@
       &.wi-screen {
         max-height: 260px;
       }
+      &.wi-player-bottom {
+        .block-music {
+          .title {
+            .track-name {
+              width: 310px;
+              span {
+                animation: 20s linear infinite slide;
+              }
+            }
+          }
+        }
+      }
     }
   }
 }
-// iPhone 6/7/8 PLUS
-@media (max-width: 414px) {
+// extra-point
+@media (max-width: 760px) {
   .widget-wrapper {
     .widget-item {
-      &.wi-screen {
-        max-height: 160px;
+      &.wi-player-bottom {
+        .block-music {
+          .title {
+            .track-name {
+              width: 150px;
+            }
+          }
+        }
       }
     }
   }
@@ -772,13 +856,65 @@
 @media (max-width: 600px) {
   .widget-wrapper {
     .widget-item {
+      &.wi-player-list {
+        .track {
+          .container {
+            .track-title {
+              .title {
+                max-width: 200px;
+                &.bp600 {
+                  display: flex;
+                  flex-direction: column-reverse;
+                  span {
+                    &.track-name {
+                      font: 600 12px/14px 'Work Sans';
+                    }
+                    &.track-artist-name {
+                      margin-top: 5px;
+                      font: 500 12px/14px 'Work Sans';
+                    }
+                  }
+                }
+              }
+            }
+            .controls {
+              .rights-carousel {
+                display: none;
+              }
+            }
+          }
+        }
+      }
       &.wi-player-bottom {
-        height: 180px;
-        flex-direction: column-reverse;
+        height: 150px;
+        flex-direction: column;
+        .progress {
+          .timing {
+            position: absolute;
+            width: 100%;
+            font: 400 14px/16px 'Work Sans';
+            text-align: center;
+            color: #b8b8b8;
+            .curtime {
+              position: absolute;
+              top: 42px;
+              left: 20px;
+            }
+            .alltime {
+              position: absolute;
+              top: 42px;
+              right: 20px;
+            }
+          }
+          .bar {
+            background-color: transparent;
+          }
+        }
         .block-money {
           width: 100%;
           height: 48px;
-          .payment-types {
+          margin: 0;
+          .timing-and-types {
             display: none;
           }
           .btn-cart-and-price {
@@ -788,21 +924,41 @@
         }
         .block-music {
           flex: 1;
-          flex-direction: column;
+          flex-direction: column-reverse;
+          justify-content: flex-end;
           width: 100%;
           .ctrls {
+            margin: 10px 0 0;
             padding: 0;
           }
           .title {
-            margin: 0;
+            flex: none;
             text-align: center;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            margin: 10px 0 0;
+            padding: 0 20px;
             .track-name {
+              width: 100%;
               font-size: 16px;
-              list-style: 18px;
-              margin: 14px 0;
+              margin: 0;
+            }
+            .tags {
+              display: none;
             }
           }
         }
+      }
+    }
+  }
+}
+// iPhone 6/7/8 PLUS
+@media (max-width: 414px) {
+  .widget-wrapper {
+    .widget-item {
+      &.wi-screen {
+        max-height: 160px;
       }
     }
   }

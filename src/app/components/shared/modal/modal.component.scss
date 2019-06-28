@@ -5,10 +5,17 @@
   height: 100%;
   top: 0;
   left: 0;
-  background: #00000094;
   display: flex;
   justify-content: center;
   align-items: center;
+  .backdrop {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: #00000094;
+  }
   .modal {
     position: relative;
     display: flex;
@@ -206,7 +213,9 @@
       .cart-content {
         .cart-header {}
         .cart-tracks {
-          margin-top: 20px;
+          max-height: 327px;
+          width: 420px;
+          overflow-y: scroll;
           .track {
             display: flex;
             justify-content: flex-start;
@@ -253,10 +262,30 @@
                &:nth-child(2) {
                  margin-top: 5px;
                }
-               .title {
+               .track-title {
+                 position: relative;
                  white-space: nowrap;
                  overflow: hidden;
-                 font: 400 14px/16px 'Work Sans';
+                 width: 100%;
+                 height: 16px;
+                 margin-right: 20px;
+                 span {
+                   display: block;
+                   position: absolute;
+                   font: 400 14px/16px 'Work Sans';
+                   animation: 20s linear infinite slide;
+                 }
+                 @keyframes slide {
+                   0% {
+                     left: 0;
+                   }
+                   50% {
+                     left: -100%;
+                   }
+                   100% {
+                     left: 0;
+                   }
+                 }
                }
                .sub-title {
                  white-space: nowrap;
@@ -273,20 +302,51 @@
                  text-align: right;
                  font: 600 14px/16px 'Work Sans';
                }
+               &.delete {
+                 justify-content: flex-end;
+                 margin-top: 10px;
+                 .del {
+                   cursor: pointer;
+                   position: relative;
+                   width: 20px;
+                   height: 20px;
+                   border-radius: 50%;
+                   border: 2px solid #695FFC;
+                   background-color: #ffffff;
+                   transition: all .2s ease;
+                   span {
+                     position: absolute;
+                     display: block;
+                     width: 12px;
+                     height: 2px;
+                     top: 50%;
+                     left: 50%;
+                     margin-top: -1px;
+                     margin-left: -6px;
+                     background-color: #695FFC;
+                     transform: rotate(45deg);
+                     transition: all .2s ease;
+                     &:first-child {
+                       transform: rotate(-45deg);
+                     }
+                   }
+                   &:hover {
+                     background-color: #695FFC;
+                     span {
+                       background-color: #ffffff;
+                     }
+                   }
+                 }
+               }
              }
             }
           }
         }
         .cart-bottom {
           margin-top: 20px;
-          padding-top: 10px;
           display: flex;
-          justify-content: space-between;
+          justify-content: flex-end;
           align-items: center;
-          .faq {
-            width: 50%;
-            font: 400 12px/16px 'Work Sans';
-          }
           .check-out {
             .total {
               font: 600 14px/16px 'Work Sans';
@@ -296,18 +356,25 @@
               }
             }
             .cta {
+              cursor: pointer;
               border: none;
               outline: none;
-              cursor: pointer;
               height: 30px;
               width: 180px;
               margin-top: 10px;
               border-radius: 3px;
-              background: #ffc43a;
+              background-color: rgba(255, 196, 58, 1);
               font: 500 12px/16px 'Work Sans';
+              &:hover {
+                background-color: rgba(255, 196, 58, 0.75);
+              }
             }
           }
         }
+      }
+      .placeholder {
+        margin-top: 30px;
+        font: 400 14px/16px 'Work Sans';
       }
     }
   }
