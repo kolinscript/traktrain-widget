@@ -80,27 +80,90 @@
     }
 
     &.wi-search {
-      position: relative;
-      padding: 15px 15px;
+      padding: 15px 19px 15px 15px;
       border-bottom: 1px solid #E6E6E6;
-      input[type='search'] {
+      .inp {
+        position: relative;
         width: 100%;
         height: 40px;
-        padding: 5px 15px;
         border-radius: 5px;
         border: 1px solid #E6E6E6;
-        outline: none;
-      }
-      &:before {
-        position: absolute;
-        display: block;
-        content: '';
-        width: 22px;
-        height: 22px;
-        top: 50%;
-        margin-top: -11px;
-        left: 30px;
-        background: url('../../../../assets/icons/search.svg') no-repeat;
+        background-color: rgba(255, 255, 255, 0.75);
+        transition: all .2s ease;
+        input {
+          position: relative;
+          width: 100%;
+          height: 100%;
+          padding: 5px 45px 5px 15px;
+          font: 500 14px/16px 'Work Sans';
+          border-radius: inherit;
+          background: transparent;
+          border: none;
+          outline: none;
+        }
+        .placeholder {
+          position: absolute;
+          left: 15px;
+          top: 50%;
+          margin-top: -8px;
+          padding: 0 5px;
+          font: 400 14px/16px 'Arial';
+          background-color: #ffffff;
+          color: #b8b8b8;
+          transition: all .2s ease;
+        }
+        .inp-clear {
+          display: none;
+          cursor: pointer;
+          position: absolute;
+          width: 20px;
+          height: 20px;
+          right: 15px;
+          top: 50%;
+          margin-top: -10px;
+          background-color: transparent;
+          transition: all .2s ease;
+          span {
+            position: absolute;
+            display: block;
+            width: 12px;
+            height: 2px;
+            top: 50%;
+            left: 50%;
+            margin-top: -1px;
+            margin-left: -6px;
+            border-radius: 1px;
+            background-color: #b8b8b8;
+            transform: rotate(45deg);
+            &:first-child {
+              transform: rotate(-45deg);
+            }
+          }
+        }
+        &:before {
+          position: absolute;
+          display: block;
+          content: '';
+          width: 22px;
+          height: 22px;
+          top: 50%;
+          margin-top: -11px;
+          right: 15px;
+          background: url('../../../../assets/icons/search.svg') no-repeat;
+        }
+        &.focused {
+          .placeholder {
+            top: -8px;
+            margin-top: 0;
+            font-size: 12px;
+          }
+          .inp-clear {
+            display: block;
+          }
+          &:before {
+            display: none;
+          }
+        }
       }
     }
 
@@ -955,7 +1018,37 @@
   .widget-wrapper {
     .widget-item {
       &.wi-search {
-        display: none;
+        position: absolute;
+        top: 65px;
+        right: 15px;
+        padding: 0;
+        border: 0;
+        width: auto;
+        .inp {
+          width: 40px;
+          padding: 0;
+          border: none;
+          input {
+            padding: 0;
+          }
+          .placeholder {
+            display: none;
+          }
+          .inp-clear {
+            span {
+              background-color: #000000;
+            }
+          }
+          &:before {
+            right: 9px;
+          }
+          &.focused {
+            width: 285px;
+            input {
+              padding: 5px 40px 5px 15px;
+            }
+          }
+        }
       }
       &.wi-player-list {
         .track {

@@ -4,6 +4,7 @@ import { WidgetService } from '../../../services/widget.service';
 import { ModalService } from '../../../services/modal.service';
 import { Modal, ModalContent, ModalTypes } from '../../../models/modal.model';
 import { Howl } from 'howler';
+import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-widget',
@@ -14,6 +15,7 @@ export class WidgetComponent implements OnInit {
   SDN_LINK_IMG = SDN_LINK_IMG;
   SDN_LINK_MP3 = SDN_LINK_MP3;
   windowWidth: number;
+  breakPoint = 600;
   widget: Widget;
   modalOpen = false;
   modalContent: ModalContent;
@@ -29,27 +31,32 @@ export class WidgetComponent implements OnInit {
   playerTrackName: string;
   playerTracklbImage: string;
   //
+  filterBy: FormGroup;
+  tracksBuffer: Track[];
+  searchFocused = false;
 
   constructor(
     private widgetService: WidgetService,
     private modalService: ModalService,
+    private fb: FormBuilder,
     public elRef: ElementRef
   ) { }
 
   ngOnInit() {
     this.windowWidth = window.innerWidth;
     console.log('windowWidth', this.windowWidth);
-    this.widgetInit(() => {
+    this.initWidget(() => {
       console.log(this.widget);
       console.log(this.widget.tracks.map(t => (t.drumKit)));
-      this.playerHowlInit(this.playerActiveTrackIndex);
-      this.carouselInit(this.widget.tracks[this.playerActiveTrackIndex].sliderIndex, this.playerActiveTrackIndex);
+      this.initPlayerHowl(this.playerActiveTrackIndex);
+      this.initCarousel(this.widget.tracks[this.playerActiveTrackIndex].sliderIndex, this.playerActiveTrackIndex);
+      this.initFilters();
     }, 9); // widgets id's: 2, 3, 5, 9(SESH) 13, 13319
   }
 
   // todo highlight to components/shared folder
   // Carousel : start
-  private carouselInit(startIndex: number, trackIndex: number): void {
+  private initCarousel(startIndex: number, trackIndex: number): void {
     const carouselLength = this.widget.tracks[trackIndex].sliderData.length;
     this.widget.tracks[trackIndex].sliderData.forEach(slide => (slide.style = ''));
     // console.log('carouselLength ', carouselLength);
@@ -159,6 +166,37 @@ export class WidgetComponent implements OnInit {
     this.widget.tracks[trackIndex].hovered = false;
   }
 
+  public searchFocus(direction: string): void {
+    switch (direction) {
+      case 'in' : {
+        this.searchFocused = true;
+        break;
+      }
+      case 'out' : {
+        this.searchFocused = ((this.filterBy.value.filterByTrackName !== null) && (this.filterBy.value.filterByTrackName.trim() !== ''));
+        this.filterBy.controls['filterByTrackName'].setValue(this.filterBy.value.filterByTrackName.trim());
+        break;
+      }
+    }
+  }
+
+  public searchTrack(): void {
+    this.widget.tracks = this.tracksBuffer;
+    let filtered = this.tracksBuffer;
+    if (this.filterBy.value.filterByTrackName.trim() !== null) {
+      filtered = filtered.filter((track: Track) => {
+        return track.name.toLocaleLowerCase().includes(this.filterBy.value.filterByTrackName.trim().toLocaleLowerCase());
+      });
+    }
+    this.widget.tracks = filtered;
+  }
+
+  public searchClear(): void {
+    this.filterBy.controls['filterByTrackName'].setValue(null);
+    this.widget.tracks = this.tracksBuffer;
+    this.searchFocused = false;
+  }
+
   public trackProgressClicked(event): void {
     console.log(event);
     console.log(event.offsetX);
@@ -172,7 +210,7 @@ export class WidgetComponent implements OnInit {
 
   public trackPlay(event?, track?: Track, trackIndex?: number): void {
     if (trackIndex || trackIndex === 0) { this.playerActiveTrackIndex = trackIndex; } // обновление активного трека (если клик по листу)
-    this.carouselInit(this.widget.tracks[this.playerActiveTrackIndex].sliderIndex, this.playerActiveTrackIndex);
+    this.initCarousel(this.widget.tracks[this.playerActiveTrackIndex].sliderIndex, this.playerActiveTrackIndex);
     this.playerTrackName = this.widget.tracks[this.playerActiveTrackIndex].name;
     this.playerTracklbImage = this.widget.tracks[this.playerActiveTrackIndex].lbImage;
     //
@@ -191,7 +229,7 @@ export class WidgetComponent implements OnInit {
           this.playerPlay = true;
           this.widget.tracks[this.playerActiveTrackIndex].play = true;
         } else {                                          // выбранный трек играл раньше? - нет
-          this.playerHowlInit(this.playerActiveTrackIndex);   // инициализируем ховлер
+          this.initPlayerHowl(this.playerActiveTrackIndex);   // инициализируем ховлер
           this.playerHowl.play();                             // запускаем плеер
           this.playerPlay = true;
           this.widget.tracks[this.playerActiveTrackIndex].play = true;
@@ -211,7 +249,7 @@ export class WidgetComponent implements OnInit {
       }
       this.widget.tracks.forEach((tr) => tr.play = false);
       this.widget.tracks.forEach((tr) => tr.active = false);
-      this.playerHowlInit(this.playerActiveTrackIndex);                    // инициализируем инстанс ховлера
+      this.initPlayerHowl(this.playerActiveTrackIndex);                    // инициализируем инстанс ховлера
       this.playerHowl.play();
       this.playerPlay = true;
       this.widget.tracks[this.playerActiveTrackIndex].active = true;
@@ -234,7 +272,7 @@ export class WidgetComponent implements OnInit {
       : this.trackPlay(null, null, this.playerActiveTrackIndex + 1);
   }
 
-  private playerHowlInit(trackIndex: number): void {
+  private initPlayerHowl(trackIndex: number): void {
     this.playerHowl = new Howl({
       src: [SDN_LINK_MP3 + this.widget.tracks[trackIndex].link],
       html5: true,
@@ -326,7 +364,7 @@ export class WidgetComponent implements OnInit {
     console.log(this.windowWidth);
   }
 
-  private widgetInit(completed, id: number): void {
+  private initWidget(completed, id: number): void {
     this.widgetService.getWidget(id).subscribe((widget: Widget) => {
       if (widget) {
         widget.tracks.forEach((track) => {
@@ -360,8 +398,15 @@ export class WidgetComponent implements OnInit {
             cartItems: [],
           } as Cart,        // setup empty cart
         };
+        this.tracksBuffer = this.widget.tracks;
         completed();
        }
+    });
+  }
+
+  private initFilters() {
+    this.filterBy = this.fb.group({
+      filterByTrackName: null,
     });
   }
 
