@@ -174,7 +174,9 @@ export class WidgetComponent implements OnInit {
       }
       case 'out' : {
         this.searchFocused = ((this.filterBy.value.filterByTrackName !== null) && (this.filterBy.value.filterByTrackName.trim() !== ''));
-        this.filterBy.controls['filterByTrackName'].setValue(this.filterBy.value.filterByTrackName.trim());
+        if (this.filterBy.value.filterByTrackName !== null) {
+          this.filterBy.controls['filterByTrackName'].setValue(this.filterBy.value.filterByTrackName.trim());
+        }
         break;
       }
     }

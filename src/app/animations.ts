@@ -1,7 +1,7 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 
-export const SlideUpDown = {
-  animationTrigger: trigger('slideUpDown', [
+export const Animations = {
+  slideUpDown: trigger('slideUpDown', [
     transition(':enter', [
       style({ height: 0 }),
       animate('0.3s ease-in', style({ height: '*' }))
