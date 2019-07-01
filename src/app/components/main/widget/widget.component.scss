@@ -64,6 +64,7 @@
 
     &.wi-screen {
       flex: 1;
+      max-height: 30%;
       .screen {
         height: 100%;
         background-color: rgba(105, 95, 252, .75);
@@ -81,6 +82,7 @@
     &.wi-search {
       position: relative;
       padding: 15px 15px;
+      border-bottom: 1px solid #E6E6E6;
       input[type='search'] {
         width: 100%;
         height: 40px;
@@ -104,13 +106,13 @@
 
     &.wi-player-list {
       flex: 1;
-      overflow: scroll;
       padding: 2px 0;
+      overflow-y: scroll;
+      overflow-x: hidden;
       .track {
         margin: 0 15px;
         position: relative;
         padding: 3px 0;
-        font: 600 14px/16px 'Work Sans';
         .click-area {
           position: absolute;
           width: 100%;
@@ -128,12 +130,12 @@
           border-radius: 5px;
           padding: 5px 15px 5px 5px;
           cursor: pointer;
-          .track-title {
+          .track-info {
             position: relative;
             display: flex;
             justify-content: center;
             align-items: center;
-            .cover {
+            .track-cover {
               position: relative;
               overflow: hidden;
               width: 48px;
@@ -249,10 +251,47 @@
                 .bar:nth-child(10) { left: 37px; animation-duration: 442ms; }
               }
             }
-            .title {
+            .track-text {
+              position: relative;
+              display: flex;
+              justify-content: center;
+              align-items: flex-start;
+              flex-direction: column;
               margin-left: 15px;
               white-space: nowrap;
               overflow: hidden;
+              &:after {
+                position: absolute;
+                display: block;
+                content: '';
+                width: 50px;
+                height: 100%;
+                top: 0;
+                right: -20px;
+                background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 45%);
+              }
+              .track-title {
+                position: relative;
+                span {
+                  font: 600 14px/16px 'Work Sans';
+                  &.scroller {
+                    &.track-number {}
+                    &.track-artist-name {}
+                    &.track-dash {}
+                    &.track-name {}
+                  }
+                }
+              }
+              .track-tags {
+                .tag {
+                  display: inline-block;
+                  margin-right: 5px;
+                  padding: 1px 5px;
+                  background-color: #F5F5F5;
+                  border-radius: 10px;
+                  font: 500 10px/12px 'Arial';
+                }
+              }
             }
           }
           .controls {
@@ -407,6 +446,18 @@
         &.active {
           .container {
             background-color: #F5F5F5;
+            .track-info {
+              .track-text {
+                &:after {
+                  background: linear-gradient(90deg, rgba(#F5F5F5,0) 0%, rgba(#F5F5F5,1) 45%);
+                }
+                .track-tags {
+                  .tag {
+                    background-color: #ffffff;
+                  }
+                }
+              }
+            }
             .controls {
               .btn-cart-add {
                 .add {
@@ -419,6 +470,18 @@
         &:hover {
           .container {
             background-color: #f5f5f580;
+            .track-info {
+              .track-text {
+                &:after {
+                  background: linear-gradient(90deg, rgba(#f5f5f580,0) 0%, rgba(#f5f5f580,1) 45%);
+                }
+                .track-tags {
+                  .tag {
+                    background-color: #ffffff;
+                  }
+                }
+              }
+            }
             .controls {
               .btn-cart-add {
                 .add {
@@ -438,21 +501,11 @@
             }
           }
         }
-
-        &.in-cart {
-          .container {
-            .controls {
-              .btn-cart-add {
-                .add {}
-              }
-            }
-          }
-        }
       }
     }
 
     &.wi-player-bottom {
-      height: 70px;
+      height: 76px;
       z-index: 9999;
       position: sticky;
       display: flex;
@@ -515,122 +568,157 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        .ctrls {
+        flex: 1;
+        height: 100%;
+        .controller {
           display: flex;
           justify-content: center;
           align-items: center;
-          padding: 20px 14px;
-          .ctrl {
-            cursor: pointer;
-            &.prev, &.next {
-              display: flex;
-              justify-content: center;
-              align-items: center;
-              span {
-                display: block;
-                transition: all .2s ease;
-                &.line {
-                  width: 3px;
-                  height: 14px;
-                  background-color: #b8b8b8;
-                }
-                &.triangle {
-                  width: 12px;
-                  height: 16px;
-                  margin-left: 2px;
-                  border-top: 8px solid transparent;
-                  border-bottom: 8px solid transparent;
-                  border-right: 12px solid #b8b8b8;
-                }
-              }
-              &:hover {
+          flex-direction: column;
+          height: 100%;
+          .ctrls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0 14px;
+            .ctrl {
+              cursor: pointer;
+              &.prev, &.next {
+                display: flex;
+                justify-content: center;
+                align-items: center;
                 span {
+                  display: block;
+                  transition: all .2s ease;
                   &.line {
-                    background-color: #695FFC;
+                    width: 3px;
+                    height: 14px;
+                    background-color: #b8b8b8;
                   }
                   &.triangle {
-                    border-right-color: #695FFC;
+                    width: 12px;
+                    height: 16px;
+                    margin-left: 2px;
+                    border-top: 8px solid transparent;
+                    border-bottom: 8px solid transparent;
+                    border-right: 12px solid #b8b8b8;
                   }
                 }
-                &.next {
+                &:hover {
                   span {
+                    &.line {
+                      background-color: #695FFC;
+                    }
                     &.triangle {
-                      border-left-color: #695FFC;
+                      border-right-color: #695FFC;
+                    }
+                  }
+                  &.next {
+                    span {
+                      &.triangle {
+                        border-left-color: #695FFC;
+                      }
+                    }
+                  }
+                }
+              }
+              &.next {
+                span {
+                  &.line {}
+                  &.triangle {
+                    margin-left: 0;
+                    margin-right: 2px;
+                    border-left: 12px solid #b8b8b8;
+                    border-right: 0;
+                  }
+                }
+              }
+              &.play {
+                margin: 0 32px;
+                position: relative;
+                width: 22px;
+                height: 30px;
+                .triangle {
+                  position: absolute;
+                  display: block;
+                  transition: all .2s ease;
+                  &.left {
+                    width: 20px;
+                    height: 30px;
+                    left: 0;
+                    top: 50%;
+                    margin-top: -15px;
+                    border-top: 15px solid transparent;
+                    border-bottom: 15px solid transparent;
+                    border-left: 22px solid #b8b8b8;
+                  }
+                  &.right {
+                    transition: all .1s ease;
+                    width: 6px;
+                    height: 16px;
+                    right: 0;
+                    top: 50%;
+                    margin-top: -8px;
+                    border-top: 8px solid transparent;
+                    border-bottom: 8px solid transparent;
+                    border-left: 12px solid #b8b8b8;
+                  }
+                }
+                &.pause {
+                  .triangle {
+                    &.left {
+                      border-top: 0 solid transparent;
+                      border-bottom: 0 solid transparent;
+                      border-left: 7px solid #b8b8b8;
+                    }
+                    &.right {
+                      height: 30px;
+                      top: 0;
+                      margin-top: 0;
+                      border-top: 0 solid transparent;
+                      border-bottom: 0 solid transparent;
+                      border-left: 7px solid #b8b8b8;
                     }
                   }
                 }
               }
             }
-            &.next {
-              span {
-                &.line {}
-                &.triangle {
-                  margin-left: 0;
-                  margin-right: 2px;
-                  border-left: 12px solid #b8b8b8;
-                  border-right: 0;
-                }
-              }
-            }
-            &.play {
-              margin: 0 32px;
-              position: relative;
-              width: 22px;
-              height: 30px;
-              .triangle {
-                position: absolute;
-                display: block;
-                transition: all .2s ease;
-                &.left {
-                  width: 20px;
-                  height: 30px;
-                  left: 0;
-                  top: 50%;
-                  margin-top: -15px;
-                  border-top: 15px solid transparent;
-                  border-bottom: 15px solid transparent;
-                  border-left: 22px solid #b8b8b8;
-                }
-                &.right {
-                  transition: all .1s ease;
-                  width: 6px;
-                  height: 16px;
-                  right: 0;
-                  top: 50%;
-                  margin-top: -8px;
-                  border-top: 8px solid transparent;
-                  border-bottom: 8px solid transparent;
-                  border-left: 12px solid #b8b8b8;
-                }
-              }
-              &.pause {
-                .triangle {
-                  &.left {
-                    border-top: 0 solid transparent;
-                    border-bottom: 0 solid transparent;
-                    border-left: 7px solid #b8b8b8;
-                  }
-                  &.right {
-                    height: 30px;
-                    top: 0;
-                    margin-top: 0;
-                    border-top: 0 solid transparent;
-                    border-bottom: 0 solid transparent;
-                    border-left: 7px solid #b8b8b8;
-                  }
-                }
-              }
-            }
+          }
+          .volume {
+            display: none;
           }
         }
         .title {
+          position: relative;
           display: flex;
           justify-content: flex-start;
           align-items: flex-start;
           flex-direction: column;
+          flex: 1;
           margin-left: 20px;
+          white-space: nowrap;
+          overflow: hidden;
+          &:after {
+            position: absolute;
+            display: block;
+            content: '';
+            width: 50px;
+            height: 100%;
+            top: 0;
+            right: -10px;
+            background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 45%);
+          }
           .track-name {
-            font: 500 14px/16px 'Work Sans';
+            position: relative;
+            white-space: nowrap;
+            overflow: hidden;
+            width: 100%;
+            height: 16px;
+            span {
+              display: block;
+              position: absolute;
+              font: 500 14px/16px 'Work Sans';
+            }
           }
           .tags {
             margin-top: 5px;
@@ -644,56 +732,149 @@
             }
           }
         }
-        .timing {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          width: 100px;
-          margin-left: 20px;
-          font: 400 14px/16px 'Work Sans';
-          text-align: center;
-          color: #b8b8b8;
-          .curtime {
-            width: 50%;
-            border-right: 1px solid #b8b8b8;
-          }
-          .alltime {
-            width: 50%;
-          }
-        }
       }
       .block-money {
         display: flex;
         justify-content: space-between;
         align-items: center;
         height: 100%;
-        .payment-types {
-          margin-right: 40px;
+        margin-left: 20px;
+        .timing-and-types {
           display: flex;
-          justify-content: space-between;
+          justify-content: center;
           align-items: center;
-          .pt {
-            width: 20px;
-            height: 20px;
-            &.paypal {
-              background: url('../../../../assets/icons/paypal.svg') no-repeat;
-              background-size: cover;
-              background-position: 50% 50%;
+          flex-direction: column;
+          margin-right: 40px;
+          .timing {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100px;
+            font: 400 14px/16px 'Work Sans';
+            text-align: center;
+            color: #b8b8b8;
+            .curtime {
+              width: 50%;
+              border-right: 1px solid #b8b8b8;
             }
-            &.card {
-              margin-left: 10px;
-              background: url('../../../../assets/icons/credit-card.svg') no-repeat;
-              background-size: cover;
-              background-position: 50% 50%;
+            .alltime {
+              width: 50%;
+            }
+          }
+          .payment-types {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 5px;
+            .pt {
+              width: 20px;
+              height: 20px;
+              &.paypal {
+                background: url('../../../../assets/icons/paypal.svg') no-repeat;
+                background-size: cover;
+                background-position: 50% 50%;
+              }
+              &.card {
+                margin-left: 10px;
+                background: url('../../../../assets/icons/credit-card.svg') no-repeat;
+                background-size: cover;
+                background-position: 50% 50%;
+              }
+            }
+          }
+          .volume {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            width: 100%;
+            height: 20px;
+            margin-top: 5px;
+            .click-area {
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              position: relative;
+              cursor: pointer;
+              width: 50px;
+              height: 100%;
+              .volume-slider {
+                position: relative;
+                width: 100%;
+                height: 2px;
+                background-color: #E6E6E6;
+                border-radius: 2px;
+                .volume-level {
+                  position: absolute;
+                  height: 100%;
+                  width: 75%;
+                  background-color: #695FFC;
+                  border-radius: 2px;
+                  top: 0;
+                  left: 0;
+                  .dot {
+                    position: absolute;
+                    width: 8px;
+                    height: 8px;
+                    right: -4px;
+                    top: 50%;
+                    margin-top: -4px;
+                    border: 2px solid #695FFC;
+                    border-radius: 50%;
+                    background-color: #ffffff;
+                  }
+                }
+              }
+              &:hover {
+                .volume-slider {
+                  .volume-level {
+                    .dot {
+                      width: 10px;
+                      height: 10px;
+                      right: -5px;
+                      top: 50%;
+                      margin-top: -5px;
+                      border-width: 2px;
+                    }
+                  }
+                }
+              }
+            }
+            &:before {
+              position: absolute;
+              display: block;
+              content: '';
+              width: 14px;
+              height: 14px;
+              top: 50%;
+              margin-top: -7px;
+              left: 5px;
+              background-color: #695FFC;
+              mask-image: url('../../../../assets/icons/volume-down.svg');
+              mask-size: cover;
+            }
+            &:after {
+              position: absolute;
+              display: block;
+              content: '';
+              width: 14px;
+              height: 14px;
+              top: 50%;
+              margin-top: -7px;
+              right: 5px;
+              background-color: #695FFC;
+              mask-image: url('../../../../assets/icons/volume-up.svg');
+              mask-size: cover;
             }
           }
         }
         .btn-cart-and-price {
           cursor: pointer;
           display: flex;
-          justify-content: space-between;
+          justify-content: flex-end;
           align-items: center;
           background-color: #F5F5F5;
+          min-width: 120px;
           height: 100%;
           padding: 20px 15px 20px 20px;
           &:hover {
@@ -755,6 +936,222 @@
       &.wi-screen {
         max-height: 260px;
       }
+      &.wi-player-bottom {
+        .block-music {
+          .title {
+            .track-name {
+              span {
+                animation: 20s linear infinite slide;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+// extra-point
+@media (max-width: 600px) {
+  .widget-wrapper {
+    .widget-item {
+      &.wi-search {
+        display: none;
+      }
+      &.wi-player-list {
+        .track {
+          .container {
+            .track-info {
+              .track-text {
+                .track-title {
+                  &.bp600 {
+                    span {
+                      &.track-name {
+                        font: 600 12px/14px 'Work Sans';
+                      }
+                      &.track-artist-name {
+                        margin-top: 5px;
+                        font: 500 12px/14px 'Work Sans';
+                      }
+                    }
+                  }
+                }
+              }
+            }
+            .controls {
+              .rights-carousel {
+                display: none;
+              }
+            }
+          }
+          &.active, &:hover {
+            .container {
+              .track-info {
+                .track-text {
+                  .track-title {
+                    span {
+                      &.scroller {
+                        //position: absolute;
+                        //animation: 5s linear infinite slide;
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      &.wi-player-bottom {
+        height: 150px;
+        flex-direction: column;
+        .progress {
+          .timing {
+            position: absolute;
+            width: 100%;
+            font: 400 12px/14px 'Work Sans';
+            text-align: center;
+            color: #b8b8b8;
+            .curtime {
+              position: absolute;
+              top: 42px;
+              left: 20px;
+            }
+            .alltime {
+              position: absolute;
+              top: 42px;
+              right: 20px;
+            }
+          }
+          .bar {
+            background-color: transparent;
+          }
+        }
+        .block-money {
+          width: 100%;
+          height: 48px;
+          margin: 0;
+          .timing-and-types {
+            display: none;
+          }
+          .btn-cart-and-price {
+            justify-content: center;
+            width: 100%;
+          }
+        }
+        .block-music {
+          flex: 1;
+          flex-direction: column-reverse;
+          justify-content: flex-end;
+          width: 100%;
+          .controller {
+            width: 100%;
+            .ctrls {
+              padding: 0;
+            }
+            .volume {
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              position: relative;
+              width: 100%;
+              height: 20px;
+              margin-top: 5px;
+              .click-area {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                position: relative;
+                cursor: pointer;
+                width: 65%;
+                height: 100%;
+                .volume-slider {
+                  position: relative;
+                  width: 100%;
+                  height: 2px;
+                  background-color: #E6E6E6;
+                  border-radius: 2px;
+                  .volume-level {
+                    position: absolute;
+                    height: 100%;
+                    width: 75%;
+                    background-color: #695FFC;
+                    border-radius: 2px;
+                    top: 0;
+                    left: 0;
+                    .dot {
+                      position: absolute;
+                      width: 8px;
+                      height: 8px;
+                      right: -4px;
+                      top: 50%;
+                      margin-top: -4px;
+                      border: 2px solid #695FFC;
+                      border-radius: 50%;
+                      background-color: #ffffff;
+                    }
+                  }
+                }
+                &:hover {
+                  .volume-slider {
+                    .volume-level {
+                      .dot {
+                        width: 10px;
+                        height: 10px;
+                        right: -5px;
+                        top: 50%;
+                        margin-top: -5px;
+                        border-width: 2px;
+                      }
+                    }
+                  }
+                }
+              }
+              &:before {
+                position: absolute;
+                display: block;
+                content: '';
+                width: 20px;
+                height: 20px;
+                top: 50%;
+                margin-top: -10px;
+                left: 20px;
+                background-color: #695FFC;
+                mask-image: url('../../../../assets/icons/volume-down.svg');
+                mask-size: cover;
+              }
+              &:after {
+                position: absolute;
+                display: block;
+                content: '';
+                width: 20px;
+                height: 20px;
+                top: 50%;
+                margin-top: -10px;
+                right: 20px;
+                background-color: #695FFC;
+                mask-image: url('../../../../assets/icons/volume-up.svg');
+                mask-size: cover;
+              }
+            }
+          }
+          .title {
+            flex: none;
+            text-align: center;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            margin: 10px 0 0;
+            .track-name {
+              width: 100%;
+              font-size: 16px;
+              margin: 0;
+            }
+            .tags {
+              display: none;
+            }
+          }
+        }
+      }
     }
   }
 }
@@ -765,41 +1162,25 @@
       &.wi-screen {
         max-height: 160px;
       }
-    }
-  }
-}
-// extra-point
-@media (max-width: 600px) {
-  .widget-wrapper {
-    .widget-item {
-      &.wi-player-bottom {
-        height: 180px;
-        flex-direction: column-reverse;
-        .block-money {
-          width: 100%;
-          height: 48px;
-          .payment-types {
-            display: none;
-          }
-          .btn-cart-and-price {
-            justify-content: center;
-            width: 100%;
-          }
-        }
-        .block-music {
-          flex: 1;
-          flex-direction: column;
-          width: 100%;
-          .ctrls {
-            padding: 0;
-          }
-          .title {
-            margin: 0;
-            text-align: center;
-            .track-name {
-              font-size: 16px;
-              list-style: 18px;
-              margin: 14px 0;
+      &.wi-player-list {
+        .track {
+          .container {
+            .track-info {
+              .track-text {
+                .track-title {
+                  &.bp600 {
+                    span {
+                      &.track-name {
+                        font: 600 12px/14px 'Work Sans';
+                      }
+                      &.track-artist-name {
+                        margin-top: 5px;
+                        font: 500 12px/14px 'Work Sans';
+                      }
+                    }
+                  }
+                }
+              }
             }
           }
         }
@@ -814,6 +1195,29 @@
       &.wi-screen {
         max-height: 120px;
       }
+      &.wi-player-list {
+        .track {
+          .container {
+            .track-info {
+              .track-text {
+                .track-title {
+                  &.bp600 {
+                    span {
+                      &.track-name {
+                        font: 600 12px/14px 'Work Sans';
+                      }
+                      &.track-artist-name {
+                        margin-top: 5px;
+                        font: 500 12px/14px 'Work Sans';
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 }
@@ -824,6 +1228,41 @@
       &.wi-screen {
         max-height: 100px;
       }
+      &.wi-player-list {
+        .track {
+          .container {
+            .track-info {
+              .track-text {
+                .track-title {
+                  &.bp600 {
+                    span {
+                      &.track-name {
+                        font: 600 12px/14px 'Work Sans';
+                      }
+                      &.track-artist-name {
+                        margin-top: 5px;
+                        font: 500 12px/14px 'Work Sans';
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
+  }
+}
+
+@keyframes slide {
+  0% {
+    left: 5%;
+  }
+  50% {
+    left: -50%
+  }
+  100% {
+    left: 5%;
   }
 }

@@ -37,9 +37,17 @@ export class ModalComponent implements OnInit {
   }
 
   modalClose(): void {
+    switch (this.modalContent.type) {
+      case ModalTypes.TERMS: {
+        this.modalContent.contentTerms.sliderData.forEach((button) => button.activeInModal = false);
+        this.modalContent.contentTerms.rightsDescription.forEach((rights) => rights.activeInModal = false);
+        break;
+      }
+      case ModalTypes.CART: {
+        break;
+      }
+    }
     this.modalResult.emit({type: 'close'});
-    this.modalContent.contentTerms.sliderData.forEach((button) => button.activeInModal = false);
-    this.modalContent.contentTerms.rightsDescription.forEach((rights) => rights.activeInModal = false);
   }
 
   /*

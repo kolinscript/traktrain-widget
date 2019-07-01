@@ -1,4 +1,5 @@
 <div class="modal-wrapper">
+  <div class="backdrop" (click)="modalClose()"></div>
 
   <div class="modal buy-terms" *ngIf="modalContent.type === ModalTypes.TERMS">
     <div class="close" (click)="modalClose()"><span></span><span></span></div>
@@ -59,9 +60,11 @@
           <!--<div class="index">{{indexTrack + 1}}. </div>-->
           <div class="description">
             <div class="row">
-              <div class="title">
-                {{modalContent.artistName}} -
-                {{cartItem.track.name}} ({{LicensePriceMapper[cartItem.cartItemServer.right]}})
+              <div class="track-title">
+                <span>
+                  {{modalContent.artistName}} -
+                  {{cartItem.track.name}} ({{LicensePriceMapper[cartItem.cartItemServer.right]}}):
+                </span>
               </div>
               <div class="price">
                 ${{cartItem.price}}.00
@@ -75,23 +78,23 @@
                 ${{cartItem.price}}.00
               </div>
             </div>
-            <div class="row">
-              <div class="del" (click)="deleteTrackFromCart(indexTrack)">DEL</div>
+            <div class="row delete">
+              <div class="del" (click)="deleteTrackFromCart(indexTrack)">
+                <span></span>
+                <span></span>
+              </div>
             </div>
           </div>
         </div>
       </div>
       <div class="cart-bottom">
-        <div class="faq">
-          Note: please visit FAQ page if you have any questions regarding credit card checkout.
-        </div>
         <div class="check-out">
           <div class="total">Total: <span class="val">${{modalContent.cart.totalCost}}.00</span></div>
           <button class="cta">Check out with PayPal</button>
         </div>
       </div>
     </div>
-    <div class="placeholder" *ngIf="modalContent.cart.cartItems.length <= 0">Cart is empty...</div>
+    <div class="placeholder" *ngIf="modalContent.cart.cartItems.length <= 0">Cart is empty.</div>
   </div>
 
 </div>
