@@ -60,12 +60,18 @@
               <div class="bar"></div>
             </div>
           </div>
-          <div class="track-text">
-            <div class="track-title" [ngClass]="{'bp600': windowWidth <= 600}">
-              <span class="track-number" *ngIf="windowWidth > 600">{{indexTrack + 1}}. </span>
-              <span class="track-artist-name">{{widget.producer.artistName}}</span>
-              <span class="track-dash" *ngIf="windowWidth > 600"> - </span>
-              <span class="track-name">{{track.name}}</span>
+          <div class="track-text"
+               [ngStyle]="{'width.px': windowWidth - ((track.active && windowWidth > 600) ? 350 : 165)}"
+          >
+            <div class="track-title"
+                 [ngClass]="{'bp600': windowWidth <= 600}"
+            >
+              <span class="scroller">
+                <span class="track-number" *ngIf="windowWidth > 600">{{indexTrack + 1}}. </span>
+                <span class="track-artist-name" *ngIf="windowWidth > 600">{{widget.producer.artistName}}</span>
+                <span class="track-dash" *ngIf="windowWidth > 600"> - </span>
+                <span class="track-name">{{track.name}}</span>
+              </span>
             </div>
             <div class="track-tags" *ngIf="track.tagsArr[0] !== ''">
               <div
@@ -136,31 +142,43 @@
       </div>
     </div>
     <div class="block-music">
-      <div class="ctrls">
-        <div class="ctrl prev" (click)="trackToggle('prev')">
-          <span class="line"></span>
-          <span class="triangle"></span>
-        </div>
-        <div
-          class="ctrl play"
-          (click)="trackPlay()"
-          [ngClass]="{'pause': playerPlay}"
-        >
+      <div class="controller">
+        <div class="ctrls">
+          <div class="ctrl prev" (click)="trackToggle('prev')">
+            <span class="line"></span>
+            <span class="triangle"></span>
+          </div>
+          <div
+            class="ctrl play"
+            (click)="trackPlay()"
+            [ngClass]="{'pause': playerPlay}"
+          >
           <span
             class="triangle left"
             [ngStyle]="{borderLeftColor: widget.style.colors.active_item}"
           ></span>
-          <span
-            class="triangle right"
-            [ngStyle]="{borderLeftColor: widget.style.colors.active_item}"
-          ></span>
+            <span
+              class="triangle right"
+              [ngStyle]="{borderLeftColor: widget.style.colors.active_item}"
+            ></span>
+          </div>
+          <div class="ctrl next" (click)="trackToggle('next')">
+            <span class="triangle"></span>
+            <span class="line"></span>
+          </div>
         </div>
-        <div class="ctrl next" (click)="trackToggle('next')">
-          <span class="triangle"></span>
-          <span class="line"></span>
+        <div class="volume">
+          <div class="click-area">
+            <div class="volume-slider">
+              <div class="volume-level">
+                <div class="dot"></div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="title">
+      <div class="title"
+           [ngStyle]="{'width.px': windowWidth > 600 ? windowWidth - 455 : windowWidth - 40}">
         <div class="track-name" [ngStyle]="{color: widget.style.colors.text}">
           <span>
           {{playerActiveTrackIndex + 1}}. {{widget.producer.artistName}} -
@@ -184,9 +202,18 @@
           <div class="curtime">{{playerProgressMS}}</div>
           <div class="alltime">{{playerDurationMS}}</div>
         </div>
-        <div class="payment-types">
-          <div class="pt paypal"></div>
-          <div class="pt card"></div>
+        <!--<div class="payment-types">-->
+          <!--<div class="pt paypal"></div>-->
+          <!--<div class="pt card"></div>-->
+        <!--</div>-->
+        <div class="volume">
+          <div class="click-area">
+            <div class="volume-slider">
+              <div class="volume-level">
+                <div class="dot"></div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div class="btn-cart-and-price" (click)="cartOpen()">
