@@ -21,8 +21,19 @@
     </div>
   </div>
 
-  <div class="widget-item wi-search">
-    <input type="search">
+  <div class="widget-item wi-search" [formGroup]="filterBy">
+    <div class="inp"
+         [ngClass]="{'focused': searchFocused}"
+    >
+      <input type="text"
+             (keyup)="searchTrack()"
+             (focus)="searchFocus('in')"
+             (focusout)="searchFocus('out')"
+             formControlName="filterByTrackName"
+      >
+      <div class="placeholder">Start type the track name</div>
+      <div class="inp-clear" (click)="searchClear()"><span></span><span></span></div>
+    </div>
   </div>
 
   <div class="widget-item wi-player-list">
@@ -61,15 +72,15 @@
             </div>
           </div>
           <div class="track-text"
-               [ngStyle]="{'width.px': windowWidth - ((track.active && windowWidth > 600) ? 350 : 165)}"
+               [ngStyle]="{'width.px': windowWidth - ((track.active && windowWidth > breakPoint) ? 350 : 165)}"
           >
             <div class="track-title"
-                 [ngClass]="{'bp600': windowWidth <= 600}"
+                 [ngClass]="{'bp600': windowWidth <= breakPoint}"
             >
               <span class="scroller">
-                <span class="track-number" *ngIf="windowWidth > 600">{{indexTrack + 1}}. </span>
-                <span class="track-artist-name" *ngIf="windowWidth > 600">{{widget.producer.artistName}}</span>
-                <span class="track-dash" *ngIf="windowWidth > 600"> - </span>
+                <span class="track-number" *ngIf="windowWidth > breakPoint">{{indexTrack + 1}}. </span>
+                <span class="track-artist-name" *ngIf="windowWidth > breakPoint">{{widget.producer.artistName}}</span>
+                <span class="track-dash" *ngIf="windowWidth > breakPoint"> - </span>
                 <span class="track-name">{{track.name}}</span>
               </span>
             </div>
@@ -131,7 +142,7 @@
 
   <div class="widget-item wi-player-bottom">
     <div class="progress" (click)="trackProgressClicked($event)">
-      <div class="timing" *ngIf="windowWidth <= 600">
+      <div class="timing" *ngIf="windowWidth <= breakPoint">
         <div class="curtime">{{playerProgressMS}}</div>
         <div class="alltime">{{playerDurationMS}}</div>
       </div>
@@ -178,7 +189,7 @@
         </div>
       </div>
       <div class="title"
-           [ngStyle]="{'width.px': windowWidth > 600 ? windowWidth - 455 : windowWidth - 40}">
+           [ngStyle]="{'width.px': windowWidth > breakPoint ? windowWidth - 455 : windowWidth - 40}">
         <div class="track-name" [ngStyle]="{color: widget.style.colors.text}">
           <span>
           {{playerActiveTrackIndex + 1}}. {{widget.producer.artistName}} -
