@@ -51,7 +51,7 @@ export class WidgetComponent implements OnInit {
       this.initPlayerHowl(this.playerActiveTrackIndex);
       this.initCarousel(this.widget.tracks[this.playerActiveTrackIndex].sliderIndex, this.playerActiveTrackIndex);
       this.initFilters();
-    }, 9); // widgets id's: 2, 3, 5, 9(SESH) 13, 13319
+    }, 13); // widgets id's: 2, 3, 5, 9(SESH) 13, 13319
   }
 
   // todo highlight to components/shared folder
@@ -174,7 +174,9 @@ export class WidgetComponent implements OnInit {
       }
       case 'out' : {
         this.searchFocused = ((this.filterBy.value.filterByTrackName !== null) && (this.filterBy.value.filterByTrackName.trim() !== ''));
-        this.filterBy.controls['filterByTrackName'].setValue(this.filterBy.value.filterByTrackName.trim());
+        if (this.filterBy.value.filterByTrackName !== null) {
+          this.filterBy.controls['filterByTrackName'].setValue(this.filterBy.value.filterByTrackName.trim());
+        }
         break;
       }
     }

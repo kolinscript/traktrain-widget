@@ -1,11 +1,15 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Modal, ModalContent, ModalTypes } from '../../../models/modal.model';
 import { CartItem, LicensePrice, LicensePriceMapper, SDN_LINK_IMG } from '../../../models/widget.model';
+import { Animations } from '../../../animations';
 
 @Component({
   selector: 'app-modal',
   templateUrl: './modal.component.html',
-  styleUrls: ['./modal.component.scss']
+  styleUrls: ['./modal.component.scss'],
+  animations: [
+    Animations.slideUpDown
+  ]
 })
 export class ModalComponent implements OnInit {
   ModalTypes = ModalTypes;

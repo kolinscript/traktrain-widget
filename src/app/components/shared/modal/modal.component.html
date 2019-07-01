@@ -25,10 +25,12 @@
           <div class="price">${{right.price}}.00</div>
         </div>
       </div>
-      <div class="rt-content" *ngFor="let content of modalContent.contentTerms.rightsDescription">
+      <div class="rt-content">
         <div
           class="content"
           [ngClass]="{'active': content.activeInModal}"
+          *ngFor="let content of modalContent.contentTerms.rightsDescription"
+          [@slideUpDown]
         >
           <div class="label">{{content.label}}</div>
           <ul class="rights">
