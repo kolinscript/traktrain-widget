@@ -51,7 +51,7 @@ export class WidgetComponent implements OnInit {
       this.initPlayerHowl(this.playerActiveTrackIndex);
       this.initCarousel(this.widget.tracks[this.playerActiveTrackIndex].sliderIndex, this.playerActiveTrackIndex);
       this.initFilters();
-    }, 9); // widgets id's: 2, 3, 5, 9(SESH) 13, 13319
+    }, 13); // widgets id's: 2, 3, 5, 9(SESH) 13, 13319
   }
 
   // todo highlight to components/shared folder
