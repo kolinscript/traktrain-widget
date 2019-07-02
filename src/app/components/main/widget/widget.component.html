@@ -1,9 +1,19 @@
 <div
-  *ngIf="widget"
   class="widget-wrapper"
   (window:resize)="onResize($event)"
 >
-  <div class="widget-item wi-topbar">
+  <div class="loader" *ngIf="loadingWidget">
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+  </div>
+
+  <div class="widget-item wi-topbar" *ngIf="!loadingWidget">
     <div class="title">
       <div class="shield" [ngStyle]="{background: widget.style.colors.active_item, borderColor: widget.style.colors.active_accent}"></div>
       <div class="name">{{widget.producer.artistName}}</div>
@@ -15,28 +25,31 @@
     </div>
   </div>
 
-  <div class="widget-item wi-screen">
+  <div class="widget-item wi-screen" *ngIf="!loadingWidget">
     <div class="screen">
       <div class="banner" [ngStyle]="{'background-image':'url(' + SDN_LINK_IMG + '' + playerTracklbImage + ')'}"></div>
     </div>
   </div>
 
-  <div class="widget-item wi-search" [formGroup]="filterBy">
+  <div class="widget-item wi-search" *ngIf="!loadingWidget" [formGroup]="filterBy">
     <div class="inp"
          [ngClass]="{'focused': searchFocused}"
     >
+      <div class="placeholder">Start type the track name</div>
       <input type="text"
              (keyup)="searchTrack()"
              (focus)="searchFocus('in')"
              (focusout)="searchFocus('out')"
              formControlName="filterByTrackName"
       >
-      <div class="placeholder">Start type the track name</div>
       <div class="inp-clear" (click)="searchClear()"><span></span><span></span></div>
     </div>
   </div>
 
-  <div class="widget-item wi-player-list">
+  <div class="widget-item wi-player-list" *ngIf="!loadingWidget">
+    <div class="empty-state" *ngIf="!widget.tracks || widget.tracks.length === 0">
+      No tracks found.
+    </div>
     <div
       class="track"
       *ngFor="let track of widget.tracks; index as indexTrack"
@@ -140,7 +153,7 @@
     </div>
   </div>
 
-  <div class="widget-item wi-player-bottom">
+  <div class="widget-item wi-player-bottom" *ngIf="!loadingWidget">
     <div class="progress" (click)="trackProgressClicked($event)">
       <div class="timing" *ngIf="windowWidth <= breakPoint">
         <div class="curtime">{{playerProgressMS}}</div>
@@ -189,6 +202,7 @@
         </div>
       </div>
       <div class="title"
+           *ngIf="widget.tracks && widget.tracks.length !== 0"
            [ngStyle]="{'width.px': windowWidth > breakPoint ? windowWidth - 455 : windowWidth - 40}">
         <div class="track-name" [ngStyle]="{color: widget.style.colors.text}">
           <span>
@@ -196,7 +210,7 @@
           {{playerTrackName}}
           </span>
         </div>
-        <div class="tags" *ngIf="widget.tracks[playerActiveTrackIndex].tagsArr[0] !== ''">
+        <div class="tags" *ngIf="widget.tracks || widget.tracks[playerActiveTrackIndex].tagsArr[0] !== ''">
           <div
             class="tag"
             [ngStyle]="{color: widget.style.colors.active_item}"

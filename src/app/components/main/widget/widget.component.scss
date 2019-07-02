@@ -8,8 +8,56 @@
   background-color: #ffffff;
   width: 100%;
   height: 100%;
+  .loader {
+    position: absolute;
+    height: 30px;
+    width: 100px;
+    top: 50%;
+    left: 50%;
+    margin-top: -15px;
+    margin-left: -50px;
+    .bar {
+      position: absolute;
+      background: #695FFC;
+      bottom: 1px;
+      width: 10px;
+      animation: sound 0ms -800ms linear infinite alternate;
+    }
+    @keyframes sound {
+      0% {
+        opacity: .35;
+        height: 3px;
+      }
+      100% {
+        opacity: 1;
+        height: 100%;
+      }
+    }
+    .bar:nth-child(1)  { left: 1px; animation-duration: 474ms; }
+    .bar:nth-child(2)  { left: 12px; animation-duration: 433ms; }
+    .bar:nth-child(3)  { left: 25px; animation-duration: 407ms; }
+    .bar:nth-child(4)  { left: 36px; animation-duration: 458ms; }
+    .bar:nth-child(5)  { left: 47px; animation-duration: 400ms; }
+    .bar:nth-child(6)  { left: 58px; animation-duration: 427ms; }
+    .bar:nth-child(7)  { left: 69px; animation-duration: 441ms; }
+    .bar:nth-child(8)  { left: 80px; animation-duration: 419ms; }
+    .bar:nth-child(9)  { left: 91px; animation-duration: 487ms; }
+    .bar:nth-child(10) { left: 102px; animation-duration: 442ms; }
+  }
+
   .widget-item {
+    position: relative;
     width: 100%;
+    .empty-state {
+      position: absolute;
+      width: 100%;
+      left: 0;
+      top: 50%;
+      margin-top: -11px;
+      font: 400 20px/22px 'Work Sans';
+      text-align: center;
+    }
+
     &.wi-topbar {
       height: 50px;
       display: flex;
@@ -629,7 +677,7 @@
       }
       .block-music {
         display: flex;
-        justify-content: center;
+        justify-content: flex-start;
         align-items: center;
         flex: 1;
         height: 100%;
@@ -1106,12 +1154,12 @@
             color: #b8b8b8;
             .curtime {
               position: absolute;
-              top: 42px;
+              top: 45px;
               left: 20px;
             }
             .alltime {
               position: absolute;
-              top: 42px;
+              top: 45px;
               right: 20px;
             }
           }

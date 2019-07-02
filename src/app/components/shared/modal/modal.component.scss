@@ -158,6 +158,7 @@
           }
         }
         .rt-content {
+          overflow: hidden;
           .content {
             display: none;
             width: 280px;
@@ -416,7 +417,6 @@
 @media (max-width: 600px) {
   .modal-wrapper {
     .modal {
-      padding: 20px;
       &.buy-terms {
         max-width: 280px;
         .track-name {
