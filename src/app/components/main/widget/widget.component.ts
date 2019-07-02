@@ -192,6 +192,7 @@ export class WidgetComponent implements OnInit {
     this.widget.tracks = filtered;
     //
     this.playerActiveTrackIndex = 0;
+    this.widget.tracks.forEach((tr) => tr.active = false);
     this.widget.tracks[this.playerActiveTrackIndex].active = true;
     this.playerTrackName = this.widget.tracks[this.playerActiveTrackIndex].name;
     this.playerTracklbImage = this.widget.tracks[this.playerActiveTrackIndex].lbImage;
@@ -203,6 +204,7 @@ export class WidgetComponent implements OnInit {
     this.searchFocused = false;
     //
     this.playerActiveTrackIndex = 0;
+    this.widget.tracks.forEach((tr) => tr.active = false);
     this.widget.tracks[this.playerActiveTrackIndex].active = true;
     this.playerTrackName = this.widget.tracks[this.playerActiveTrackIndex].name;
     this.playerTracklbImage = this.widget.tracks[this.playerActiveTrackIndex].lbImage;
