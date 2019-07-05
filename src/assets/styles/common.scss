@@ -23,18 +23,15 @@ html, body {
 
 /* custom scroll */
 ::-webkit-scrollbar {
-  width: 4px;
-}
-::-webkit-scrollbar:hover {
-  width: 8px;
+  width: 2px;
 }
 ::-webkit-scrollbar-track {
-  background: #F5F5F5;
+  background: #ffffff;
 }
 ::-webkit-scrollbar-thumb {
-  background: #695FFC;
-  border-radius: 4px;
+  background: #E6E6E6;
+  border-radius: 2px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #524fc4;
+  background: #E6E6E6;
 }
