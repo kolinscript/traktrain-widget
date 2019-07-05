@@ -62,7 +62,7 @@
       <div class="container">
         <div class="track-info" (click)="trackPlay($event, track, indexTrack)">
           <div class="track-cover">
-            <img [src]="SDN_LINK_IMG + track.lbImage" alt="">
+            <img [src]="SDN_LINK_IMG + '/48x48/' + track.image" alt="">
             <div class="fade" *ngIf="track.play || track.hovered"></div>
             <div
               class="play-pause"
@@ -85,7 +85,11 @@
             </div>
           </div>
           <div class="track-text"
-               [ngStyle]="{'width.px': windowWidth - ((track.active && windowWidth > breakPoint) ? 350 : 165)}"
+               [ngStyle]="{'width.px': windowWidth - (
+               (windowWidth > breakPoint) ?
+               ((track.active) ? 350 : 165) :
+               ((track.active || track.hovered) ? 165 : 100)
+               )}"
           >
             <div class="track-title"
                  [ngClass]="{'bp600': windowWidth <= breakPoint}"
@@ -192,9 +196,13 @@
           </div>
         </div>
         <div class="volume">
-          <div class="click-area">
+          <div class="click-area"
+               #volumeMobile
+               (click)="trackVolumeClick($event)"
+               (touchstart)="trackVolumeClick($event)"
+               (touchmove)="trackVolumeClick($event)">
             <div class="volume-slider">
-              <div class="volume-level">
+              <div class="volume-level" [ngStyle]="{'width.%': playerVolumePercent}">
                 <div class="dot"></div>
               </div>
             </div>
@@ -202,7 +210,6 @@
         </div>
       </div>
       <div class="title"
-           *ngIf="widget.tracks && widget.tracks.length !== 0"
            [ngStyle]="{'width.px': windowWidth > breakPoint ? windowWidth - 455 : windowWidth - 40}">
         <div class="track-name" [ngStyle]="{color: widget.style.colors.text}">
           <span>
@@ -210,11 +217,11 @@
           {{playerTrackName}}
           </span>
         </div>
-        <div class="tags" *ngIf="widget.tracks || widget.tracks[playerActiveTrackIndex].tagsArr[0] !== ''">
+        <div class="tags">
           <div
             class="tag"
             [ngStyle]="{color: widget.style.colors.active_item}"
-            *ngFor="let tag of widget.tracks[playerActiveTrackIndex].tagsArr"
+            *ngFor="let tag of playerTrackTags"
           >
             {{tag}}
           </div>
@@ -232,9 +239,14 @@
           <!--<div class="pt card"></div>-->
         <!--</div>-->
         <div class="volume">
-          <div class="click-area">
+          <div class="click-area"
+               #volumeDesktop
+               (click)="trackVolumeClick($event)"
+               (touchstart)="trackVolumeClick($event)"
+               (touchmove)="trackVolumeClick($event)"
+          >
             <div class="volume-slider">
-              <div class="volume-level">
+              <div class="volume-level" [ngStyle]="{'width.%': playerVolumePercent}">
                 <div class="dot"></div>
               </div>
             </div>
