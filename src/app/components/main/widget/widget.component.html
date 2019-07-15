@@ -28,6 +28,7 @@
   <div class="widget-item wi-screen" *ngIf="!loadingWidget">
     <div class="screen">
       <div class="banner" [ngStyle]="{'background-image':'url(' + SDN_LINK_IMG + '' + playerTracklbImage + ')'}"></div>
+      <div class="waves"></div>
     </div>
   </div>
 
@@ -158,7 +159,11 @@
   </div>
 
   <div class="widget-item wi-player-bottom" *ngIf="!loadingWidget">
-    <div class="progress" (click)="trackProgressClicked($event)">
+    <div class="progress"
+         (mousemove)="trackProgressClicked($event)"
+         (mousedown)="trackProgressClicked($event)"
+         (mouseup)="trackProgressClicked($event)"
+    >
       <div class="timing" *ngIf="windowWidth <= breakPoint">
         <div class="curtime">{{playerProgressMS}}</div>
         <div class="alltime">{{playerDurationMS}}</div>
@@ -198,9 +203,10 @@
         <div class="volume">
           <div class="click-area"
                #volumeMobile
-               (click)="trackVolumeClick($event)"
-               (touchstart)="trackVolumeClick($event)"
-               (touchmove)="trackVolumeClick($event)">
+               (mousemove)="trackVolumeClick($event)"
+               (mousedown)="trackVolumeClick($event)"
+               (mouseup)="trackVolumeClick($event)"
+          >
             <div class="volume-slider">
               <div class="volume-level" [ngStyle]="{'width.%': playerVolumePercent}">
                 <div class="dot"></div>
@@ -241,9 +247,9 @@
         <div class="volume">
           <div class="click-area"
                #volumeDesktop
-               (click)="trackVolumeClick($event)"
-               (touchstart)="trackVolumeClick($event)"
-               (touchmove)="trackVolumeClick($event)"
+               (mousemove)="trackVolumeClick($event)"
+               (mousedown)="trackVolumeClick($event)"
+               (mouseup)="trackVolumeClick($event)"
           >
             <div class="volume-slider">
               <div class="volume-level" [ngStyle]="{'width.%': playerVolumePercent}">

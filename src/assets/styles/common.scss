@@ -35,3 +35,11 @@ html, body {
 ::-webkit-scrollbar-thumb:hover {
   background: #E6E6E6;
 }
+
+.wave-line {
+  position: absolute;
+  max-width: calc(100% / 128);
+  bottom: 0;
+  opacity: 1;
+  background: linear-gradient(to top,#fff 0,#fff 50%,rgba(255,255,255,.9) 51%,rgba(255,255,255,.3) 71%,rgba(255,255,255,.3) 100%);
+}

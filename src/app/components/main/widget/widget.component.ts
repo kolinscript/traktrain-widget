@@ -24,13 +24,15 @@ export class WidgetComponent implements OnInit {
   modalContent: ModalContent;
   //
   playerActiveTrackIndex = 0;
-  playerVolumePercent: number;
   playerPlay = false;
   playerProgressSec: number | any;
   playerProgressMS = '00:00';
   playerDurationMS = '00:00';
   playerProgressPercent: number;
+  playerProgressDragged = false;
   playerProgressInterval: any;
+  playerVolumePercent: number;
+  playerVolumeDragged = false;
   playerHowl: Howl;
   playerTrackName: string;
   playerTrackTags: string[];
@@ -39,6 +41,13 @@ export class WidgetComponent implements OnInit {
   filterBy: FormGroup;
   tracksBuffer: Track[];
   searchFocused = false;
+  //
+  audio: any;
+  ctx: any;
+  source: any;
+  analyser: any;
+  freqArray: any;
+  lines = [];
 
   constructor(
     private widgetService: WidgetService,
@@ -48,12 +57,12 @@ export class WidgetComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.initFilters();
     this.initWidget(() => {
       // console.log(this.widget);
       // console.log(this.widget.tracks.map(t => (t.drumKit)));
       this.initPlayerHowl(this.playerActiveTrackIndex);
       this.initCarousel(this.widget.tracks[this.playerActiveTrackIndex].sliderIndex, this.playerActiveTrackIndex);
-      this.initFilters();
     }, 13); // widgets id's: 2, 3, 5, 9(SESH) 13, 13319
   }
 
@@ -217,22 +226,59 @@ export class WidgetComponent implements OnInit {
   }
 
   public trackVolumeClick(event): void {
-    this.playerVolumePercent = (
-      (event.offsetX * 100) /
-      (this.volumeContainerDesktop.nativeElement.offsetWidth || this.volumeContainerMobile.nativeElement.offsetWidth)
-    );
-    const volume = +(Math.round((this.playerVolumePercent / 100 * 10)) / 10).toFixed(1);
-    this.playerHowl.volume(volume);
+    switch (event.type) {
+      case ('mousedown'): {
+        this.playerVolumeDragged = true;
+        this.playerVolumePercent = (
+          (event.offsetX * 100) /
+          (this.volumeContainerDesktop.nativeElement.offsetWidth || this.volumeContainerMobile.nativeElement.offsetWidth)
+        );
+        const volume = +(Math.round((this.playerVolumePercent / 100 * 10)) / 10).toFixed(1);
+        this.playerHowl.volume(volume);
+        break;
+      }
+      case ('mousemove'): {
+        if (this.playerVolumeDragged) {
+          this.playerVolumePercent = (
+            (event.offsetX * 100) /
+            (this.volumeContainerDesktop.nativeElement.offsetWidth || this.volumeContainerMobile.nativeElement.offsetWidth)
+          );
+          const volume = +(Math.round((this.playerVolumePercent / 100 * 10)) / 10).toFixed(1);
+          this.playerHowl.volume(volume);
+        }
+        break;
+      }
+      case ('mouseup'): {
+        this.playerVolumeDragged = false;
+        break;
+      }
+    }
   }
 
   public trackProgressClicked(event): void {
-    console.log(event);
-    console.log(event.offsetX);
-    const playerProgressPx = event.offsetX;
-    this.playerProgressPercent = ((playerProgressPx * 100) / this.windowWidth);
-    this.playerProgressSec = ((this.playerHowl.duration() * this.playerProgressPercent) / 100);
-    if (this.playerProgressSec) {
-      this.playerHowl.seek(this.playerProgressSec);
+    switch (event.type) {
+      case ('mousedown'): {
+        this.playerProgressDragged = true;
+        this.playerProgressPercent = (event.offsetX * 100) / this.windowWidth;
+        this.playerProgressSec = (this.playerHowl.duration() * this.playerProgressPercent) / 100;
+        if (this.playerProgressSec) {
+          this.playerHowl.seek(this.playerProgressSec);
+        }
+        break;
+      }
+      case ('mousemove'): {
+        if (this.playerProgressDragged) {
+          if (!this.playerHowl.playing()) {
+            this.playerProgressPercent = (event.offsetX * 100) / this.windowWidth;
+            this.playerProgressSec = (this.playerHowl.duration() * this.playerProgressPercent) / 100;
+          }
+        }
+        break;
+      }
+      case ('mouseup'): {
+        this.playerProgressDragged = false;
+        break;
+      }
     }
   }
 
@@ -330,8 +376,27 @@ export class WidgetComponent implements OnInit {
       html5: true,
       onload: () => {
         this.playerDurationMS = new Date(Math.round(this.playerHowl.duration()) * 1000).toISOString().substr(14, 5);
+        // equalizer
+        this.audio = (this.playerHowl as any)._sounds[0]._node;
+        this.audio.crossOrigin = 'anonymous';
+        this.ctx = new AudioContext();
+        this.ctx.crossOrigin = 'anonymous';
+        this.source = this.ctx.createMediaElementSource(this.audio);
+        this.analyser = this.ctx.createAnalyser();
+
+        this.source.connect(this.analyser);
+        this.analyser.connect(this.ctx.destination);
+
+        this.analyser.fftSize = 256;
+        const bufferLength = this.analyser.frequencyBinCount;
+        this.freqArray = new Uint8Array(bufferLength);
+        console.log(this.audio);
+        console.log(this.ctx);
+        console.log(this.freqArray);
+        console.log(this.analyser);
       },
       onplay: () => {
+        this.initEqualizerScreen();
         this.playerProgressInterval = setInterval(() => {
           this.playerProgressSec
             = (typeof this.playerHowl.seek() === 'number')
@@ -339,8 +404,8 @@ export class WidgetComponent implements OnInit {
             : this.playerHowl.seek();
           this.playerProgressPercent = ((this.playerProgressSec * 100) / this.playerHowl.duration());
           this.playerProgressMS = new Date(this.playerProgressSec * 1000).toISOString().substr(14, 5);
+          this.animate();
         }, 10);
-
       },
       onseek: () => {
         this.playerProgressSec
@@ -466,6 +531,37 @@ export class WidgetComponent implements OnInit {
     this.filterBy = this.fb.group({
       filterByTrackName: null,
     });
+  }
+
+  private animate() {
+    if (this && this.analyser) {
+      this.analyser.getByteTimeDomainData(this.freqArray);
+      this.lines.forEach((line, i) => {
+        line.style.height = this.freqArray[i] / 2 + 'px';
+      });
+      requestAnimationFrame(this.animate);
+    }
+  }
+
+
+  public initEqualizerScreen() {
+    let xPos = 0;
+    const width = 6;
+    const space = 16;
+    const target = document.getElementsByClassName('waves')[0];
+    console.log(document.getElementsByClassName('wave-line'));
+    if (document.getElementsByClassName('wave-line').length === 0) {
+      for (let i = 0; i < 64; i++) {
+        const line = document.createElement('div');
+        line.setAttribute('class', 'wave-line line_' + i);
+        line.style.left = (xPos + 0) + 'px';
+        line.style.width = width + 'px';
+        this.lines.push(line);
+        target.appendChild(line);
+        xPos += width + space;
+      }
+    }
+    console.log('Equalizer screen initialized');
   }
 
   private priceTransformer(INPUT_PRICES: {}): {}[] {
