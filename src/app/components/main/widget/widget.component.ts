@@ -22,6 +22,7 @@ export class WidgetComponent implements OnInit {
   breakPoint = 600;
   modalOpen = false;
   modalContent: ModalContent;
+  carouselMoving: boolean;
   //
   playerActiveTrackIndex = 0;
   playerPlay = false;
@@ -69,11 +70,12 @@ export class WidgetComponent implements OnInit {
   // todo highlight to components/shared folder
   // Carousel : start
   private initCarousel(startIndex: number, trackIndex: number): void {
+    this.carouselMoving = false;
     const carouselLength = this.widget.tracks[trackIndex].sliderData.length;
     this.widget.tracks[trackIndex].sliderData.forEach(slide => (slide.style = ''));
     // console.log('carouselLength ', carouselLength);
     // console.log('Carousel start index ', startIndex);
-    if (carouselLength > 3) {
+    if (carouselLength >= 3) {
       this.widget.tracks[trackIndex].sliderData[carouselLength - 1].style = 'prev';
       this.widget.tracks[trackIndex].sliderData[0].style = 'initial';
       this.widget.tracks[trackIndex].sliderData[1].style = 'next';
@@ -91,84 +93,95 @@ export class WidgetComponent implements OnInit {
   }
 
   public carouselSlide(track: Track, trackId: number, direction: string): void {
-    const carouselLength = track.sliderData.length;
-    const activeIndex = track.sliderData.findIndex(el => el.style === 'initial');
-    // console.log('track ', track);
-    // console.log('sliderDataLength ', sliderDataLength);
-    // console.log('activeIndex ', activeIndex);
-    switch (direction) {
-      case 'prev': {
-        if (carouselLength === 2) {
-          if (activeIndex === 1) {
+    // console.log(this.carouselMoving);
+    if (!this.carouselMoving) {
+      this.disableInteraction();
+      const carouselLength = track.sliderData.length;
+      const activeIndex = track.sliderData.findIndex(el => el.style === 'initial');
+      // console.log('track ', track);
+      // console.log('sliderDataLength ', sliderDataLength);
+      // console.log('activeIndex ', activeIndex);
+      switch (direction) {
+        case 'prev': {
+          if (carouselLength === 2) {
+            if (activeIndex === 1) {
+              track.sliderData[0].style =  'initial';
+              track.sliderData[1].style =  'next';
+            } else if (activeIndex === 0) {
+              track.sliderData[0].style =  'next';
+              track.sliderData[1].style =  'initial';
+            }
+          } else if (activeIndex === 0) {
+            // console.log('activeIndex ', activeIndex);
+            track.sliderData[activeIndex].style =  'next';
+            track.sliderData[activeIndex + 1].style =  '';
+            track.sliderData[carouselLength - 1].style =  'initial';
+            track.sliderData[carouselLength - 2].style =  'prev';
+          } else if (activeIndex === carouselLength - 1) {
+            track.sliderData[activeIndex - 2].style =  'prev';
+            track.sliderData[activeIndex - 1].style =  'initial';
+            track.sliderData[activeIndex].style =  'next';
+            track.sliderData[0].style =  '';
+          } else if (activeIndex === 1) {
+            track.sliderData[carouselLength - 1].style =  'prev';
             track.sliderData[0].style =  'initial';
             track.sliderData[1].style =  'next';
-          } else if (activeIndex === 0) {
-            track.sliderData[0].style =  'next';
-            track.sliderData[1].style =  'initial';
+            track.sliderData[2].style =  '';
+          } else if (activeIndex !== 0) {
+            // console.log('activeIndex ', activeIndex);
+            track.sliderData[activeIndex - 2].style =  'prev';
+            track.sliderData[activeIndex - 1].style =  'initial';
+            track.sliderData[activeIndex].style =  'next';
+            track.sliderData[activeIndex + 1].style =  '';
           }
-        } else if (activeIndex === 0) {
-          // console.log('activeIndex ', activeIndex);
-          track.sliderData[activeIndex].style =  'next';
-          track.sliderData[activeIndex + 1].style =  '';
-          track.sliderData[carouselLength - 1].style =  'initial';
-          track.sliderData[carouselLength - 2].style =  'prev';
-        } else if (activeIndex === carouselLength - 1) {
-          track.sliderData[activeIndex - 2].style =  'prev';
-          track.sliderData[activeIndex - 1].style =  'initial';
-          track.sliderData[activeIndex].style =  'next';
-          track.sliderData[0].style =  '';
-        } else if (activeIndex === 1) {
-          track.sliderData[carouselLength - 1].style =  'prev';
-          track.sliderData[0].style =  'initial';
-          track.sliderData[1].style =  'next';
-          track.sliderData[2].style =  '';
-        } else if (activeIndex !== 0) {
-          // console.log('activeIndex ', activeIndex);
-          track.sliderData[activeIndex - 2].style =  'prev';
-          track.sliderData[activeIndex - 1].style =  'initial';
-          track.sliderData[activeIndex].style =  'next';
-          track.sliderData[activeIndex + 1].style =  '';
+          break;
         }
-        break;
-      }
-      case 'next': {
-        if (carouselLength === 1) {
-          track.sliderData[0].style =  'initial';
-        } else if (carouselLength === 2) {
-          if (activeIndex === 1) {
+        case 'next': {
+          if (carouselLength === 1) {
+            track.sliderData[0].style =  'initial';
+          } else if (carouselLength === 2) {
+            if (activeIndex === 1) {
+              track.sliderData[0].style =  'initial';
+              track.sliderData[1].style =  'next';
+            } else if (activeIndex === 0) {
+              track.sliderData[0].style =  'next';
+              track.sliderData[1].style =  'initial';
+            }
+          } else if (activeIndex === 0) {
+            // console.log('activeIndex ', activeIndex);
+            track.sliderData[activeIndex].style =  'prev';
+            track.sliderData[activeIndex + 1].style =  'initial';
+            track.sliderData[activeIndex + 2].style =  'next';
+            track.sliderData[carouselLength - 1].style =  '';
+          } else if (activeIndex === carouselLength - 1) {
+            track.sliderData[activeIndex - 1].style =  '';
+            track.sliderData[activeIndex].style =  'prev';
             track.sliderData[0].style =  'initial';
             track.sliderData[1].style =  'next';
-          } else if (activeIndex === 0) {
+          } else if (activeIndex === carouselLength - 2) {
+            track.sliderData[activeIndex - 1].style =  '';
+            track.sliderData[activeIndex].style =  'prev';
+            track.sliderData[activeIndex + 1].style =  'initial';
             track.sliderData[0].style =  'next';
-            track.sliderData[1].style =  'initial';
+          } else if (activeIndex !== 0) {
+            // console.log('activeIndex ', activeIndex);
+            track.sliderData[activeIndex - 1].style =  '';
+            track.sliderData[activeIndex].style =  'prev';
+            track.sliderData[activeIndex + 1].style =  'initial';
+            track.sliderData[activeIndex + 2].style =  'next';
           }
-        } else if (activeIndex === 0) {
-          // console.log('activeIndex ', activeIndex);
-          track.sliderData[activeIndex].style =  'prev';
-          track.sliderData[activeIndex + 1].style =  'initial';
-          track.sliderData[activeIndex + 2].style =  'next';
-          track.sliderData[carouselLength - 1].style =  '';
-        } else if (activeIndex === carouselLength - 1) {
-          track.sliderData[activeIndex - 1].style =  '';
-          track.sliderData[activeIndex].style =  'prev';
-          track.sliderData[0].style =  'initial';
-          track.sliderData[1].style =  'next';
-        } else if (activeIndex === carouselLength - 2) {
-          track.sliderData[activeIndex - 1].style =  '';
-          track.sliderData[activeIndex].style =  'prev';
-          track.sliderData[activeIndex + 1].style =  'initial';
-          track.sliderData[0].style =  'next';
-        } else if (activeIndex !== 0) {
-          // console.log('activeIndex ', activeIndex);
-          track.sliderData[activeIndex - 1].style =  '';
-          track.sliderData[activeIndex].style =  'prev';
-          track.sliderData[activeIndex + 1].style =  'initial';
-          track.sliderData[activeIndex + 2].style =  'next';
+          break;
         }
-        break;
       }
+      this.widget.tracks[trackId].sliderData = track.sliderData;
     }
-    this.widget.tracks[trackId].sliderData = track.sliderData;
+  }
+
+  private disableInteraction() {
+    this.carouselMoving = true;
+    setTimeout(() => {
+      this.carouselMoving = false;
+    }, 500);
   }
   // Carousel : end
 
@@ -385,8 +398,8 @@ export class WidgetComponent implements OnInit {
         this.analyser.fftSize = 256;
         this.freqArray = new Uint8Array(bufferLength);
         Howler.masterGain.connect(this.analyser);
-        console.log(this.analyser);
-        console.log(this.freqArray);
+        // console.log(this.analyser);
+        // console.log(this.freqArray);
       },
       onplay: () => {
         this.initEqualizerScreen();
@@ -397,7 +410,7 @@ export class WidgetComponent implements OnInit {
             : this.playerHowl.seek();
           this.playerProgressPercent = ((this.playerProgressSec * 100) / this.playerHowl.duration());
           this.playerProgressMS = new Date(this.playerProgressSec * 1000).toISOString().substr(14, 5);
-          this.animate();
+          this.animateEqualizer();
         }, 10);
       },
       onseek: () => {
@@ -534,17 +547,6 @@ export class WidgetComponent implements OnInit {
     });
   }
 
-  private animate() {
-    if (this && this.analyser) {
-      this.analyser.getByteFrequencyData(this.freqArray);
-      this.lines.forEach((line, i) => {
-        line.style.height = this.freqArray[i] / 2 + 'px';
-      });
-      requestAnimationFrame(this.animate);
-    }
-  }
-
-
   private initEqualizerScreen() {
     this.screenWidth = (document.getElementsByClassName('wi-screen') as HTMLCollection)[0].clientWidth;
     this.screenHeight = (document.getElementsByClassName('wi-screen') as HTMLCollection)[0].clientHeight;
@@ -567,6 +569,16 @@ export class WidgetComponent implements OnInit {
       }
     }
     console.log('Equalizer screen initialized');
+  }
+
+  private animateEqualizer() {
+    if (this && this.analyser) {
+      this.analyser.getByteFrequencyData(this.freqArray);
+      this.lines.forEach((line, i) => {
+        line.style.height = this.freqArray[i] / 2 + 'px';
+      });
+      requestAnimationFrame(this.animateEqualizer);
+    }
   }
 
   private priceTransformer(INPUT_PRICES: {}): {}[] {
