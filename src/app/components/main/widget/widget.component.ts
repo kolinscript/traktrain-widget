@@ -298,6 +298,9 @@ export class WidgetComponent implements OnInit {
           this.playerHowl.pause();                              // пауза ховлера
           this.playerPlay = false;
           this.widget.tracks[this.playerActiveTrackIndex].play = false;
+          if (this.analyser) {
+            this.analyser.ctx.close();
+          }
           if (this.playerProgressInterval) {
             clearInterval(this.playerProgressInterval);         // чистка таймера
           }
