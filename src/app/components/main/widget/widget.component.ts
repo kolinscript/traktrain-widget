@@ -3,7 +3,7 @@ import { Colors, LicensePriceMapper, Style, Track, Widget, SDN_LINK_IMG, SDN_LIN
 import { WidgetService } from '../../../services/widget.service';
 import { ModalService } from '../../../services/modal.service';
 import { ModalContent, ModalTypes } from '../../../models/modal.model';
-import { Howl } from 'howler';
+import { Howl, Howler } from 'howler';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
@@ -24,13 +24,15 @@ export class WidgetComponent implements OnInit {
   modalContent: ModalContent;
   //
   playerActiveTrackIndex = 0;
-  playerVolumePercent: number;
   playerPlay = false;
   playerProgressSec: number | any;
   playerProgressMS = '00:00';
   playerDurationMS = '00:00';
   playerProgressPercent: number;
+  playerProgressDragged = false;
   playerProgressInterval: any;
+  playerVolumePercent: number;
+  playerVolumeDragged = false;
   playerHowl: Howl;
   playerTrackName: string;
   playerTrackTags: string[];
@@ -39,6 +41,13 @@ export class WidgetComponent implements OnInit {
   filterBy: FormGroup;
   tracksBuffer: Track[];
   searchFocused = false;
+  //
+  analyser: any;
+  freqArray: any;
+  ctx: any;
+  lines = [];
+  screenWidth: number;
+  screenHeight: number;
 
   constructor(
     private widgetService: WidgetService,
@@ -48,13 +57,13 @@ export class WidgetComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    this.initFilters();
     this.initWidget(() => {
       // console.log(this.widget);
       // console.log(this.widget.tracks.map(t => (t.drumKit)));
       this.initPlayerHowl(this.playerActiveTrackIndex);
       this.initCarousel(this.widget.tracks[this.playerActiveTrackIndex].sliderIndex, this.playerActiveTrackIndex);
-      this.initFilters();
-    }, 13); // widgets id's: 2, 3, 5, 9(SESH) 13, 13319
+    }, 9); // widgets id's: 2, 3, 5, 9(SESH) 13, 13319
   }
 
   // todo highlight to components/shared folder
@@ -217,22 +226,59 @@ export class WidgetComponent implements OnInit {
   }
 
   public trackVolumeClick(event): void {
-    this.playerVolumePercent = (
-      (event.offsetX * 100) /
-      (this.volumeContainerDesktop.nativeElement.offsetWidth || this.volumeContainerMobile.nativeElement.offsetWidth)
-    );
-    const volume = +(Math.round((this.playerVolumePercent / 100 * 10)) / 10).toFixed(1);
-    this.playerHowl.volume(volume);
+    switch (event.type) {
+      case ('mousedown'): {
+        this.playerVolumeDragged = true;
+        this.playerVolumePercent = (
+          (event.offsetX * 100) /
+          (this.volumeContainerDesktop.nativeElement.offsetWidth || this.volumeContainerMobile.nativeElement.offsetWidth)
+        );
+        const volume = +(Math.round((this.playerVolumePercent / 100 * 10)) / 10).toFixed(1);
+        this.playerHowl.volume(volume);
+        break;
+      }
+      case ('mousemove'): {
+        if (this.playerVolumeDragged) {
+          this.playerVolumePercent = (
+            (event.offsetX * 100) /
+            (this.volumeContainerDesktop.nativeElement.offsetWidth || this.volumeContainerMobile.nativeElement.offsetWidth)
+          );
+          const volume = +(Math.round((this.playerVolumePercent / 100 * 10)) / 10).toFixed(1);
+          this.playerHowl.volume(volume);
+        }
+        break;
+      }
+      case ('mouseup'): {
+        this.playerVolumeDragged = false;
+        break;
+      }
+    }
   }
 
   public trackProgressClicked(event): void {
-    console.log(event);
-    console.log(event.offsetX);
-    const playerProgressPx = event.offsetX;
-    this.playerProgressPercent = ((playerProgressPx * 100) / this.windowWidth);
-    this.playerProgressSec = ((this.playerHowl.duration() * this.playerProgressPercent) / 100);
-    if (this.playerProgressSec) {
-      this.playerHowl.seek(this.playerProgressSec);
+    switch (event.type) {
+      case ('mousedown'): {
+        this.playerProgressDragged = true;
+        this.playerProgressPercent = (event.offsetX * 100) / this.windowWidth;
+        this.playerProgressSec = (this.playerHowl.duration() * this.playerProgressPercent) / 100;
+        if (this.playerProgressSec) {
+          this.playerHowl.seek(this.playerProgressSec);
+        }
+        break;
+      }
+      case ('mousemove'): {
+        if (this.playerProgressDragged) {
+          if (!this.playerHowl.playing()) {
+            this.playerProgressPercent = (event.offsetX * 100) / this.windowWidth;
+            this.playerProgressSec = (this.playerHowl.duration() * this.playerProgressPercent) / 100;
+          }
+        }
+        break;
+      }
+      case ('mouseup'): {
+        this.playerProgressDragged = false;
+        break;
+      }
     }
   }
 
@@ -252,6 +298,9 @@ export class WidgetComponent implements OnInit {
           this.playerHowl.pause();                              // пауза ховлера
           this.playerPlay = false;
           this.widget.tracks[this.playerActiveTrackIndex].play = false;
+          if (this.analyser) {
+            this.analyser.ctx.close();
+          }
           if (this.playerProgressInterval) {
             clearInterval(this.playerProgressInterval);         // чистка таймера
           }
@@ -327,11 +376,20 @@ export class WidgetComponent implements OnInit {
     this.playerDurationMS = '00:00';
     this.playerHowl = new Howl({
       src: [SDN_LINK_MP3 + this.widget.tracks[trackIndex].link],
-      html5: true,
       onload: () => {
         this.playerDurationMS = new Date(Math.round(this.playerHowl.duration()) * 1000).toISOString().substr(14, 5);
+        // equalizer
+        this.ctx = Howler.ctx;
+        this.analyser = this.ctx.createAnalyser();
+        const bufferLength = this.analyser.frequencyBinCount;
+        this.analyser.fftSize = 256;
+        this.freqArray = new Uint8Array(bufferLength);
+        Howler.masterGain.connect(this.analyser);
+        console.log(this.analyser);
+        console.log(this.freqArray);
       },
       onplay: () => {
+        this.initEqualizerScreen();
         this.playerProgressInterval = setInterval(() => {
           this.playerProgressSec
             = (typeof this.playerHowl.seek() === 'number')
@@ -339,8 +397,8 @@ export class WidgetComponent implements OnInit {
             : this.playerHowl.seek();
           this.playerProgressPercent = ((this.playerProgressSec * 100) / this.playerHowl.duration());
           this.playerProgressMS = new Date(this.playerProgressSec * 1000).toISOString().substr(14, 5);
+          this.animate();
         }, 10);
-
       },
       onseek: () => {
         this.playerProgressSec
@@ -349,7 +407,11 @@ export class WidgetComponent implements OnInit {
           : this.playerHowl.seek();
         this.playerProgressMS = new Date(this.playerProgressSec * 1000).toISOString().substr(14, 5);
       },
-      onpause: () => {},
+      onpause: () => {
+        this.lines.forEach((line) => {
+          line.style.height = 0 + 'px';
+        });
+      },
       onend: () => {
         clearInterval(this.playerProgressInterval);
         this.playerProgressSec = 0;
@@ -414,7 +476,11 @@ export class WidgetComponent implements OnInit {
 
   public onResize(event): void {
     this.windowWidth = event.target.innerWidth;
-    console.log(this.windowWidth);
+    this.screenWidth = (document.getElementsByClassName('wi-screen') as HTMLCollection)[0].clientWidth;
+    this.screenHeight = (document.getElementsByClassName('wi-screen') as HTMLCollection)[0].clientHeight;
+    console.log('windowWidth', this.windowWidth);
+    console.log('screenWidth', this.screenWidth);
+    console.log('screenHeight', this.screenHeight);
   }
 
   private initWidget(completed, id: number): void {
@@ -466,6 +532,41 @@ export class WidgetComponent implements OnInit {
     this.filterBy = this.fb.group({
       filterByTrackName: null,
     });
+  }
+
+  private animate() {
+    if (this && this.analyser) {
+      this.analyser.getByteFrequencyData(this.freqArray);
+      this.lines.forEach((line, i) => {
+        line.style.height = this.freqArray[i] / 2 + 'px';
+      });
+      requestAnimationFrame(this.animate);
+    }
+  }
+
+
+  private initEqualizerScreen() {
+    this.screenWidth = (document.getElementsByClassName('wi-screen') as HTMLCollection)[0].clientWidth;
+    this.screenHeight = (document.getElementsByClassName('wi-screen') as HTMLCollection)[0].clientHeight;
+    console.log('screenWidth', this.screenWidth);
+    console.log('screenHeight', this.screenHeight);
+    let xPos = 0;
+    const lineAmount = 68;
+    const space = 4;
+    const width = Math.round((this.screenWidth / lineAmount) + 0) - space;
+    const target = document.getElementsByClassName('waves')[0];
+    if (document.getElementsByClassName('wave-line').length === 0) {
+      for (let i = 0; i < lineAmount; i++) {
+        const line = document.createElement('div');
+        line.setAttribute('class', 'wave-line line_' + i);
+        line.style.left = (xPos + 0) + 'px';
+        line.style.width = width + 'px';
+        this.lines.push(line);
+        target.appendChild(line);
+        xPos += width + space;
+      }
+    }
+    console.log('Equalizer screen initialized');
   }
 
   private priceTransformer(INPUT_PRICES: {}): {}[] {
