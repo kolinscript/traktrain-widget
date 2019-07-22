@@ -99,12 +99,20 @@
               height: 100%;
             }
           }
-          &.instagram {
-            width: 20px;
+          &.soundcloud {
+            width: auto;
+            height: 20px;
+          }
+          &.youtube {
+            width: auto;
             height: 20px;
           }
           &.twitter {
             width: auto;
+            height: 20px;
+          }
+          &.instagram {
+            width: 20px;
             height: 20px;
           }
         }

@@ -38,8 +38,7 @@ html, body {
 
 .wave-line {
   position: absolute;
-  max-width: calc(100% / 128);
   bottom: 0;
   opacity: 1;
-  background: linear-gradient(to top,#fff 0,#fff 50%,rgba(255,255,255,.9) 51%,rgba(255,255,255,.3) 71%,rgba(255,255,255,.3) 100%);
+  background: linear-gradient(to top,rgba(255,255,255,.9) 0,rgba(255,255,255,.7) 50%,rgba(255,255,255,.6) 51%,rgba(255,255,255,.4) 71%,rgba(255,255,255,.2) 100%);
 }

@@ -3,7 +3,7 @@ import { Colors, LicensePriceMapper, Style, Track, Widget, SDN_LINK_IMG, SDN_LIN
 import { WidgetService } from '../../../services/widget.service';
 import { ModalService } from '../../../services/modal.service';
 import { ModalContent, ModalTypes } from '../../../models/modal.model';
-import { Howl } from 'howler';
+import { Howl, Howler } from 'howler';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
@@ -42,12 +42,12 @@ export class WidgetComponent implements OnInit {
   tracksBuffer: Track[];
   searchFocused = false;
   //
-  audio: any;
-  ctx: any;
-  source: any;
   analyser: any;
   freqArray: any;
+  ctx: any;
   lines = [];
+  screenWidth: number;
+  screenHeight: number;
 
   constructor(
     private widgetService: WidgetService,
@@ -63,7 +63,7 @@ export class WidgetComponent implements OnInit {
       // console.log(this.widget.tracks.map(t => (t.drumKit)));
       this.initPlayerHowl(this.playerActiveTrackIndex);
       this.initCarousel(this.widget.tracks[this.playerActiveTrackIndex].sliderIndex, this.playerActiveTrackIndex);
-    }, 13); // widgets id's: 2, 3, 5, 9(SESH) 13, 13319
+    }, 9); // widgets id's: 2, 3, 5, 9(SESH) 13, 13319
   }
 
   // todo highlight to components/shared folder
@@ -373,27 +373,17 @@ export class WidgetComponent implements OnInit {
     this.playerDurationMS = '00:00';
     this.playerHowl = new Howl({
       src: [SDN_LINK_MP3 + this.widget.tracks[trackIndex].link],
-      html5: true,
       onload: () => {
         this.playerDurationMS = new Date(Math.round(this.playerHowl.duration()) * 1000).toISOString().substr(14, 5);
         // equalizer
-        this.audio = (this.playerHowl as any)._sounds[0]._node;
-        this.audio.crossOrigin = 'anonymous';
-        this.ctx = new AudioContext();
-        this.ctx.crossOrigin = 'anonymous';
-        this.source = this.ctx.createMediaElementSource(this.audio);
+        this.ctx = Howler.ctx;
         this.analyser = this.ctx.createAnalyser();
-
-        this.source.connect(this.analyser);
-        this.analyser.connect(this.ctx.destination);
-
-        this.analyser.fftSize = 256;
         const bufferLength = this.analyser.frequencyBinCount;
+        this.analyser.fftSize = 256;
         this.freqArray = new Uint8Array(bufferLength);
-        console.log(this.audio);
-        console.log(this.ctx);
-        console.log(this.freqArray);
+        Howler.masterGain.connect(this.analyser);
         console.log(this.analyser);
+        console.log(this.freqArray);
       },
       onplay: () => {
         this.initEqualizerScreen();
@@ -414,7 +404,11 @@ export class WidgetComponent implements OnInit {
           : this.playerHowl.seek();
         this.playerProgressMS = new Date(this.playerProgressSec * 1000).toISOString().substr(14, 5);
       },
-      onpause: () => {},
+      onpause: () => {
+        this.lines.forEach((line) => {
+          line.style.height = 0 + 'px';
+        });
+      },
       onend: () => {
         clearInterval(this.playerProgressInterval);
         this.playerProgressSec = 0;
@@ -479,7 +473,11 @@ export class WidgetComponent implements OnInit {
 
   public onResize(event): void {
     this.windowWidth = event.target.innerWidth;
-    console.log(this.windowWidth);
+    this.screenWidth = (document.getElementsByClassName('wi-screen') as HTMLCollection)[0].clientWidth;
+    this.screenHeight = (document.getElementsByClassName('wi-screen') as HTMLCollection)[0].clientHeight;
+    console.log('windowWidth', this.windowWidth);
+    console.log('screenWidth', this.screenWidth);
+    console.log('screenHeight', this.screenHeight);
   }
 
   private initWidget(completed, id: number): void {
@@ -535,7 +533,7 @@ export class WidgetComponent implements OnInit {
 
   private animate() {
     if (this && this.analyser) {
-      this.analyser.getByteTimeDomainData(this.freqArray);
+      this.analyser.getByteFrequencyData(this.freqArray);
       this.lines.forEach((line, i) => {
         line.style.height = this.freqArray[i] / 2 + 'px';
       });
@@ -544,14 +542,18 @@ export class WidgetComponent implements OnInit {
   }
 
 
-  public initEqualizerScreen() {
+  private initEqualizerScreen() {
+    this.screenWidth = (document.getElementsByClassName('wi-screen') as HTMLCollection)[0].clientWidth;
+    this.screenHeight = (document.getElementsByClassName('wi-screen') as HTMLCollection)[0].clientHeight;
+    console.log('screenWidth', this.screenWidth);
+    console.log('screenHeight', this.screenHeight);
     let xPos = 0;
-    const width = 6;
-    const space = 16;
+    const lineAmount = 68;
+    const space = 4;
+    const width = Math.round((this.screenWidth / lineAmount) + 0) - space;
     const target = document.getElementsByClassName('waves')[0];
-    console.log(document.getElementsByClassName('wave-line'));
     if (document.getElementsByClassName('wave-line').length === 0) {
-      for (let i = 0; i < 64; i++) {
+      for (let i = 0; i < lineAmount; i++) {
         const line = document.createElement('div');
         line.setAttribute('class', 'wave-line line_' + i);
         line.style.left = (xPos + 0) + 'px';

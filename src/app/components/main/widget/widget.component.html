@@ -19,7 +19,16 @@
       <div class="name">{{widget.producer.artistName}}</div>
     </div>
     <div class="social">
-      <div class="link instagram">
+      <div class="link soundcloud" *ngIf="widget.socials.soundcloud">
+        <a href="{{widget.socials.soundcloud}}" target="_blank"><img src="../../../assets/icons/soundcloud.svg" alt="soundcloud"></a>
+      </div>
+      <div class="link youtube" *ngIf="widget.socials.youtube">
+        <a href="{{widget.socials.youtube}}" target="_blank"><img src="../../../assets/icons/youtube.svg" alt="youtube"></a>
+      </div>
+      <div class="link twitter" *ngIf="widget.socials.twitter">
+        <a href="{{widget.socials.twitter}}" target="_blank"><img src="../../../assets/icons/twitter.svg" alt="twitter"></a>
+      </div>
+      <div class="link instagram" *ngIf="widget.socials.instagram">
         <a href="{{widget.socials.instagram}}" target="_blank"><img src="../../../assets/icons/instagram.svg" alt="instagram"></a>
       </div>
     </div>
