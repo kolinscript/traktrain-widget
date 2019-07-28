@@ -15,7 +15,9 @@
 
   <div class="widget-item wi-topbar" *ngIf="!loadingWidget">
     <div class="title">
-      <div class="shield" [ngStyle]="{background: widget.style.colors.active_item, borderColor: widget.style.colors.active_accent}"></div>
+      <div class="shield"
+           [ngStyle]="{background: widget.style.colors.active_item, borderColor: widget.style.colors.active_accent}"
+      ></div>
       <div class="name">{{widget.producer.artistName}}</div>
     </div>
     <div class="social">
@@ -34,7 +36,10 @@
     </div>
   </div>
 
-  <div class="widget-item wi-screen" *ngIf="!loadingWidget">
+  <div class="widget-item wi-screen"
+       *ngIf="!loadingWidget"
+       [ngStyle]="{background: widget.style.colors.active_item}"
+  >
     <div class="screen">
       <div class="banner" [ngStyle]="{'background-image':'url(' + SDN_LINK_IMG + '' + playerTracklbImage + ')'}"></div>
       <div class="waves"></div>
@@ -132,18 +137,16 @@
               <div class="icon"></div>
             </div>
             <div class="rc-rights">
-              <div
-                class="right"
-                *ngFor="let right of track.sliderData ; index as indexRight"
-                [ngClass]="{'prev': right.style === 'prev', 'next': right.style === 'next', 'initial': right.style === 'initial'}"
+              <div class="right"
+                   *ngFor="let right of track.sliderData ; index as indexRight"
+                   [ngClass]="{'prev': right.style === 'prev', 'next': right.style === 'next', 'initial': right.style === 'initial'}"
               >
                 {{right.right}}<span class="val"> ${{right.price}}</span>
               </div>
             </div>
-            <div
-              class="rc-control next"
-              *ngIf="track.sliderData.length !== 1"
-              (click)="carouselSlide(track, indexTrack, 'next')"
+            <div class="rc-control next"
+                 *ngIf="track.sliderData.length !== 1"
+                 (click)="carouselSlide(track, indexTrack, 'next')"
             >
               <div class="icon"></div>
             </div>
@@ -153,7 +156,10 @@
                *ngIf="(track.active || track.hovered) && !track.inCart"
                (click)="trackAddToCart($event, track, indexTrack)"
           >
-            <span class="tip"><span class="line"></span><span class="line"></span></span>
+            <span class="tip"
+                  [ngStyle]="{backgroundColor: widget.style.colors.active_item}"
+            >
+              <span class="line"></span><span class="line"></span></span>
           </div>
           <div class="btn-cart added"
                *ngIf="track.inCart"
@@ -178,17 +184,30 @@
         <div class="alltime">{{playerDurationMS}}</div>
       </div>
       <div class="bar">
-        <div class="active-area" [ngStyle]="{'width.%': playerProgressPercent}">
-          <div class="dot" *ngIf="playerProgressPercent"></div>
+        <div class="active-area"
+             [ngStyle]="{'width.%': playerProgressPercent, backgroundColor: widget.style.colors.active_item}"
+        >
+          <div class="dot"
+               *ngIf="playerProgressPercent"
+               [ngStyle]="{borderColor: widget.style.colors.active_item}"
+          ></div>
         </div>
       </div>
     </div>
     <div class="block-music">
       <div class="controller">
         <div class="ctrls">
-          <div class="ctrl prev" (click)="trackToggle('prev')">
-            <span class="line"></span>
-            <span class="triangle"></span>
+          <div class="ctrl prev"
+               (click)="trackToggle('prev')"
+               (mouseover)="hoverOnPrev = true"
+               (mouseleave)="hoverOnPrev = false"
+          >
+            <span class="line"
+                  [ngStyle]="{backgroundColor: hoverOnPrev === true  ? widget.style.colors.active_item : '#b8b8b8'}"
+            ></span>
+            <span class="triangle"
+                  [ngStyle]="{borderRightColor: hoverOnPrev === true  ? widget.style.colors.active_item : '#b8b8b8'}"
+            ></span>
           </div>
           <div
             class="ctrl play"
@@ -204,9 +223,17 @@
               [ngStyle]="{borderLeftColor: widget.style.colors.active_item}"
             ></span>
           </div>
-          <div class="ctrl next" (click)="trackToggle('next')">
-            <span class="triangle"></span>
-            <span class="line"></span>
+          <div class="ctrl next"
+               (click)="trackToggle('next')"
+               (mouseover)="hoverOnNext = true"
+               (mouseleave)="hoverOnNext = false"
+          >
+            <span class="triangle"
+                  [ngStyle]="{borderLeftColor: hoverOnNext === true  ? widget.style.colors.active_item : '#b8b8b8'}"
+            ></span>
+            <span class="line"
+                  [ngStyle]="{backgroundColor: hoverOnNext === true  ? widget.style.colors.active_item : '#b8b8b8'}"
+            ></span>
           </div>
         </div>
         <div class="volume">
@@ -217,15 +244,20 @@
                (mouseup)="trackVolumeClick($event)"
           >
             <div class="volume-slider">
-              <div class="volume-level" [ngStyle]="{'width.%': playerVolumePercent}">
-                <div class="dot"></div>
+              <div class="volume-level"
+                   [ngStyle]="{'width.%': playerVolumePercent, backgroundColor: widget.style.colors.active_item}"
+              >
+                <div class="dot"
+                     [ngStyle]="{borderColor: widget.style.colors.active_item}"
+                ></div>
               </div>
             </div>
           </div>
         </div>
       </div>
       <div class="title"
-           [ngStyle]="{'width.px': windowWidth > breakPoint ? windowWidth - 455 : windowWidth - 40}">
+           [ngStyle]="{'width.px': windowWidth > breakPoint ? windowWidth - 455 : windowWidth - 40}"
+      >
         <div class="track-name" [ngStyle]="{color: widget.style.colors.text}">
           <span>
           {{playerActiveTrackIndex + 1}}. {{widget.producer.artistName}} -
@@ -261,18 +293,38 @@
                (mouseup)="trackVolumeClick($event)"
           >
             <div class="volume-slider">
-              <div class="volume-level" [ngStyle]="{'width.%': playerVolumePercent}">
-                <div class="dot"></div>
+              <div class="volume-level"
+                   [ngStyle]="{'width.%': playerVolumePercent, backgroundColor: widget.style.colors.active_item}"
+              >
+                <div class="dot"
+                     [ngStyle]="{borderColor: widget.style.colors.active_item}"
+                ></div>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <div class="btn-cart-and-price" (click)="cartOpen()">
+      <div class="btn-cart-and-price"
+           (click)="cartOpen()"
+           (mouseover)="hoverOnCart = true"
+           (mouseleave)="hoverOnCart = false"
+           [ngStyle]="{backgroundColor: hoverOnCart === true  ? widget.style.colors.active_item : '#F5F5F5'}"
+      >
         <div class="price" [ngStyle]="{color: widget.style.colors.text}">
           <span class="val">${{widget.cart.totalCost}}</span>
         </div>
-        <div class="icon-cart"><span class="count" *ngIf="widget.cart.cartItems.length > 0">{{widget.cart.cartItems.length}}</span></div>
+        <div class="icon-cart">
+          <span class="count"
+                *ngIf="widget.cart.cartItems.length > 0"
+                [ngStyle]="{
+                  color: hoverOnCart === true  ? widget.style.colors.active_item : '#ffffff',
+                  backgroundColor: hoverOnCart === true  ? '#ffffff' : widget.style.colors.active_item,
+                  'box-shadow': hoverOnCart === true  ? '0 0 0 2px' + widget.style.colors.active_item : '0 0 0 2px #f5f5f5'
+                }"
+          >
+            {{widget.cart.cartItems.length}}
+          </span>
+        </div>
       </div>
     </div>
   </div>

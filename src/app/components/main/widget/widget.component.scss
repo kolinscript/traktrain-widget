@@ -19,7 +19,7 @@
     margin-left: -50px;
     .bar {
       position: absolute;
-      background: #695FFC;
+      background: #b8b8b8;
       bottom: 1px;
       width: 10px;
       animation: sound 0ms -800ms linear infinite alternate;
@@ -125,7 +125,7 @@
       .screen {
         position: relative;
         height: 100%;
-        background-color: rgba(105, 95, 252, .75);
+        background-color: #b8b8b8;
         background-image: url('../../../../assets/icons/traktrain_logo.png');
         background-size: 10%;
         background-position: 50% 50%;
@@ -528,7 +528,7 @@
                 height: 16px;
                 top: -6px;
                 right: -2px;
-                background-color: #695FFC;
+                //background-color: #695FFC;
                 border-radius: 50%;
                 box-shadow: 0 0 0 2px #f5f5f5;
                 .line {
@@ -685,7 +685,7 @@
           .active-area {
             position: absolute;
             height: 2px;
-            background-color: #695FFC;
+            //background-color: #695FFC;
             top: -1px;
             left: 0;
             .dot {
@@ -696,7 +696,7 @@
               right: -4px;
               top: 50%;
               margin-top: -4px;
-              border: 2px solid #695FFC;
+              border: 2px solid #b8b8b8;
               border-radius: 50%;
               background-color: #ffffff;
             }
@@ -746,16 +746,16 @@
                 &:hover {
                   span {
                     &.line {
-                      background-color: #695FFC;
+                      //background-color: #695FFC;
                     }
                     &.triangle {
-                      border-right-color: #695FFC;
+                      //border-right-color: #695FFC;
                     }
                   }
                   &.next {
                     span {
                       &.triangle {
-                        border-left-color: #695FFC;
+                        //border-left-color: #695FFC;
                       }
                     }
                   }
@@ -947,7 +947,7 @@
                   position: absolute;
                   height: 100%;
                   width: 100%;
-                  background-color: #695FFC;
+                  //background-color: #695FFC;
                   border-radius: 2px;
                   top: 0;
                   left: 0;
@@ -959,7 +959,7 @@
                     right: -4px;
                     top: 50%;
                     margin-top: -4px;
-                    border: 2px solid #695FFC;
+                    border: 2px solid #b8b8b8;
                     border-radius: 50%;
                     background-color: #ffffff;
                   }
@@ -1013,12 +1013,12 @@
           display: flex;
           justify-content: flex-end;
           align-items: center;
-          background-color: #F5F5F5;
+          //background-color: #F5F5F5;
           min-width: 120px;
           height: 100%;
           padding: 20px 15px 20px 20px;
           &:hover {
-            background-color: #695FFC;
+            //background-color: #695FFC;
             .price {
               .val {
                 color: #ffffff;
@@ -1026,9 +1026,9 @@
             }
             .icon-cart {
               .count {
-                background-color: #ffffff;
-                color: #695FFC;
-                box-shadow: 0 0 0 2px #695FFC;
+                //background-color: #ffffff;
+                //color: #695FFC;
+                //box-shadow: 0 0 0 2px #695FFC;
               }
             }
           }
@@ -1055,12 +1055,12 @@
               height: 16px;
               top: -6px;
               right: -2px;
-              background: #695FFC;
+              //background: #695FFC;
               border-radius: 50%;
               font: 600 10px/16px 'Arial';
               text-align: center;
-              color: #ffffff;
-              box-shadow: 0 0 0 2px #f5f5f5;
+              //color: #ffffff;
+              //box-shadow: 0 0 0 2px #f5f5f5;
             }
           }
         }
@@ -1244,7 +1244,7 @@
                     position: absolute;
                     height: 100%;
                     width: 100%;
-                    background-color: #695FFC;
+                    background-color: #b8b8b8;
                     border-radius: 2px;
                     top: 0;
                     left: 0;
@@ -1256,7 +1256,7 @@
                       right: -4px;
                       top: 50%;
                       margin-top: -4px;
-                      border: 2px solid #695FFC;
+                      border: 2px solid #b8b8b8;
                       border-radius: 50%;
                       background-color: #ffffff;
                     }

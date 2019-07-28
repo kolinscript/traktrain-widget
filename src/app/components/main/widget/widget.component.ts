@@ -311,7 +311,7 @@ export class WidgetComponent implements OnInit {
           this.playerHowl.pause();                              // пауза ховлера
           this.playerPlay = false;
           this.widget.tracks[this.playerActiveTrackIndex].play = false;
-          if (this.analyser) {
+          if (this.analyser && this.analyser.ctx) {
             this.analyser.ctx.close();
           }
           if (this.playerProgressInterval) {
@@ -577,7 +577,7 @@ export class WidgetComponent implements OnInit {
       this.lines.forEach((line, i) => {
         line.style.height = this.freqArray[i] / 2 + 'px';
       });
-      requestAnimationFrame(this.animateEqualizer);
+      // requestAnimationFrame(this.animateEqualizer);
     }
   }
 
