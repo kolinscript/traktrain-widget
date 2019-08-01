@@ -187,6 +187,7 @@ export class WidgetComponent implements OnInit {
 
   public trackHover(event, track: Track, trackIndex: number): void {
     this.widget.tracks[trackIndex].hovered = true;
+    console.log(track);
   }
 
   public trackLeave(event, track: Track, trackIndex: number): void {
@@ -440,8 +441,10 @@ export class WidgetComponent implements OnInit {
   }
 
   public trackAddToCart(event, track: Track, trackIndex: number): void {
+    track.hovered = false;
     this.modalOpen = true;
     this.modalContent = {
+      style: this.widget.style,
       title: 'BUY TERMS',
       type: ModalTypes.TERMS,
       artistName: this.widget.producer.artistName,
@@ -459,6 +462,7 @@ export class WidgetComponent implements OnInit {
     console.log(this.widget.cart);
     this.modalOpen = true;
     this.modalContent = {
+      style: this.widget.style,
       title: 'CART',
       type: ModalTypes.CART,
       artistName: this.widget.producer.artistName,
@@ -485,6 +489,7 @@ export class WidgetComponent implements OnInit {
     }
     console.log(this.widget);
     console.log(this.widget.cart);
+    this.storageUpdate('cart', this.widget.cart);
   }
 
   public onResize(event): void {
@@ -499,7 +504,9 @@ export class WidgetComponent implements OnInit {
   private initWidget(completed, id: number): void {
     this.windowWidth = window.innerWidth;
     this.loadingWidget = true;
+    const cart = this.storageFetch('cart') as Cart;
     console.log('windowWidth', this.windowWidth);
+    console.log('cart', cart);
     this.widgetService.getWidget(id).subscribe((widget: Widget) => {
       if (widget) {
         widget.tracks.forEach((track) => {
@@ -525,15 +532,26 @@ export class WidgetComponent implements OnInit {
             colors: {
               background: '#FFFFFF',
               text: '#4A4A4A',
-              active_item: '#695FFC',
-              active_accent: '#524fc4',
+              active_item: '#fc6782',
+              active_accent: '#c4315e',
             } as Colors,
           } as Style,        // add default Widget styles
-          cart: {
+          cart: cart ? cart : {
             totalCost: 0,
             cartItems: [],
           } as Cart,        // setup empty cart
         };
+        if (cart) {
+          this.widget.tracks.map((track: Track, trackIndex: number) => {
+            this.widget.cart.cartItems.forEach((cartItem: CartItem) => {
+              cartItem.track.active = false;
+              cartItem.track.hovered = false;
+              if (track.id === cartItem.track.id) {
+                this.widget.tracks[trackIndex] = cartItem.track;
+              }
+            });
+          });
+        }
         this.tracksBuffer = this.widget.tracks;
         this.loadingWidget = false;
         completed();
@@ -579,6 +597,14 @@ export class WidgetComponent implements OnInit {
       });
       // requestAnimationFrame(this.animateEqualizer);
     }
+  }
+
+  private storageUpdate(key: string, data: {}) {
+    localStorage.setItem(key, JSON.stringify(data));
+  }
+
+  private storageFetch(key): {} {
+    return JSON.parse(localStorage.getItem(key));
   }
 
   private priceTransformer(INPUT_PRICES: {}): {}[] {

@@ -27,6 +27,7 @@ export class ModalComponent implements OnInit {
   * function common block
   */
   ngOnInit() {
+    console.log(this.modalContent.style);
     switch (this.modalContent.type) {
       case ModalTypes.TERMS: {
         this.initTerms();
@@ -106,6 +107,7 @@ export class ModalComponent implements OnInit {
   public deleteTrackFromCart(indexTrack: number) {
     this.modalContent.cart.totalCost = this.modalContent.cart.totalCost - this.modalContent.cart.cartItems[indexTrack].price;
     this.modalContent.cart.cartItems[indexTrack].track.inCart = false;
+    this.modalContent.cart.cartItems[indexTrack].track.hovered = false;
     this.modalContent.cart.cartItems.splice(indexTrack, 1);
   }
 

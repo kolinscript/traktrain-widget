@@ -1,3 +1,5 @@
+@import "../../../../assets/styles/colors";
+
 .modal-wrapper {
   z-index: 99999999;
   position: absolute;
@@ -59,8 +61,7 @@
       .shield {
         height: 26px;
         width: 5px;
-        background: #695FFC;
-        border-bottom: 5px solid #524fc4;
+        border-bottom: 5px solid;
       }
       .text {
         margin-left: 7px;
@@ -125,12 +126,6 @@
             &:hover {
               background-color: #F5F5F5;
             }
-            &.active{
-              border-color: #695FFC;
-              .label {
-                border-color: #695FFC;
-              }
-            }
             .label {
               display: flex;
               align-items: center;
@@ -179,17 +174,16 @@
                 padding-left: 30px;
                 font: 400 14px/16px 'Work Sans';
                 color: #787878;
-                &:before {
+                .marker {
                   position: absolute;
                   display: block;
-                  content: '';
                   width: 24px;
                   height: 24px;
                   top: -3px;
                   left: 0;
                   mask-image: url('../../../../assets/icons/done.svg');
                   mask-size: cover;
-                  background-color: #695FFC;
+                  background-color: $gray-background-basic;
                 }
               }
             }
@@ -202,7 +196,7 @@
         outline: none;
         margin-top: 20px;
         padding: 0 80px;
-        background-color: #695ffc;
+        background-color: $gray-background-basic;
         border-radius: 3px;
         font: 500 14px/40px 'Work Sans';
         text-transform: uppercase;
@@ -307,7 +301,7 @@
                    width: 20px;
                    height: 20px;
                    border-radius: 50%;
-                   border: 2px solid #695FFC;
+                   border: 2px solid $gray-background-basic;
                    background-color: #ffffff;
                    transition: all .2s ease;
                    span {
@@ -319,7 +313,7 @@
                      left: 50%;
                      margin-top: -1px;
                      margin-left: -6px;
-                     background-color: #695FFC;
+                     background-color: $gray-background-basic;
                      transform: rotate(45deg);
                      transition: all .2s ease;
                      &:first-child {
@@ -327,7 +321,7 @@
                      }
                    }
                    &:hover {
-                     background-color: #695FFC;
+                     background-color: $gray-background-basic;
                      span {
                        background-color: #ffffff;
                      }
