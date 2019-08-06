@@ -24,6 +24,7 @@ export interface Widget {
   tracks: Track[];
   style?: Style;
   cart?: Cart;
+  editMode: boolean;
 }
 
 export interface Producer {

@@ -1,19 +1,25 @@
+<div class="widget-loader" *ngIf="loadingWidget">
+  <div class="bar"></div>
+  <div class="bar"></div>
+  <div class="bar"></div>
+  <div class="bar"></div>
+  <div class="bar"></div>
+  <div class="bar"></div>
+  <div class="bar"></div>
+  <div class="bar"></div>
+</div>
+
+<div *ngIf="!loadingWidget">
+  <app-settings *ngIf="widget.editMode"></app-settings>
+</div>
+
 <div
   class="widget-wrapper"
+  *ngIf="!loadingWidget"
+  [ngClass]="{'edit-mode': widget.editMode}"
   (window:resize)="onResize($event)"
 >
-  <div class="widget-loader" *ngIf="loadingWidget">
-    <div class="bar"></div>
-    <div class="bar"></div>
-    <div class="bar"></div>
-    <div class="bar"></div>
-    <div class="bar"></div>
-    <div class="bar"></div>
-    <div class="bar"></div>
-    <div class="bar"></div>
-  </div>
-
-  <div class="widget-item wi-topbar" *ngIf="!loadingWidget">
+  <div class="widget-item wi-topbar">
     <div class="title">
       <div class="shield"
            [ngStyle]="{backgroundColor: widget.style.colors.active_item, borderColor: widget.style.colors.active_accent}"
@@ -37,7 +43,6 @@
   </div>
 
   <div class="widget-item wi-screen"
-       *ngIf="!loadingWidget"
        [ngStyle]="{backgroundColor: widget.style.colors.active_item}"
   >
     <div class="screen">
@@ -46,7 +51,7 @@
     </div>
   </div>
 
-  <div class="widget-item wi-search" *ngIf="!loadingWidget" [formGroup]="filterBy">
+  <div class="widget-item wi-search" [formGroup]="filterBy">
     <div class="inp"
          [ngClass]="{'focused': searchFocused}"
     >
@@ -61,7 +66,7 @@
     </div>
   </div>
 
-  <div class="widget-item wi-player-list" *ngIf="!loadingWidget">
+  <div class="widget-item wi-player-list">
     <div class="empty-state" *ngIf="!widget.tracks || widget.tracks.length === 0">
       No tracks found.
     </div>
@@ -98,7 +103,7 @@
                [ngStyle]="{'width.px': windowWidth - (
                (windowWidth > breakPoint) ?
                ((track.active) ? 350 : 165) :
-               ((track.active || track.hovered) ? 165 : 100)
+               ((track.active || track.hovered || track.inCart) ? 165 : 100)
                )}"
           >
             <div class="track-title" [ngClass]="{'bp600': windowWidth <= breakPoint}">
@@ -173,7 +178,7 @@
     </div>
   </div>
 
-  <div class="widget-item wi-player-bottom" *ngIf="!loadingWidget">
+  <div class="widget-item wi-player-bottom">
     <div class="progress"
          (mousemove)="trackProgressClicked($event)"
          (mousedown)="trackProgressClicked($event)"
@@ -334,10 +339,8 @@
   </div>
 </div>
 
-<div class="modals">
-  <app-modal
-    *ngIf="modalOpen"
-    [modalContent]="modalContent"
-    (modalResult)="modalEvent($event)"
-  ></app-modal>
-</div>
+<app-modal
+  *ngIf="modalOpen"
+  [modalContent]="modalContent"
+  (modalResult)="modalEvent($event)"
+></app-modal>

@@ -21,7 +21,7 @@
   .modal {
     position: relative;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     flex-direction: column;
     padding: 40px;
@@ -411,6 +411,8 @@
 @media (max-width: 600px) {
   .modal-wrapper {
     .modal {
+      max-height: 80%;
+      overflow-y: scroll;
       &.buy-terms {
         max-width: 280px;
         .track-name {

@@ -1,3 +1,69 @@
-<p>
-  settings works!
-</p>
+<div class="settings-wrapper">
+  <div class="row settings">
+    <div class="inputs" [formGroup]="settings">
+      <div class="inp"
+      >
+        <div class="title">
+          <span>Width</span>
+          <div class="toggler"><div class="dot"></div></div>
+          <span>Auto</span>
+        </div>
+        <input type="text" formControlName="width"
+        >
+      </div>
+
+      <div class="inp"
+      >
+        <div class="title">Height</div>
+        <input type="text" formControlName="height"
+        >
+      </div>
+
+      <div class="inp"
+      >
+        <div class="title">Background</div>
+        <input type="text" formControlName="background"
+        >
+      </div>
+
+      <div class="inp"
+      >
+        <div class="title">Text</div>
+        <input type="text" formControlName="text"
+        >
+      </div>
+
+      <div class="inp"
+      >
+        <div class="title">Active</div>
+        <input type="text" formControlName="active"
+        >
+      </div>
+
+      <div class="inp"
+      >
+        <div class="title">Accent</div>
+        <input type="text" formControlName="accent"
+        >
+      </div>
+    </div>
+
+    <div class="controls">
+      <button class="cta reset"
+              (click)="settingsReset()"
+      >
+        Reset
+      </button>
+      <button class="cta save"
+              (click)="settingsSave()"
+      >
+        Save
+      </button>
+    </div>
+  </div>
+
+  <div class="row embed-code">
+    <div class="title">Embed Code</div>
+    <div class="code">embed code goes here</div>
+  </div>
+</div>

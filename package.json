@@ -4,6 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --proxy-config proxy.conf.json --host 0.0.0.0",
+    "start-local": "ng serve --proxy-config proxy.conf.json --host 172.16.36.119",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",

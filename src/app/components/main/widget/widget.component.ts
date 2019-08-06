@@ -412,7 +412,7 @@ export class WidgetComponent implements OnInit {
           this.playerProgressPercent = ((this.playerProgressSec * 100) / this.playerHowl.duration());
           this.playerProgressMS = new Date(this.playerProgressSec * 1000).toISOString().substr(14, 5);
           this.animateEqualizer();
-        }, 10);
+        }, 100);
       },
       onseek: () => {
         this.playerProgressSec
@@ -540,7 +540,8 @@ export class WidgetComponent implements OnInit {
             totalCost: 0,
             cartItems: [],
           } as Cart,        // setup empty cart
-        };
+          editMode: true,
+        } as Widget;
         if (cart) {
           this.widget.tracks.map((track: Track, trackIndex: number) => {
             this.widget.cart.cartItems.forEach((cartItem: CartItem) => {
