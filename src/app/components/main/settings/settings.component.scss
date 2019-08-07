@@ -1,0 +1,154 @@
+.settings-wrapper {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-direction: column;
+  background-color: #ffffff;
+  border: 1px solid #E6E6E6;
+  padding: 15px;
+  width: 100%;
+  .row {
+    width: 100%;
+    &.settings {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      .inputs {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        flex-wrap: wrap;
+        .inp {
+          position: relative;
+          margin-right: 20px;
+          max-width: 120px;
+          height: 40px;
+          margin-top: 40px;
+          border-radius: 3px;
+          border: 1px solid #E6E6E6;
+          background-color: rgba(255, 255, 255, 0.75);
+          &:last-child {
+            margin-right: 0;
+          }
+          .title {
+            position: absolute;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            left: 0;
+            top: -25px;
+            font: 500 14px/16px 'Work Sans';
+            color: #4A4A4A;
+            .toggler {
+              position: relative;
+              width: 20px;
+              height: 10px;
+              margin: 2px 5px 0 20px;
+              background-color: #695FFC;
+              border-radius: 5px;
+              input[type="checkbox"] {
+                opacity: 0;
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+                top: 0;
+                left: 0;
+                display: block;
+                position: absolute;
+                background: transparent;
+                cursor: pointer;
+                border: none;
+                outline: none;
+              }
+              &.on {
+                .dot {
+                  transform:translate3d(11px, 2px, 0);
+                }
+              }
+              &.off {
+                background-color: #b8b8b8;
+                .dot {
+                  transform: translate3d(3px, 2px, 0);
+                }
+              }
+              .dot {
+                width: 6px;
+                height: 6px;
+                border-radius: 50%;
+                background-color: #ffffff;
+                transition: all 80ms linear;
+                transition-property: transform;
+                transform: translate3d(3px, 2px, 0);
+              }
+            }
+          }
+          input[type="text"] {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            padding: 5px 45px 5px 15px;
+            font: 500 14px/16px 'Work Sans';
+            color: #4A4A4A;
+            border-radius: inherit;
+            background: transparent;
+            border: none;
+            outline: none;
+          }
+          &.disabled {
+            background-color: #efefef;
+            input[type="text"] {
+              pointer-events: none;
+            }
+          }
+        }
+      }
+      .controls {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-left: 20px;
+        .cta {
+          display: block;
+          cursor: pointer;
+          border: none;
+          outline: none;
+          padding: 0;
+          width: 112px;
+          border-radius: 3px;
+          font: 500 14px/38px 'Work Sans';
+          text-transform: uppercase;
+          text-align: center;
+          &.reset {
+            background-color: #ffffff;
+            border: 1px solid #695FFC;
+            color: #695FFC;
+          }
+          &.save {
+            margin-left: 10px;
+            background-color: #695FFC;
+            border: 1px solid transparent;
+            color: #ffffff;
+          }
+        }
+      }
+    }
+
+    &.embed-code {
+      width: auto;
+      margin-top: 20px;
+      .title {
+        font: 500 14px/16px 'Work Sans';
+        color: #4A4A4A;
+      }
+      .code {
+        margin-top: 10px;
+        padding: 15px;
+        border-radius: 3px;
+        background-color: #F5F5F5;
+        font: italic 14px/16px 'Arial';
+        color: #4A4A4A;
+      }
+    }
+  }
+}

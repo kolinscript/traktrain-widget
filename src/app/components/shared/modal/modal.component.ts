@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Modal, ModalContent, ModalTypes } from '../../../models/modal.model';
-import { CartItem, LicensePrice, LicensePriceMapper, SDN_LINK_IMG } from '../../../models/widget.model';
+import { ModalContent, ModalTypes } from '../../../models/modal.model';
+import { CartItem, LicensePriceMapper, SDN_LINK_IMG } from '../../../models/widget.model';
 import { Animations } from '../../../animations';
 
 @Component({
@@ -12,9 +12,9 @@ import { Animations } from '../../../animations';
   ]
 })
 export class ModalComponent implements OnInit {
-  ModalTypes = ModalTypes;
   @Input() modalContent: ModalContent;
   @Output() modalResult: EventEmitter<any> = new EventEmitter<any>();
+  ModalTypes = ModalTypes;
   // variables TERMS
   pickedLease: any;
   // variables CART
@@ -27,6 +27,7 @@ export class ModalComponent implements OnInit {
   * function common block
   */
   ngOnInit() {
+    console.log(this.modalContent.style);
     switch (this.modalContent.type) {
       case ModalTypes.TERMS: {
         this.initTerms();
@@ -106,6 +107,7 @@ export class ModalComponent implements OnInit {
   public deleteTrackFromCart(indexTrack: number) {
     this.modalContent.cart.totalCost = this.modalContent.cart.totalCost - this.modalContent.cart.cartItems[indexTrack].price;
     this.modalContent.cart.cartItems[indexTrack].track.inCart = false;
+    this.modalContent.cart.cartItems[indexTrack].track.hovered = false;
     this.modalContent.cart.cartItems.splice(indexTrack, 1);
   }
 

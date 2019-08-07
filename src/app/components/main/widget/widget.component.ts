@@ -1,10 +1,11 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { Colors, LicensePriceMapper, Style, Track, Widget, SDN_LINK_IMG, SDN_LINK_MP3, CartItem, Cart } from '../../../models/widget.model';
 import { WidgetService } from '../../../services/widget.service';
 import { ModalService } from '../../../services/modal.service';
 import { ModalContent, ModalTypes } from '../../../models/modal.model';
+import { SettingsContent } from '../../../models/settings.model';
 import { Howl, Howler } from 'howler';
-import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-widget',
@@ -22,6 +23,7 @@ export class WidgetComponent implements OnInit {
   breakPoint = 600;
   modalOpen = false;
   modalContent: ModalContent;
+  settingsContent: SettingsContent;
   carouselMoving: boolean;
   //
   playerActiveTrackIndex = 0;
@@ -311,7 +313,7 @@ export class WidgetComponent implements OnInit {
           this.playerHowl.pause();                              // пауза ховлера
           this.playerPlay = false;
           this.widget.tracks[this.playerActiveTrackIndex].play = false;
-          if (this.analyser) {
+          if (this.analyser && this.analyser.ctx) {
             this.analyser.ctx.close();
           }
           if (this.playerProgressInterval) {
@@ -411,7 +413,7 @@ export class WidgetComponent implements OnInit {
           this.playerProgressPercent = ((this.playerProgressSec * 100) / this.playerHowl.duration());
           this.playerProgressMS = new Date(this.playerProgressSec * 1000).toISOString().substr(14, 5);
           this.animateEqualizer();
-        }, 10);
+        }, 100);
       },
       onseek: () => {
         this.playerProgressSec
@@ -440,8 +442,10 @@ export class WidgetComponent implements OnInit {
   }
 
   public trackAddToCart(event, track: Track, trackIndex: number): void {
+    track.hovered = false;
     this.modalOpen = true;
     this.modalContent = {
+      style: this.widget.style,
       title: 'BUY TERMS',
       type: ModalTypes.TERMS,
       artistName: this.widget.producer.artistName,
@@ -459,6 +463,7 @@ export class WidgetComponent implements OnInit {
     console.log(this.widget.cart);
     this.modalOpen = true;
     this.modalContent = {
+      style: this.widget.style,
       title: 'CART',
       type: ModalTypes.CART,
       artistName: this.widget.producer.artistName,
@@ -485,6 +490,17 @@ export class WidgetComponent implements OnInit {
     }
     console.log(this.widget);
     console.log(this.widget.cart);
+    this.storageUpdate('cart', this.widget.cart);
+  }
+
+  public settingsEvent(event): void {
+    console.log(event);
+    if (event['active']) {
+      this.widget.style.colors.active_item = event['active'];
+    }
+    if (event['accent']) {
+      this.widget.style.colors.active_accent = event['accent'];
+    }
   }
 
   public onResize(event): void {
@@ -499,7 +515,9 @@ export class WidgetComponent implements OnInit {
   private initWidget(completed, id: number): void {
     this.windowWidth = window.innerWidth;
     this.loadingWidget = true;
+    const cart = this.storageFetch('cart') as Cart;
     console.log('windowWidth', this.windowWidth);
+    console.log('cart', cart);
     this.widgetService.getWidget(id).subscribe((widget: Widget) => {
       if (widget) {
         widget.tracks.forEach((track) => {
@@ -525,15 +543,32 @@ export class WidgetComponent implements OnInit {
             colors: {
               background: '#FFFFFF',
               text: '#4A4A4A',
-              active_item: '#695FFC',
-              active_accent: '#524fc4',
+              active_item: '#fc6782',
+              active_accent: '#c4315e',
             } as Colors,
           } as Style,        // add default Widget styles
-          cart: {
+          cart: cart ? cart : {
             totalCost: 0,
             cartItems: [],
           } as Cart,        // setup empty cart
-        };
+          editMode: true,
+        } as Widget;
+        if (cart) {
+          this.widget.tracks.map((track: Track, trackIndex: number) => {
+            this.widget.cart.cartItems.forEach((cartItem: CartItem) => {
+              cartItem.track.active = false;
+              cartItem.track.hovered = false;
+              if (track.id === cartItem.track.id) {
+                this.widget.tracks[trackIndex] = cartItem.track;
+              }
+            });
+          });
+        }
+        if (this.widget.editMode) {
+          this.settingsContent = {
+            widgetID: id,
+          };
+        }
         this.tracksBuffer = this.widget.tracks;
         this.loadingWidget = false;
         completed();
@@ -577,8 +612,16 @@ export class WidgetComponent implements OnInit {
       this.lines.forEach((line, i) => {
         line.style.height = this.freqArray[i] / 2 + 'px';
       });
-      requestAnimationFrame(this.animateEqualizer);
+      // requestAnimationFrame(this.animateEqualizer);
     }
+  }
+
+  private storageUpdate(key: string, data: {}) {
+    localStorage.setItem(key, JSON.stringify(data));
+  }
+
+  private storageFetch(key): {} {
+    return JSON.parse(localStorage.getItem(key));
   }
 
   private priceTransformer(INPUT_PRICES: {}): {}[] {

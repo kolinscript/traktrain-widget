@@ -4,24 +4,34 @@
   <div class="modal buy-terms" *ngIf="modalContent.type === ModalTypes.TERMS">
     <div class="close" (click)="modalClose()"><span></span><span></span></div>
     <div class="title">
-      <div class="shield"></div>
+      <div class="shield"
+           [ngStyle]="{backgroundColor: modalContent.style.colors.active_item, borderColor: modalContent.style.colors.active_accent}"
+      ></div>
       <div class="text">{{modalContent.title}}</div>
     </div>
     <div class="track-name">{{modalContent.artistName}} - {{modalContent.contentTerms.track.name}}</div>
     <div class="payment-types">
       <div class="label">Payment methods:</div>
-      <div class="pt paypal"></div>
-      <div class="pt card"></div>
+      <div class="pt paypal"
+           [ngStyle]="{backgroundColor: modalContent.style.colors.active_item}"
+      ></div>
+      <div class="pt card"
+           [ngStyle]="{backgroundColor: modalContent.style.colors.active_item}"
+      ></div>
     </div>
     <div class="rights-toggler">
       <div class="rt-buttons">
         <div
           class="button"
           *ngFor="let right of modalContent.contentTerms.sliderData; index as i"
-          [ngClass]="{'active': right.activeInModal}"
+          [ngStyle]="{borderColor: right.activeInModal ? modalContent.style.colors.active_item : '#e6e6e6'}"
           (click)="pickLease(right, i)"
         >
-          <div class="label">{{right.right}}<div class="in-cart-icon" *ngIf="right.addedToCart"></div></div>
+          <div class="label"
+               [ngStyle]="{borderColor: right.activeInModal ? modalContent.style.colors.active_item : '#e6e6e6'}"
+          >
+            {{right.right}}
+            <div class="in-cart-icon" *ngIf="right.addedToCart"></div></div>
           <div class="price">${{right.price}}.00</div>
         </div>
       </div>
@@ -34,18 +44,28 @@
         >
           <div class="label">{{content.label}}</div>
           <ul class="rights">
-            <li class="right" *ngFor="let right of content.rights">{{right}}</li>
+            <li class="right" *ngFor="let right of content.rights">
+              <span class="marker" [ngStyle]="{backgroundColor: modalContent.style.colors.active_item}"></span>
+              {{right}}
+            </li>
           </ul>
         </div>
       </div>
     </div>
-    <button class="add2cart" (click)="addToCart()">Add to cart</button>
+    <button class="add2cart"
+            (click)="addToCart()"
+            [ngStyle]="{backgroundColor: modalContent.style.colors.active_item}"
+    >
+      Add to cart
+    </button>
   </div>
 
   <div class="modal cart" *ngIf="modalContent.type === ModalTypes.CART">
     <div class="close" (click)="modalClose()"><span></span><span></span></div>
     <div class="title">
-      <div class="shield"></div>
+      <div class="shield"
+           [ngStyle]="{backgroundColor: modalContent.style.colors.active_item, borderColor: modalContent.style.colors.active_accent}"
+      ></div>
       <div class="text">{{modalContent.title}}</div>
     </div>
     <div class="cart-content" *ngIf="modalContent.cart.cartItems.length > 0">
