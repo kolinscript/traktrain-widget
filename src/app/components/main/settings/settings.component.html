@@ -2,10 +2,16 @@
   <div class="row settings">
     <div class="inputs" [formGroup]="settings">
       <div class="inp"
+           [ngClass]="{'disabled': settings.controls['autoWidth'].value}"
       >
         <div class="title">
           <span>Width</span>
-          <div class="toggler"><div class="dot"></div></div>
+          <div class="toggler"
+               [ngClass]="{'on': settings.controls['autoWidth'].value, 'off': !settings.controls['autoWidth'].value}"
+          >
+            <div class="dot"></div>
+            <input type="checkbox" formControlName="autoWidth">
+          </div>
           <span>Auto</span>
         </div>
         <input type="text" formControlName="width"
@@ -13,8 +19,18 @@
       </div>
 
       <div class="inp"
+           [ngClass]="{'disabled': settings.controls['autoHeight'].value}"
       >
-        <div class="title">Height</div>
+        <div class="title">
+          <span>Height</span>
+          <div class="toggler"
+               [ngClass]="{'on': settings.controls['autoHeight'].value, 'off': !settings.controls['autoHeight'].value}"
+          >
+            <div class="dot"></div>
+            <input type="checkbox" formControlName="autoHeight">
+          </div>
+          <span>Auto</span>
+        </div>
         <input type="text" formControlName="height"
         >
       </div>
@@ -64,6 +80,6 @@
 
   <div class="row embed-code">
     <div class="title">Embed Code</div>
-    <div class="code">embed code goes here</div>
+    <div class="code">{{embedCode}}</div>
   </div>
 </div>

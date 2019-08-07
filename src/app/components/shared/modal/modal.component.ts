@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Modal, ModalContent, ModalTypes } from '../../../models/modal.model';
-import { CartItem, LicensePrice, LicensePriceMapper, SDN_LINK_IMG } from '../../../models/widget.model';
+import { ModalContent, ModalTypes } from '../../../models/modal.model';
+import { CartItem, LicensePriceMapper, SDN_LINK_IMG } from '../../../models/widget.model';
 import { Animations } from '../../../animations';
 
 @Component({
@@ -12,9 +12,9 @@ import { Animations } from '../../../animations';
   ]
 })
 export class ModalComponent implements OnInit {
-  ModalTypes = ModalTypes;
   @Input() modalContent: ModalContent;
   @Output() modalResult: EventEmitter<any> = new EventEmitter<any>();
+  ModalTypes = ModalTypes;
   // variables TERMS
   pickedLease: any;
   // variables CART

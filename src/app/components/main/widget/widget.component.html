@@ -10,7 +10,10 @@
 </div>
 
 <div *ngIf="!loadingWidget">
-  <app-settings *ngIf="widget.editMode"></app-settings>
+  <app-settings *ngIf="widget.editMode"
+                [settingsContent]="settingsContent"
+                (settingsResult)="settingsEvent($event)"
+  ></app-settings>
 </div>
 
 <div

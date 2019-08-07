@@ -4,12 +4,6 @@ export enum ModalTypes {
   TERMS = 'TERMS', CART = 'CART'
 }
 
-export interface Modal {
-  modalOpen?: boolean;
-  modalType?: string;
-  modalContent?: ModalContent;
-}
-
 export interface ModalContent {
   style: Style;
   type?: ModalTypes;

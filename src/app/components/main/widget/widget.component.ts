@@ -1,10 +1,11 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { Colors, LicensePriceMapper, Style, Track, Widget, SDN_LINK_IMG, SDN_LINK_MP3, CartItem, Cart } from '../../../models/widget.model';
 import { WidgetService } from '../../../services/widget.service';
 import { ModalService } from '../../../services/modal.service';
 import { ModalContent, ModalTypes } from '../../../models/modal.model';
+import { SettingsContent } from '../../../models/settings.model';
 import { Howl, Howler } from 'howler';
-import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-widget',
@@ -22,6 +23,7 @@ export class WidgetComponent implements OnInit {
   breakPoint = 600;
   modalOpen = false;
   modalContent: ModalContent;
+  settingsContent: SettingsContent;
   carouselMoving: boolean;
   //
   playerActiveTrackIndex = 0;
@@ -187,7 +189,6 @@ export class WidgetComponent implements OnInit {
 
   public trackHover(event, track: Track, trackIndex: number): void {
     this.widget.tracks[trackIndex].hovered = true;
-    console.log(track);
   }
 
   public trackLeave(event, track: Track, trackIndex: number): void {
@@ -492,6 +493,16 @@ export class WidgetComponent implements OnInit {
     this.storageUpdate('cart', this.widget.cart);
   }
 
+  public settingsEvent(event): void {
+    console.log(event);
+    if (event['active']) {
+      this.widget.style.colors.active_item = event['active'];
+    }
+    if (event['accent']) {
+      this.widget.style.colors.active_accent = event['accent'];
+    }
+  }
+
   public onResize(event): void {
     this.windowWidth = event.target.innerWidth;
     this.screenWidth = (document.getElementsByClassName('wi-screen') as HTMLCollection)[0].clientWidth;
@@ -552,6 +563,11 @@ export class WidgetComponent implements OnInit {
               }
             });
           });
+        }
+        if (this.widget.editMode) {
+          this.settingsContent = {
+            widgetID: id,
+          };
         }
         this.tracksBuffer = this.widget.tracks;
         this.loadingWidget = false;
