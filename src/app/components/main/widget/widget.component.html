@@ -20,6 +20,7 @@
   class="widget-wrapper"
   *ngIf="!loadingWidget"
   [ngClass]="{'edit-mode': widget.editMode}"
+  [ngStyle]="{background: widget.style.colors.background}"
   (window:resize)="onResize($event)"
 >
   <div class="widget-item wi-topbar">
@@ -27,7 +28,11 @@
       <div class="shield"
            [ngStyle]="{backgroundColor: widget.style.colors.active_item, borderColor: widget.style.colors.active_accent}"
       ></div>
-      <div class="name">{{widget.producer.artistName}}</div>
+      <div class="name"
+           [ngStyle]="{color: widget.style.colors.text}"
+      >
+        {{widget.producer.artistName}}
+      </div>
     </div>
     <div class="social">
       <div class="link soundcloud" *ngIf="widget.socials.soundcloud">
@@ -58,12 +63,17 @@
     <div class="inp"
          [ngClass]="{'focused': searchFocused}"
     >
-      <div class="placeholder">Start type the track name</div>
+      <div class="placeholder"
+           [ngStyle]="{color: lightenDarkenColor(widget.style.colors.text, 50)}"
+      >
+        Start type the track name
+      </div>
       <input type="text"
              (keyup)="searchTrack()"
              (focus)="searchFocus('in')"
              (focusout)="searchFocus('out')"
              formControlName="filterByTrackName"
+             [ngStyle]="{color: widget.style.colors.text}"
       >
       <div class="inp-clear" (click)="searchClear()"><span></span><span></span></div>
     </div>
@@ -75,7 +85,7 @@
     </div>
     <div class="track"
          *ngFor="let track of widget.tracks; index as indexTrack"
-         [ngStyle]="{color: widget.style.colors.text}"
+         [ngStyle]="{color: track.active ? widget.style.colors.active_accent : widget.style.colors.text}"
          [ngClass]="{'active': track.active}"
          (mouseenter)="trackHover($event, track, indexTrack)"
          (mouseleave)="trackLeave($event, track, indexTrack)"
@@ -135,7 +145,12 @@
             <div class="rc-rights">
               <div class="right"
                    *ngFor="let right of track.sliderData ; index as indexRight"
-                   [ngClass]="{'prev': right.style === 'prev', 'next': right.style === 'next', 'initial': right.style === 'initial'}"
+                   [ngClass]="{
+                   'prev': right.style === 'prev',
+                   'next': right.style === 'next',
+                   'initial': right.style === 'initial'
+                   }"
+                   [ngStyle]="{color: widget.style.colors.text}"
               >
                 {{right.right}}<span class="val"> ${{right.price}}</span>
               </div>
@@ -187,7 +202,10 @@
          (mousedown)="trackProgressClicked($event)"
          (mouseup)="trackProgressClicked($event)"
     >
-      <div class="timing" *ngIf="windowWidth <= breakPoint">
+      <div class="timing"
+           *ngIf="windowWidth <= breakPoint"
+           [ngStyle]="{color: lightenDarkenColor(widget.style.colors.text, 50)}"
+      >
         <div class="curtime">{{playerProgressMS}}</div>
         <div class="alltime">{{playerDurationMS}}</div>
       </div>
@@ -268,8 +286,8 @@
       <div class="title"
            [ngStyle]="{'width.px': windowWidth > breakPoint ? windowWidth - 455 : windowWidth - 40}"
       >
-        <div class="track-name" [ngStyle]="{color: widget.style.colors.text}">
-          <span>
+        <div class="track-name" #trackNameContainer [ngStyle]="{color: widget.style.colors.text}">
+          <span #trackNameContent>
           {{playerActiveTrackIndex + 1}}. {{widget.producer.artistName}} -
           {{playerTrackName}}
           </span>
@@ -287,7 +305,9 @@
     </div>
     <div class="block-money">
       <div class="timing-and-types">
-        <div class="timing">
+        <div class="timing"
+             [ngStyle]="{color: lightenDarkenColor(widget.style.colors.text, 50)}"
+        >
           <div class="curtime">{{playerProgressMS}}</div>
           <div class="alltime">{{playerDurationMS}}</div>
         </div>

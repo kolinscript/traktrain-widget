@@ -10,5 +10,5 @@ export interface Settings {
   background: string;
   text: string;
   active: string;
-  accent: string;
+  accent?: string;
 }

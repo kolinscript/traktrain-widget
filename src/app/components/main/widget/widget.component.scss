@@ -181,7 +181,6 @@
           margin-top: -8px;
           padding: 0 5px;
           font: 400 14px/16px 'Arial';
-          background-color: #ffffff;
           color: $gray-background-basic;
           transition: all .2s ease;
         }
@@ -627,7 +626,6 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: #ffffff;
       left: 0;
       top: 100%;
       border-top: 1px solid #E6E6E6;
@@ -1111,7 +1109,7 @@
           .title {
             .track-name {
               span {
-                animation: 20s linear infinite slide;
+                //animation: 20s linear infinite slide;
               }
             }
           }
@@ -1263,6 +1261,10 @@
               width: 100%;
               font-size: 16px;
               margin: 0;
+              span {
+                width: 100%;
+                text-align: center;
+              }
             }
             .tags {
               display: none;

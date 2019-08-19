@@ -143,5 +143,5 @@ export interface Colors {
   background: string;
   text: string;
   active_item: string;
-  active_accent: string;
+  active_accent?: string;
 }
