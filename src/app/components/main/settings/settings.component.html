@@ -6,13 +6,15 @@
       >
         <div class="title">
           <span>Width</span>
-          <div class="toggler"
-               [ngClass]="{'on': settings.controls['autoWidth'].value, 'off': !settings.controls['autoWidth'].value}"
-          >
-            <div class="dot"></div>
-            <input type="checkbox" formControlName="autoWidth">
+          <div class="toggler-wrapper">
+            <div class="toggler"
+                 [ngClass]="{'on': settings.controls['autoWidth'].value, 'off': !settings.controls['autoWidth'].value}"
+            >
+              <div class="dot"></div>
+              <input type="checkbox" formControlName="autoWidth">
+            </div>
+            <span>Auto</span>
           </div>
-          <span>Auto</span>
         </div>
         <input type="text" formControlName="width"
         >
@@ -23,13 +25,15 @@
       >
         <div class="title">
           <span>Height</span>
-          <div class="toggler"
-               [ngClass]="{'on': settings.controls['autoHeight'].value, 'off': !settings.controls['autoHeight'].value}"
-          >
-            <div class="dot"></div>
-            <input type="checkbox" formControlName="autoHeight">
+          <div class="toggler-wrapper">
+            <div class="toggler"
+                 [ngClass]="{'on': settings.controls['autoHeight'].value, 'off': !settings.controls['autoHeight'].value}"
+            >
+              <div class="dot"></div>
+              <input type="checkbox" formControlName="autoHeight">
+            </div>
+            <span>Auto</span>
           </div>
-          <span>Auto</span>
         </div>
         <input type="text" formControlName="height"
         >
@@ -56,12 +60,12 @@
         >
       </div>
 
-      <div class="inp"
-      >
-        <div class="title">Accent</div>
-        <input type="text" formControlName="accent"
-        >
-      </div>
+      <!--<div class="inp"-->
+      <!--&gt;-->
+        <!--<div class="title">Accent</div>-->
+        <!--<input type="text" formControlName="accent"-->
+        <!--&gt;-->
+      <!--</div>-->
     </div>
 
     <div class="controls">

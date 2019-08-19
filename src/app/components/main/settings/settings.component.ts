@@ -44,7 +44,6 @@ export class SettingsComponent implements OnInit {
       background: null,
       text: null,
       active: null,
-      accent: null,
     } as Settings);
     this.embedCode = '<iframe src="https://traktrain.com/widget/' + this.settingsContent.widgetID + '" width=“auto” height=“auto” frameborder="0"></iframe>';
   }
