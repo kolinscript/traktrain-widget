@@ -13,6 +13,7 @@ import { Howl, Howler } from 'howler';
   styleUrls: ['./widget.component.scss']
 })
 export class WidgetComponent implements OnInit {
+  @ViewChild('waves') canvasWavesElRef: ElementRef<HTMLCanvasElement>;
   @ViewChild('volumeDesktop') volumeContainerDesktop: ElementRef;
   @ViewChild('volumeMobile') volumeContainerMobile: ElementRef;
   SDN_LINK_IMG = SDN_LINK_IMG;
@@ -51,6 +52,8 @@ export class WidgetComponent implements OnInit {
   lines = [];
   screenWidth: number;
   screenHeight: number;
+
+  private ctxCanvas: CanvasRenderingContext2D;
 
   constructor(
     private widgetService: WidgetService,
@@ -405,6 +408,7 @@ export class WidgetComponent implements OnInit {
       },
       onplay: () => {
         this.initEqualizerScreen();
+        this.animateEqualizer();
         this.playerProgressInterval = setInterval(() => {
           this.playerProgressSec
             = (typeof this.playerHowl.seek() === 'number')
@@ -583,36 +587,43 @@ export class WidgetComponent implements OnInit {
   }
 
   private initEqualizerScreen() {
+    this.ctxCanvas = this.canvasWavesElRef.nativeElement.getContext('2d');
     this.screenWidth = (document.getElementsByClassName('wi-screen') as HTMLCollection)[0].clientWidth;
     this.screenHeight = (document.getElementsByClassName('wi-screen') as HTMLCollection)[0].clientHeight;
-    console.log('screenWidth', this.screenWidth);
-    console.log('screenHeight', this.screenHeight);
-    let xPos = 0;
-    const lineAmount = 68;
-    const space = 4;
-    const width = Math.round((this.screenWidth / lineAmount) + 0) - space;
-    const target = document.getElementsByClassName('waves')[0];
-    if (document.getElementsByClassName('wave-line').length === 0) {
-      for (let i = 0; i < lineAmount; i++) {
-        const line = document.createElement('div');
-        line.setAttribute('class', 'wave-line line_' + i);
-        line.style.left = (xPos + 0) + 'px';
-        line.style.width = width + 'px';
-        this.lines.push(line);
-        target.appendChild(line);
-        xPos += width + space;
-      }
-    }
+    this.ctxCanvas.fillRect(0, 0,  this.screenWidth, this.screenHeight);
     console.log('Equalizer screen initialized');
   }
 
   private animateEqualizer() {
     if (this && this.analyser) {
       this.analyser.getByteFrequencyData(this.freqArray);
-      this.lines.forEach((line, i) => {
-        line.style.height = this.freqArray[i] / 2 + 'px';
-      });
-      // requestAnimationFrame(this.animateEqualizer);
+      // this.lines.forEach((line, i) => {
+      //   line.style.height = this.freqArray[i] / 2 + 'px';
+      // });
+      let xPos = 0;
+
+      const lineAmount = 68;
+      const space = 2;
+
+      this.ctxCanvas.clearRect(0, 0, this.screenWidth, this.screenHeight);
+      for (let i = 0; i < lineAmount; i++) {
+        // const line = document.createElement('div');
+        // line.setAttribute('class', 'wave-line line_' + i);
+        // line.style.left = (xPos + 0) + 'px';
+        // line.style.width = width + 'px';
+        // this.lines.push(line);
+        // target.appendChild(line);
+
+        const barWidth = Math.round(this.screenWidth / 256);
+        const barHeight = Math.round(this.freqArray[i] / 2);
+        console.log(Math.round(barWidth));
+        console.log(Math.round(barHeight));
+
+        this.ctxCanvas.fillStyle = 'rgb(' + (barHeight + 100) + ', 50, 50)';
+        this.ctxCanvas.fillRect(xPos, 0, barWidth, barHeight);
+
+        xPos += barWidth + space;
+      }
     }
   }
 
