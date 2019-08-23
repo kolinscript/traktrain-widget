@@ -410,7 +410,7 @@ export class WidgetComponent implements OnInit {
         // console.log(this.freqArray);
       },
       onplay: () => {
-        this.initEqualizerScreen();
+        // this.initEqualizerScreen();
         this.playerProgressInterval = setInterval(() => {
           this.playerProgressSec
             = (typeof this.playerHowl.seek() === 'number')
@@ -418,7 +418,7 @@ export class WidgetComponent implements OnInit {
             : this.playerHowl.seek();
           this.playerProgressPercent = ((this.playerProgressSec * 100) / this.playerHowl.duration());
           this.playerProgressMS = new Date(this.playerProgressSec * 1000).toISOString().substr(14, 5);
-          this.animateEqualizer();
+          // this.animateEqualizer();
         }, 100);
       },
       onseek: () => {
@@ -565,7 +565,7 @@ export class WidgetComponent implements OnInit {
             totalCost: 0,
             cartItems: [],
           } as Cart,        // setup empty cart
-          editMode: false,
+          editMode: true,
         } as Widget;
         if (cart) {
           this.widget.tracks.map((track: Track, trackIndex: number) => {
@@ -638,7 +638,7 @@ export class WidgetComponent implements OnInit {
     return JSON.parse(localStorage.getItem(key));
   }
 
-  private lightenDarkenColor(col, amt) {
+  public lightenDarkenColor(col, amt) {
     let usePound = false;
 
     if (col[0] === '#') {
@@ -673,6 +673,19 @@ export class WidgetComponent implements OnInit {
     }
 
     return (usePound ? '#' : '') + (g | (b << 8) | (r << 16)).toString(16);
+  }
+
+
+  public hexToRGB(hex, alpha) {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+
+    if (alpha) {
+      return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + alpha + ')';
+    } else {
+      return 'rgb(' + r + ', ' + g + ', ' + b + ')';
+    }
   }
 
   private textScroller() {

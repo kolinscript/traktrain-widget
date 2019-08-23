@@ -44,6 +44,11 @@
         <div class="title">Background</div>
         <input type="text" formControlName="background"
         >
+        <input class="color-picker-input"
+               [(colorPicker)]="backgroundColor"
+               [style.background]="backgroundColor"
+               (colorPickerChange)="backgroundColorChanged(backgroundColor)"
+        >
       </div>
 
       <div class="inp"
@@ -51,12 +56,22 @@
         <div class="title">Text</div>
         <input type="text" formControlName="text"
         >
+        <input class="color-picker-input"
+               [(colorPicker)]="textColor"
+               [style.background]="textColor"
+               (colorPickerChange)="textColorChanged(textColor)"
+        >
       </div>
 
       <div class="inp"
       >
         <div class="title">Active</div>
         <input type="text" formControlName="active"
+        >
+        <input class="color-picker-input"
+               [(colorPicker)]="activeColor"
+               [style.background]="activeColor"
+               (colorPickerChange)="activeColorChanged(activeColor)"
         >
       </div>
 

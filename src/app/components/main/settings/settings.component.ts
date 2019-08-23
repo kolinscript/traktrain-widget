@@ -13,6 +13,10 @@ export class SettingsComponent implements OnInit {
   settings: FormGroup;
   embedCode: string;
 
+  backgroundColor: any;
+  textColor: any;
+  activeColor: any;
+
   constructor(
     private fb: FormBuilder
   ) { }
@@ -32,6 +36,24 @@ export class SettingsComponent implements OnInit {
       + '" width=“' + this.settings.value.width.toLowerCase()
       + '” height=“' + this.settings.value.height.toLowerCase()
       + '” frameborder="0"></iframe>';
+    this.settingsResult.emit(this.settings.value);
+  }
+
+  public backgroundColorChanged(backgroundColor: string) {
+    console.log(this.backgroundColor);
+    this.settings.controls['background'].setValue(backgroundColor);
+    this.settingsResult.emit(this.settings.value);
+  }
+
+  public textColorChanged(textColor: string) {
+    console.log(this.backgroundColor);
+    this.settings.controls['text'].setValue(textColor);
+    this.settingsResult.emit(this.settings.value);
+  }
+
+  public activeColorChanged(activeColor: string) {
+    console.log(this.backgroundColor);
+    this.settings.controls['active'].setValue(activeColor);
     this.settingsResult.emit(this.settings.value);
   }
 

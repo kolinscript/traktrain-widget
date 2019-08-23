@@ -23,7 +23,9 @@
   [ngStyle]="{background: widget.style.colors.background}"
   (window:resize)="onResize($event)"
 >
-  <div class="widget-item wi-topbar">
+  <div class="widget-item wi-topbar"
+       [ngStyle]="{borderColor: lightenDarkenColor(widget.style.colors.background, -50)}"
+  >
     <div class="title">
       <div class="shield"
            [ngStyle]="{backgroundColor: widget.style.colors.active_item, borderColor: widget.style.colors.active_accent}"
@@ -59,9 +61,13 @@
     </div>
   </div>
 
-  <div class="widget-item wi-search" [formGroup]="filterBy">
+  <div class="widget-item wi-search"
+       [formGroup]="filterBy"
+       [ngStyle]="{borderColor: lightenDarkenColor(widget.style.colors.background, -50)}"
+  >
     <div class="inp"
          [ngClass]="{'focused': searchFocused}"
+         [ngStyle]="{backgroundColor: lightenDarkenColor(widget.style.colors.background, -50)}"
     >
       <div class="placeholder"
            [ngStyle]="{color: lightenDarkenColor(widget.style.colors.text, 50)}"
@@ -85,13 +91,19 @@
     </div>
     <div class="track"
          *ngFor="let track of widget.tracks; index as indexTrack"
-         [ngStyle]="{color: track.active ? widget.style.colors.active_accent : widget.style.colors.text}"
+         [ngStyle]="{
+         color: track.active ? widget.style.colors.active_item : widget.style.colors.text
+         }"
          [ngClass]="{'active': track.active}"
          (mouseenter)="trackHover($event, track, indexTrack)"
          (mouseleave)="trackLeave($event, track, indexTrack)"
     >
       <div class="click-area" (click)="trackPlay($event, track, indexTrack)"></div>
-      <div class="container">
+      <div class="container"
+           [ngStyle]="{
+           backgroundColor: (track.active || track.hovered) ? lightenDarkenColor(widget.style.colors.background, -50) : 'transparent'
+           }"
+      >
         <div class="track-info" (click)="trackPlay($event, track, indexTrack)">
           <div class="track-cover">
             <img [src]="SDN_LINK_IMG + '/48x48/' + track.image" alt="">
@@ -128,9 +140,23 @@
               </span>
             </div>
             <div class="track-tags" *ngIf="track.tagsArr[0] !== ''">
-              <div class="tag" [ngStyle]="{color: widget.style.colors.active_item}" *ngFor="let tag of track.tagsArr">
+              <div class="tag"
+                   [ngStyle]="{
+                   color: widget.style.colors.text,
+                   backgroundColor: lightenDarkenColor(widget.style.colors.background, -25)
+                   }"
+                   *ngFor="let tag of track.tagsArr"
+              >
                 {{tag}}
               </div>
+            </div>
+            <div class="track-shadow"
+                 [ngStyle]="{
+                 background: (track.active || track.hovered) ?
+                 'linear-gradient(90deg, ' + hexToRGB(lightenDarkenColor(widget.style.colors.background, -50), 0.1) + ' 0%, ' + lightenDarkenColor(widget.style.colors.background, -50) + ' 50%)' :
+                 'transparent'
+                 }"
+            >
             </div>
           </div>
         </div>
@@ -196,7 +222,9 @@
     </div>
   </div>
 
-  <div class="widget-item wi-player-bottom">
+  <div class="widget-item wi-player-bottom"
+       [ngStyle]="{borderColor: lightenDarkenColor(widget.style.colors.background, -50)}"
+  >
     <div class="progress"
          (mousemove)="trackProgressClicked($event)"
          (mousedown)="trackProgressClicked($event)"
@@ -204,18 +232,23 @@
     >
       <div class="timing"
            *ngIf="windowWidth <= breakPoint"
-           [ngStyle]="{color: lightenDarkenColor(widget.style.colors.text, 50)}"
+           [ngStyle]="{color: widget.style.colors.text}"
       >
         <div class="curtime">{{playerProgressMS}}</div>
         <div class="alltime">{{playerDurationMS}}</div>
       </div>
-      <div class="bar">
+      <div class="bar"
+           [ngStyle]="{backgroundColor: lightenDarkenColor(widget.style.colors.background, -50)}"
+      >
         <div class="active-area"
              [ngStyle]="{'width.%': playerProgressPercent, backgroundColor: widget.style.colors.active_item}"
         >
           <div class="dot"
                *ngIf="playerProgressPercent"
-               [ngStyle]="{borderColor: widget.style.colors.active_item}"
+               [ngStyle]="{
+               borderColor: widget.style.colors.active_item,
+               backgroundColor: widget.style.colors.active_item
+               }"
           ></div>
         </div>
       </div>
@@ -229,25 +262,29 @@
                (mouseleave)="hoverOnPrev = false"
           >
             <span class="line"
-                  [ngStyle]="{backgroundColor: hoverOnPrev === true  ? widget.style.colors.active_item : '#b8b8b8'}"
-            ></span>
+                  [ngStyle]="{backgroundColor: hoverOnPrev === true  ? widget.style.colors.active_item : lightenDarkenColor(widget.style.colors.active_item, 85)}"
+            >
+            </span>
             <span class="triangle"
-                  [ngStyle]="{borderRightColor: hoverOnPrev === true  ? widget.style.colors.active_item : '#b8b8b8'}"
-            ></span>
+                  [ngStyle]="{borderRightColor: hoverOnPrev === true  ? widget.style.colors.active_item : lightenDarkenColor(widget.style.colors.active_item, 85)}"
+            >
+            </span>
           </div>
           <div
             class="ctrl play"
             (click)="trackPlay()"
             [ngClass]="{'pause': playerPlay}"
           >
-          <span
-            class="triangle left"
-            [ngStyle]="{borderLeftColor: widget.style.colors.active_item}"
-          ></span>
+            <span
+              class="triangle left"
+              [ngStyle]="{borderLeftColor: widget.style.colors.active_item}"
+            >
+            </span>
             <span
               class="triangle right"
               [ngStyle]="{borderLeftColor: widget.style.colors.active_item}"
-            ></span>
+            >
+            </span>
           </div>
           <div class="ctrl next"
                (click)="trackToggle('next')"
@@ -255,10 +292,10 @@
                (mouseleave)="hoverOnNext = false"
           >
             <span class="triangle"
-                  [ngStyle]="{borderLeftColor: hoverOnNext === true  ? widget.style.colors.active_item : '#b8b8b8'}"
+                  [ngStyle]="{borderLeftColor: hoverOnNext === true  ? widget.style.colors.active_item : lightenDarkenColor(widget.style.colors.active_item, 85)}"
             ></span>
             <span class="line"
-                  [ngStyle]="{backgroundColor: hoverOnNext === true  ? widget.style.colors.active_item : '#b8b8b8'}"
+                  [ngStyle]="{backgroundColor: hoverOnNext === true  ? widget.style.colors.active_item : lightenDarkenColor(widget.style.colors.active_item, 85)}"
             ></span>
           </div>
         </div>
@@ -270,12 +307,17 @@
                (mousedown)="trackVolumeClick($event)"
                (mouseup)="trackVolumeClick($event)"
           >
-            <div class="volume-slider">
+            <div class="volume-slider"
+                 [ngStyle]="{backgroundColor: lightenDarkenColor(widget.style.colors.background, -50)}"
+            >
               <div class="volume-level"
                    [ngStyle]="{'width.%': playerVolumePercent, backgroundColor: widget.style.colors.active_item}"
               >
                 <div class="dot"
-                     [ngStyle]="{borderColor: widget.style.colors.active_item}"
+                     [ngStyle]="{
+                     borderColor: widget.style.colors.active_item,
+                     backgroundColor: widget.style.colors.active_item
+                     }"
                 ></div>
               </div>
             </div>
@@ -295,20 +337,31 @@
         <div class="tags">
           <div
             class="tag"
-            [ngStyle]="{color: widget.style.colors.active_item}"
+            [ngStyle]="{
+            color: widget.style.colors.text,
+            backgroundColor: lightenDarkenColor(widget.style.colors.background, -25)
+            }"
             *ngFor="let tag of playerTrackTags"
           >
             {{tag}}
           </div>
         </div>
+        <div class="track-shadow"
+             [ngStyle]="{background: 'linear-gradient(90deg, ' + hexToRGB(widget.style.colors.background, 0.1) + ' 0%, ' + hexToRGB(widget.style.colors.background, 1) + ' 50%)'}"
+        >
+      </div>
       </div>
     </div>
     <div class="block-money">
       <div class="timing-and-types">
         <div class="timing"
-             [ngStyle]="{color: lightenDarkenColor(widget.style.colors.text, 50)}"
+             [ngStyle]="{color: widget.style.colors.text}"
         >
-          <div class="curtime">{{playerProgressMS}}</div>
+          <div class="curtime"
+               [ngStyle]="{borderColor: widget.style.colors.text}"
+          >
+            {{playerProgressMS}}
+          </div>
           <div class="alltime">{{playerDurationMS}}</div>
         </div>
         <!--<div class="payment-types">-->
@@ -323,12 +376,17 @@
                (mousedown)="trackVolumeClick($event)"
                (mouseup)="trackVolumeClick($event)"
           >
-            <div class="volume-slider">
+            <div class="volume-slider"
+                 [ngStyle]="{backgroundColor: lightenDarkenColor(widget.style.colors.background, -50)}"
+            >
               <div class="volume-level"
                    [ngStyle]="{'width.%': playerVolumePercent, backgroundColor: widget.style.colors.active_item}"
               >
                 <div class="dot"
-                     [ngStyle]="{borderColor: widget.style.colors.active_item}"
+                     [ngStyle]="{
+                     borderColor: widget.style.colors.active_item,
+                     backgroundColor: widget.style.colors.active_item
+                     }"
                 ></div>
               </div>
             </div>
@@ -340,22 +398,31 @@
            (click)="cartOpen()"
            (mouseover)="hoverOnCart = true"
            (mouseleave)="hoverOnCart = false"
-           [ngStyle]="{backgroundColor: hoverOnCart === true  ? widget.style.colors.active_item : '#F5F5F5'}"
+           [ngStyle]="{backgroundColor: hoverOnCart === true  ? widget.style.colors.active_item : lightenDarkenColor(widget.style.colors.background, -50)}"
+
       >
-        <div class="price" [ngStyle]="{color: widget.style.colors.text}">
+        <div class="price"
+             [ngStyle]="{color: hoverOnCart === true  ? lightenDarkenColor(widget.style.colors.active_item, -75) :  widget.style.colors.text}"
+        >
           <span class="val">${{widget.cart.totalCost}}</span>
         </div>
-        <div class="icon-cart">
+        <div class="icon-cart-wrapper">
+          <div class="icon-cart"
+               [ngStyle]="{
+               backgroundColor: hoverOnCart === true  ? lightenDarkenColor(widget.style.colors.active_item, -75) :  widget.style.colors.text
+               }"
+          >
+          </div>
           <span class="count"
                 *ngIf="widget.cart.cartItems.length > 0"
                 [ngStyle]="{
-                  color: hoverOnCart === true  ? widget.style.colors.active_item : '#ffffff',
-                  backgroundColor: hoverOnCart === true  ? '#ffffff' : widget.style.colors.active_item,
-                  'box-shadow': hoverOnCart === true  ? '0 0 0 2px' + widget.style.colors.active_item : '0 0 0 2px #f5f5f5'
+                  color: hoverOnCart === true  ? widget.style.colors.active_item : lightenDarkenColor(widget.style.colors.background, -50),
+                  backgroundColor: hoverOnCart === true  ? lightenDarkenColor(widget.style.colors.active_item, -75) : widget.style.colors.active_item,
+                  'box-shadow': hoverOnCart === true  ? '0 0 0 2px' + widget.style.colors.active_item : '0 0 0 2px ' + lightenDarkenColor(widget.style.colors.background, -50)
                 }"
           >
-            {{widget.cart.cartItems.length}}
-          </span>
+          {{widget.cart.cartItems.length}}
+        </span>
         </div>
       </div>
     </div>
