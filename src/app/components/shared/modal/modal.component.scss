@@ -118,32 +118,34 @@
             justify-content: center;
             align-items: center;
             margin-bottom: 10px;
-            border: 1px solid #e6e6e6;
+            border: 1px dashed #e6e6e6;
             border-radius: 3px;
+            transition: all .2s ease;
             &:last-child {
               margin-bottom: 0;
             }
-            &:hover {
-              background-color: #F5F5F5;
-            }
+            //&:hover {
+            //  background-color: #F5F5F5;
+            //}
             .label {
               display: flex;
               align-items: center;
               justify-content: flex-start;
-              min-width: 200px;
+              min-width: 150px;
               padding: 0 15px;
               font: 400 14px/38px 'Work Sans';
               text-transform: uppercase;
-              border-right: 1px solid #e6e6e6;
-              .in-cart-icon {
-                position: relative;
-                margin-left: 10px;
-                width: 14px;
-                height: 14px;
-                mask-image: url(../../../../assets/icons/shopping-cart.svg);
-                background-color: #ffffff;
-                mask-size: cover;
-              }
+              //border-right: 1px solid #e6e6e6;
+              //border: none;
+              //.in-cart-icon {
+              //  position: relative;
+              //  margin-left: 10px;
+              //  width: 14px;
+              //  height: 14px;
+              //  mask-image: url(../../../../assets/icons/shopping-cart.svg);
+              //  background-color: #ffffff;
+              //  mask-size: cover;
+              //}
             }
             .price {
               min-width: 100px;
@@ -202,14 +204,15 @@
         text-transform: uppercase;
         text-align: center;
         color: #fff;
+        transition: all .2s ease;
       }
     }
     &.cart {
       .cart-content {
         .cart-header {}
         .cart-tracks {
-          overflow-y: scroll;
-          max-height: 307px;
+          overflow-y: auto;
+          max-height: calc(100vh - 350px);
           width: 420px;
           margin-top: 20px;
           padding-right: 8px;
@@ -224,6 +227,7 @@
               margin-top: 0;
             }
             .cover {
+              border-bottom: none;
               position: relative;
               overflow: hidden;
               width: 88px;
@@ -241,14 +245,29 @@
                 width: auto;
                 height: 100%;
               }
-            }
-            .index {
-              margin-left: 15px;
-              padding-top: 5px;
-              font: 400 14px/16px 'Work Sans';
+              .fade {
+                cursor: pointer;
+                position: absolute;
+                height: 100%;
+                width: 100%;
+              }
+              .btn-delete {
+                cursor: pointer;
+                position: absolute;
+                display: block;
+                content: '';
+                width: 24px;
+                height: 24px;
+                top: calc(50% - 12px);
+                left: calc(50% - 12px);
+                mask-image: url('../../../../assets/icons/trash.svg');
+                mask-size: cover;
+              }
             }
             .description {
               flex: 1;
+              width: 100%;
+              overflow: hidden;
               display: flex;
               justify-content: flex-start;
               align-items: flex-start;
@@ -265,15 +284,17 @@
                }
                .track-title {
                  position: relative;
-                 white-space: nowrap;
-                 overflow: hidden;
                  width: 100%;
                  height: 16px;
                  margin-right: 20px;
                  span {
                    display: block;
                    position: absolute;
+                   width: 100%;
                    font: 400 14px/16px 'Work Sans';
+                   white-space: nowrap;
+                   text-overflow: ellipsis;
+                   overflow: hidden;
                    //animation: 20s linear infinite slide;
                  }
                }
@@ -291,42 +312,6 @@
                  flex: 1;
                  text-align: right;
                  font: 600 14px/16px 'Work Sans';
-               }
-               &.delete {
-                 justify-content: flex-end;
-                 margin-top: 10px;
-                 .del {
-                   cursor: pointer;
-                   position: relative;
-                   width: 20px;
-                   height: 20px;
-                   border-radius: 50%;
-                   border: 2px solid $gray-background-basic;
-                   background-color: #ffffff;
-                   transition: all .2s ease;
-                   span {
-                     position: absolute;
-                     display: block;
-                     width: 12px;
-                     height: 2px;
-                     top: 50%;
-                     left: 50%;
-                     margin-top: -1px;
-                     margin-left: -6px;
-                     background-color: $gray-background-basic;
-                     transform: rotate(45deg);
-                     transition: all .2s ease;
-                     &:first-child {
-                       transform: rotate(-45deg);
-                     }
-                   }
-                   &:hover {
-                     background-color: $gray-background-basic;
-                     span {
-                       background-color: #ffffff;
-                     }
-                   }
-                 }
                }
              }
             }
@@ -401,6 +386,36 @@
           .cart-header {}
           .cart-tracks {
             width: 240px;
+            .track {
+              .cover {
+                width: 40px;
+                height: 40px;
+              }
+              .description {
+                padding: 0;
+                .row {
+                  .track-title {
+                    height: 14px;
+                    span {
+                      font-size: 12px;
+                      line-height: 14px;
+                    }
+                  }
+                  .sub-title {
+                    font-size: 12px;
+                    line-height: 14px;
+                  }
+                  .price {
+                    font-size: 12px;
+                    line-height: 14px;
+                  }
+                  .sub-price {
+                    font-size: 12px;
+                    line-height: 14px;
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -411,10 +426,12 @@
 @media (max-width: 600px) {
   .modal-wrapper {
     .modal {
-      max-height: 80%;
-      overflow-y: scroll;
+      padding: 30px;
+      overflow: hidden;
       &.buy-terms {
+        max-height: 80%;
         max-width: 280px;
+        overflow-y: auto;
         .track-name {
           font-size: 16px;
           line-height: 18px;

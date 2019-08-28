@@ -16,7 +16,7 @@
             <span>Auto</span>
           </div>
         </div>
-        <input type="text" formControlName="width"
+        <input type="text" formControlName="width" (keyup)="widthChanged()"
         >
       </div>
 
@@ -35,28 +35,43 @@
             <span>Auto</span>
           </div>
         </div>
-        <input type="text" formControlName="height"
+        <input type="text" formControlName="height" (keyup)="heightChanged()"
         >
       </div>
 
       <div class="inp"
       >
         <div class="title">Background</div>
-        <input type="text" formControlName="background"
+        <input type="text" formControlName="background" disabled
+        >
+        <input class="color-picker-input"
+               [(colorPicker)]="backgroundColor"
+               [style.background]="backgroundColor"
+               (colorPickerChange)="backgroundColorChanged(backgroundColor)"
         >
       </div>
 
       <div class="inp"
       >
         <div class="title">Text</div>
-        <input type="text" formControlName="text"
+        <input type="text" formControlName="text" disabled
+        >
+        <input class="color-picker-input"
+               [(colorPicker)]="textColor"
+               [style.background]="textColor"
+               (colorPickerChange)="textColorChanged(textColor)"
         >
       </div>
 
       <div class="inp"
       >
         <div class="title">Active</div>
-        <input type="text" formControlName="active"
+        <input type="text" formControlName="active" disabled
+        >
+        <input class="color-picker-input"
+               [(colorPicker)]="activeColor"
+               [style.background]="activeColor"
+               (colorPickerChange)="activeColorChanged(activeColor)"
         >
       </div>
 

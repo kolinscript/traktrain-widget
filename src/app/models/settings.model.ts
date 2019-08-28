@@ -1,5 +1,8 @@
 export interface SettingsContent {
   widgetID: number;
+  backgroundColor: any;
+  textColor: any;
+  activeColor: any;
 }
 
 export interface Settings {
