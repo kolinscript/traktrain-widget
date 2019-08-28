@@ -76,7 +76,7 @@ export interface Track {
   name: string;
   prices: Prices;
   image: string;
-  lbImage: null | string;
+  lbImage: string;
   drumKit: boolean;
   drumKitInfo: DrumKitInfo;
   tags: string;

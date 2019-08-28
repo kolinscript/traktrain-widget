@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ModalContent, ModalTypes } from '../../../models/modal.model';
 import { CartItem, LicensePriceMapper, SDN_LINK_IMG } from '../../../models/widget.model';
 import { Animations } from '../../../animations';
+import { LightenDarkenColor } from '../../../helpers';
 
 @Component({
   selector: 'app-modal',
@@ -12,6 +13,7 @@ import { Animations } from '../../../animations';
   ]
 })
 export class ModalComponent implements OnInit {
+  lightenDarkenColor = LightenDarkenColor;
   @Input() modalContent: ModalContent;
   @Output() modalResult: EventEmitter<any> = new EventEmitter<any>();
   ModalTypes = ModalTypes;
@@ -102,7 +104,9 @@ export class ModalComponent implements OnInit {
   /*
   * function CART block
   */
-  private initCart() {}
+  private initCart() {
+    this.modalContent.cart.cartItems.forEach(item => item.track.play = false);
+  }
 
   public deleteTrackFromCart(indexTrack: number) {
     this.modalContent.cart.totalCost = this.modalContent.cart.totalCost - this.modalContent.cart.cartItems[indexTrack].price;

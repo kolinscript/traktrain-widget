@@ -53,11 +53,10 @@
   </div>
 
   <div class="widget-item wi-screen"
-       [ngStyle]="{backgroundColor: widget.style.colors.active_item}"
+       [ngStyle]="{backgroundColor: lightenDarkenColor(widget.style.colors.background, -50)}"
   >
     <div class="screen">
       <div class="banner" [ngStyle]="{'background-image':'url(' + SDN_LINK_IMG + '' + playerTracklbImage + ')'}"></div>
-      <!--<div class="waves"></div>-->
       <canvas #waves></canvas>
     </div>
   </div>
@@ -75,6 +74,7 @@
       >
         Start type the track name
       </div>
+      <div class="icon-search" [ngStyle]="{backgroundColor: widget.style.colors.text}"></div>
       <input type="text"
              (keyup)="searchTrack()"
              (focus)="searchFocus('in')"
@@ -82,12 +82,18 @@
              formControlName="filterByTrackName"
              [ngStyle]="{color: widget.style.colors.text}"
       >
-      <div class="inp-clear" (click)="searchClear()"><span></span><span></span></div>
+      <div class="inp-clear" (click)="searchClear()">
+        <span [ngStyle]="{backgroundColor: widget.style.colors.text}"></span>
+        <span [ngStyle]="{backgroundColor: widget.style.colors.text}"></span>
+      </div>
     </div>
   </div>
 
   <div class="widget-item wi-player-list">
-    <div class="empty-state" *ngIf="!widget.tracks || widget.tracks.length === 0">
+    <div class="empty-state"
+         *ngIf="!widget.tracks || widget.tracks.length === 0"
+         [ngStyle]="{color: widget.style.colors.text}"
+    >
       No tracks found.
     </div>
     <div class="track"
@@ -166,8 +172,15 @@
             <div class="rc-control prev"
                  *ngIf="track.sliderData.length !== 1"
                  (click)="carouselSlide(track, indexTrack, 'prev')"
+                 (mouseover)="hoverOnRcPrev = true" (mouseleave)="hoverOnRcPrev = false"
+                 [ngStyle]="{backgroundColor: hoverOnRcPrev === true  ? widget.style.colors.background : 'transparent' }"
             >
-              <div class="icon"></div>
+              <div class="icon"
+                   [ngStyle]="{
+                   backgroundColor: widget.style.colors.text
+                   }"
+              >
+              </div>
             </div>
             <div class="rc-rights">
               <div class="right"
@@ -177,7 +190,9 @@
                    'next': right.style === 'next',
                    'initial': right.style === 'initial'
                    }"
-                   [ngStyle]="{color: widget.style.colors.text}"
+                   [ngStyle]="{
+                   color: widget.style.colors.text
+                   }"
               >
                 {{right.right}}<span class="val"> ${{right.price}}</span>
               </div>
@@ -185,37 +200,69 @@
             <div class="rc-control next"
                  *ngIf="track.sliderData.length !== 1"
                  (click)="carouselSlide(track, indexTrack, 'next')"
+                 (mouseover)="hoverOnRcNext = true" (mouseleave)="hoverOnRcNext = false"
+                 [ngStyle]="{backgroundColor: hoverOnRcNext === true  ? widget.style.colors.background : 'transparent' }"
             >
-              <div class="icon"></div>
+              <div class="icon"
+                   [ngStyle]="{
+                   backgroundColor: widget.style.colors.text
+                   }"
+              >
+              </div>
             </div>
           </div>
-
-          <div class="btn-cart add"
+          <div class="icon-cart-wrapper add"
                *ngIf="(track.active || track.hovered) && !track.inCart"
                (click)="trackAddToCart($event, track, indexTrack)"
           >
+            <div class="icon-cart"
+                 [ngStyle]="{
+               backgroundColor: widget.style.colors.text
+               }"
+            >
+            </div>
             <span class="tip"
                   [ngStyle]="{
-                    backgroundColor: widget.style.colors.active_item,
-                    'box-shadow': (track.active || track.hovered) ? '0 0 0 2px #f5f5f5' : '0 0 0 2px #ffffff'
+                  backgroundColor: widget.style.colors.active_item,
+                  'box-shadow': '0 0 0 2px ' + lightenDarkenColor(widget.style.colors.background, -50)
                   }"
             >
-              <span class="line"></span>
-              <span class="line"></span>
+              <span class="line"
+                    [ngStyle]="{
+                    backgroundColor: lightenDarkenColor(widget.style.colors.background, -50)
+                    }"
+              >
+              </span>
+              <span class="line"
+                    [ngStyle]="{
+                    backgroundColor: lightenDarkenColor(widget.style.colors.background, -50)
+                    }"
+              >
+              </span>
             </span>
           </div>
-          <div class="btn-cart added"
+          <div class="icon-cart-wrapper added"
                *ngIf="track.inCart"
                (click)="cartOpen()"
-               [ngClass]="{'active': track.active || track.hovered}"
           >
+            <div class="icon-cart"
+                 [ngStyle]="{
+               backgroundColor: widget.style.colors.text
+               }"
+            >
+            </div>
             <span class="tip"
                   [ngStyle]="{
-                    'box-shadow': (track.active || track.hovered) ? '0 0 0 2px #f5f5f5' : '0 0 0 2px #ffffff'
+                  backgroundColor: widget.style.colors.active_item,
+                  'box-shadow': (track.active || track.hovered) ? '0 0 0 2px ' + lightenDarkenColor(widget.style.colors.background, -50) : '0 0 0 2px ' + widget.style.colors.background
                   }"
             >
-              <span class="line"></span>
-              <span class="line"></span>
+              <div class="icon"
+                   [ngStyle]="{
+                   backgroundColor: (track.active || track.hovered) ? lightenDarkenColor(widget.style.colors.background, -50) : widget.style.colors.background
+                   }"
+              >
+              </div>
             </span>
           </div>
         </div>
@@ -248,7 +295,7 @@
                *ngIf="playerProgressPercent"
                [ngStyle]="{
                borderColor: widget.style.colors.active_item,
-               backgroundColor: widget.style.colors.active_item
+               backgroundColor: widget.style.colors.background
                }"
           ></div>
         </div>
@@ -317,7 +364,7 @@
                 <div class="dot"
                      [ngStyle]="{
                      borderColor: widget.style.colors.active_item,
-                     backgroundColor: widget.style.colors.active_item
+                     backgroundColor: widget.style.colors.background
                      }"
                 ></div>
               </div>
@@ -335,7 +382,9 @@
           {{playerTrackName}}
           </span>
         </div>
-        <div class="tags">
+        <div class="tags"
+             *ngIf="playerTrackTags"
+        >
           <div
             class="tag"
             [ngStyle]="{
@@ -386,7 +435,7 @@
                 <div class="dot"
                      [ngStyle]="{
                      borderColor: widget.style.colors.active_item,
-                     backgroundColor: widget.style.colors.active_item
+                     backgroundColor: widget.style.colors.background
                      }"
                 ></div>
               </div>
@@ -399,39 +448,39 @@
            (click)="cartOpen()"
            (mouseover)="hoverOnCart = true"
            (mouseleave)="hoverOnCart = false"
-           [ngStyle]="{backgroundColor: hoverOnCart === true  ? widget.style.colors.active_item : lightenDarkenColor(widget.style.colors.background, -50)}"
+           [ngStyle]="{backgroundColor: lightenDarkenColor(widget.style.colors.background, -50)}"
 
       >
         <div class="price"
-             [ngStyle]="{color: hoverOnCart === true  ? lightenDarkenColor(widget.style.colors.active_item, -75) :  widget.style.colors.text}"
+             [ngStyle]="{color: hoverOnCart === true  ? widget.style.colors.active_item :  widget.style.colors.text}"
         >
           <span class="val">${{widget.cart.totalCost}}</span>
         </div>
         <div class="icon-cart-wrapper">
           <div class="icon-cart"
                [ngStyle]="{
-               backgroundColor: hoverOnCart === true  ? lightenDarkenColor(widget.style.colors.active_item, -75) :  widget.style.colors.text
+               backgroundColor: widget.style.colors.text
                }"
           >
           </div>
           <span class="count"
                 *ngIf="widget.cart.cartItems.length > 0"
                 [ngStyle]="{
-                  color: hoverOnCart === true  ? widget.style.colors.active_item : lightenDarkenColor(widget.style.colors.background, -50),
-                  backgroundColor: hoverOnCart === true  ? lightenDarkenColor(widget.style.colors.active_item, -75) : widget.style.colors.active_item,
-                  'box-shadow': hoverOnCart === true  ? '0 0 0 2px' + widget.style.colors.active_item : '0 0 0 2px ' + lightenDarkenColor(widget.style.colors.background, -50)
+                  color: lightenDarkenColor(widget.style.colors.background, -50),
+                  backgroundColor: hoverOnCart === true  ? widget.style.colors.active_item : widget.style.colors.text,
+                  'box-shadow': hoverOnCart === true  ? '0 0 0 2px' + lightenDarkenColor(widget.style.colors.background, -50) : '0 0 0 2px ' + lightenDarkenColor(widget.style.colors.background, -50)
                 }"
           >
-          {{widget.cart.cartItems.length}}
-        </span>
+            {{widget.cart.cartItems.length}}
+          </span>
         </div>
       </div>
     </div>
   </div>
-</div>
 
-<app-modal
-  *ngIf="modalOpen"
-  [modalContent]="modalContent"
-  (modalResult)="modalEvent($event)"
-></app-modal>
+  <app-modal
+    *ngIf="modalOpen"
+    [modalContent]="modalContent"
+    (modalResult)="modalEvent($event)"
+  ></app-modal>
+</div>

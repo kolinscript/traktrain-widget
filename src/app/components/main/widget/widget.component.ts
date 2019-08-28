@@ -1,6 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { Colors, LicensePriceMapper, Style, Track, Widget, SDN_LINK_IMG, SDN_LINK_MP3, CartItem, Cart } from '../../../models/widget.model';
+import { Colors, Style, Track, Widget, SDN_LINK_IMG, SDN_LINK_MP3, CartItem, Cart } from '../../../models/widget.model';
+import { CreateRightsDescriptions, HexToRGB, LightenDarkenColor, PriceTransformer } from '../../../helpers';
 import { WidgetService } from '../../../services/widget.service';
 import { ModalService } from '../../../services/modal.service';
 import { ModalContent, ModalTypes } from '../../../models/modal.model';
@@ -13,6 +14,8 @@ import { Howl, Howler } from 'howler';
   styleUrls: ['./widget.component.scss']
 })
 export class WidgetComponent implements OnInit {
+  lightenDarkenColor = LightenDarkenColor;
+  hexToRGB = HexToRGB;
   @ViewChild('waves') canvasWavesElRef: ElementRef<HTMLCanvasElement>;
   @ViewChild('volumeDesktop') volumeContainerDesktop: ElementRef;
   @ViewChild('volumeMobile') volumeContainerMobile: ElementRef;
@@ -28,6 +31,7 @@ export class WidgetComponent implements OnInit {
   modalContent: ModalContent;
   settingsContent: SettingsContent;
   carouselMoving: boolean;
+  trackLoading: boolean;
   //
   playerActiveTrackIndex = 0;
   playerPlay = false;
@@ -72,7 +76,7 @@ export class WidgetComponent implements OnInit {
       // console.log(this.widget.tracks.map(t => (t.drumKit)));
       this.initPlayerHowl(this.playerActiveTrackIndex);
       this.initCarousel(this.widget.tracks[this.playerActiveTrackIndex].sliderIndex, this.playerActiveTrackIndex);
-    }, 13); // widgets id's: 2, 3, 5, 9(SESH) 13(Rio), 13319
+    }, 9); // widgets id's: 2, 3, 5, 9(SESH) 13(Rio), 13319
   }
 
   // todo highlight to components/shared folder
@@ -103,7 +107,7 @@ export class WidgetComponent implements OnInit {
   public carouselSlide(track: Track, trackId: number, direction: string): void {
     // console.log(this.carouselMoving);
     if (!this.carouselMoving) {
-      this.disableInteraction();
+      this.disableInteraction('carousel');
       const carouselLength = track.sliderData.length;
       const activeIndex = track.sliderData.findIndex(el => el.style === 'initial');
       // console.log('track ', track);
@@ -185,11 +189,20 @@ export class WidgetComponent implements OnInit {
     }
   }
 
-  private disableInteraction() {
-    this.carouselMoving = true;
-    setTimeout(() => {
-      this.carouselMoving = false;
-    }, 500);
+  private disableInteraction(target: string) {
+    if (target === 'carousel') {
+      this.carouselMoving = true;
+      console.log('carousel INTERACTION DISABLED');
+      setTimeout(() => {
+        this.carouselMoving = false;
+      }, 500);
+    } else if (target === 'track') {
+      this.trackLoading = true;
+      console.log('track INTERACTION DISABLED');
+      setTimeout(() => {
+        this.trackLoading = false;
+      }, 800);
+    }
   }
   // Carousel : end
 
@@ -254,8 +267,8 @@ export class WidgetComponent implements OnInit {
           (event.offsetX * 100) /
           (this.volumeContainerDesktop.nativeElement.offsetWidth || this.volumeContainerMobile.nativeElement.offsetWidth)
         );
-        const volume = +(Math.round((this.playerVolumePercent / 100 * 10)) / 10).toFixed(1);
-        this.playerHowl.volume(volume);
+        this.playerVolumeHowlerValue = +(Math.round((this.playerVolumePercent / 100 * 10)) / 10).toFixed(1);
+        this.playerHowl.volume(this.playerVolumeHowlerValue);
         break;
       }
       case ('mousemove'): {
@@ -264,8 +277,8 @@ export class WidgetComponent implements OnInit {
             (event.offsetX * 100) /
             (this.volumeContainerDesktop.nativeElement.offsetWidth || this.volumeContainerMobile.nativeElement.offsetWidth)
           );
-          const volume = +(Math.round((this.playerVolumePercent / 100 * 10)) / 10).toFixed(1);
-          this.playerHowl.volume(volume);
+          this.playerVolumeHowlerValue = +(Math.round((this.playerVolumePercent / 100 * 10)) / 10).toFixed(1);
+          this.playerHowl.volume(this.playerVolumeHowlerValue);
         }
         break;
       }
@@ -304,74 +317,82 @@ export class WidgetComponent implements OnInit {
   }
 
   public trackPlay(event?, track?: Track, trackIndex?: number): void {
-    // console.log(this.widget.tracks.length);
-    if (this.widget.tracks.length > 0) {
-      if (trackIndex || trackIndex === 0) { this.playerActiveTrackIndex = trackIndex; } // обновление активного трека (если клик по листу)
-      this.initCarousel(this.widget.tracks[this.playerActiveTrackIndex].sliderIndex, this.playerActiveTrackIndex);
-      this.playerTrackName = this.widget.tracks[this.playerActiveTrackIndex].name;
-      this.playerTrackTags = this.widget.tracks[this.playerActiveTrackIndex].tagsArr;
-      this.playerTracklbImage =
-        this.widget.tracks[this.playerActiveTrackIndex].image
-        || this.widget.tracks[this.playerActiveTrackIndex].lbImage;
-      //
-      if (this.widget.tracks[this.playerActiveTrackIndex].active === true) { // выбранный трек активный? - да
-        if (this.widget.tracks[this.playerActiveTrackIndex].play === true) { // выбранный трек играет? - да
-          this.playerHowl.pause();                              // пауза ховлера
-          this.playerPlay = false;
-          this.widget.tracks[this.playerActiveTrackIndex].play = false;
-          if (this.analyser && this.analyser.ctx) {
-            this.analyser.ctx.close();
+    if (!this.trackLoading) {
+      this.disableInteraction('track');
+      if (this.widget.tracks.length > 0) {
+        this.textScroller();
+        if (trackIndex || trackIndex === 0) { this.playerActiveTrackIndex = trackIndex; } // обновление активного трека (если клик по листу)
+        this.initCarousel(this.widget.tracks[this.playerActiveTrackIndex].sliderIndex, this.playerActiveTrackIndex);
+        this.playerTrackName = this.widget.tracks[this.playerActiveTrackIndex].name;
+        this.playerTrackTags = this.widget.tracks[this.playerActiveTrackIndex].tagsArr;
+        this.playerTracklbImage = this.widget.tracks[this.playerActiveTrackIndex].lbImage
+          ?  this.widget.tracks[this.playerActiveTrackIndex].lbImage
+          : this.widget.tracks[this.playerActiveTrackIndex].image;
+        //
+        console.log(this.playerTracklbImage);
+        if (this.widget.tracks[this.playerActiveTrackIndex].active === true) { // выбранный трек активный? - да
+          if (this.widget.tracks[this.playerActiveTrackIndex].play === true) { // выбранный трек играет? - да
+            this.playerHowl.pause();                              // пауза ховлера
+            this.playerPlay = false;
+            this.widget.tracks[this.playerActiveTrackIndex].play = false;
+            if (this.analyser && this.analyser.ctx) {
+              this.analyser.ctx.close();
+            }
+            if (this.playerProgressInterval) {
+              clearInterval(this.playerProgressInterval);         // чистка таймера
+            }
+          } else {                                            // выбранный трек играет? - нет
+            if (this.playerProgressSec) {                     // выбранный трек играл раньше? - да
+              this.playerHowl.seek(this.playerProgressSec);       // устанавливаем время запуска трека (текущее на момент установкии паузы)
+              this.playerHowl.volume(this.playerVolumeHowlerValue);
+              this.playerHowl.play();                             // запускаем плеер
+              this.playerPlay = true;
+              this.widget.tracks[this.playerActiveTrackIndex].play = true;
+            } else {                                          // выбранный трек играл раньше? - нет
+              this.initPlayerHowl(this.playerActiveTrackIndex);   // инициализируем ховлер
+              this.playerHowl.volume(this.playerVolumeHowlerValue);
+              this.playerHowl.play();                             // запускаем плеер
+              this.playerPlay = true;
+              this.widget.tracks[this.playerActiveTrackIndex].play = true;
+            }
           }
-          if (this.playerProgressInterval) {
-            clearInterval(this.playerProgressInterval);         // чистка таймера
+        } else {                                              // выбранный трек активный? - нет
+          this.playerProgressSec = 0;
+          this.playerProgressPercent = 0;
+          this.playerProgressMS = '00:00';
+          this.playerDurationMS = '00:00';
+          if (this.playerHowl) {
+            if (this.playerProgressInterval) {
+              clearInterval(this.playerProgressInterval);         // чистка таймера
+            }
+            this.playerHowl.stop();
+            this.playerPlay = false;
           }
-        } else {                                            // выбранный трек играет? - нет
-          if (this.playerProgressSec) {                     // выбранный трек играл раньше? - да
-            this.playerHowl.seek(this.playerProgressSec);       // устанавливаем время запуска трека (текущее на момент установкии паузы)
-            this.playerHowl.play();                             // запускаем плеер
-            this.playerPlay = true;
-            this.widget.tracks[this.playerActiveTrackIndex].play = true;
-          } else {                                          // выбранный трек играл раньше? - нет
-            this.initPlayerHowl(this.playerActiveTrackIndex);   // инициализируем ховлер
-            this.playerHowl.play();                             // запускаем плеер
-            this.playerPlay = true;
-            this.widget.tracks[this.playerActiveTrackIndex].play = true;
-          }
-        }
-      } else {                                              // выбранный трек активный? - нет
-        this.playerProgressSec = 0;
-        this.playerProgressPercent = 0;
-        this.playerProgressMS = '00:00';
-        this.playerDurationMS = '00:00';
-        if (this.playerHowl) {
-          if (this.playerProgressInterval) {
-            clearInterval(this.playerProgressInterval);         // чистка таймера
-          }
-          this.playerHowl.stop();
-          this.playerPlay = false;
-        }
-        this.widget.tracks.forEach((tr) => tr.play = false);
-        this.widget.tracks.forEach((tr) => tr.active = false);
-        this.initPlayerHowl(this.playerActiveTrackIndex);                    // инициализируем инстанс ховлера
-        this.playerHowl.play();
-        this.playerPlay = true;
-        this.widget.tracks[this.playerActiveTrackIndex].active = true;
-        this.widget.tracks[this.playerActiveTrackIndex].play = true;
-        setTimeout(() => {
-          this.elRef.nativeElement.querySelector('.active ').focus();
-          this.elRef.nativeElement.querySelector('.active').scrollIntoView({behavior: 'smooth'});
-        }, 100);
-      }
-    } else {
-      if (this.playerHowl) {
-        if (!this.playerPlay) {
-          this.playerPlay = true;
+          this.widget.tracks.forEach((tr) => tr.play = false);
+          this.widget.tracks.forEach((tr) => tr.active = false);
+          this.initPlayerHowl(this.playerActiveTrackIndex);                    // инициализируем инстанс ховлера
+          this.playerHowl.volume(this.playerVolumeHowlerValue);
           this.playerHowl.play();
-        } else {
-          this.playerHowl.pause();
-          this.playerPlay = false;
-          if (this.playerProgressInterval) {
-            clearInterval(this.playerProgressInterval);
+          this.playerPlay = true;
+          this.widget.tracks[this.playerActiveTrackIndex].active = true;
+          this.widget.tracks[this.playerActiveTrackIndex].play = true;
+          setTimeout(() => {
+            this.elRef.nativeElement.querySelector('.active ').focus();
+            this.elRef.nativeElement.querySelector('.active').scrollIntoView({behavior: 'smooth'});
+          }, 100);
+        }
+      } else {
+        if (this.playerHowl) {
+          if (!this.playerPlay) {
+            this.playerPlay = true;
+            this.playerHowl.volume(this.playerVolumeHowlerValue);
+            this.playerHowl.play();
+          } else {
+            this.playerHowl.pause();
+            this.playerPlay = false;
+            if (this.playerProgressInterval) {
+              clearInterval(this.playerProgressInterval);
+            }
           }
         }
       }
@@ -411,7 +432,6 @@ export class WidgetComponent implements OnInit {
       },
       onplay: () => {
         this.initEqualizerScreen();
-        this.animateEqualizer();
         this.playerProgressInterval = setInterval(() => {
           this.playerProgressSec
             = (typeof this.playerHowl.seek() === 'number')
@@ -461,7 +481,7 @@ export class WidgetComponent implements OnInit {
         trackIndex: trackIndex,
         paymentInfo: this.widget.producer.paymentInfo,
         sliderData: track.sliderData,
-        rightsDescription: this.createRightsDescriptions(track.sliderData),
+        rightsDescription: CreateRightsDescriptions(track.sliderData, this.widget.producer),
       },
     };
   }
@@ -502,11 +522,15 @@ export class WidgetComponent implements OnInit {
 
   public settingsEvent(event): void {
     console.log(event);
+    if (event['background']) {
+      this.widget.style.colors.background = event['background'];
+    }
+    if (event['text']) {
+      this.widget.style.colors.text = event['text'];
+    }
     if (event['active']) {
       this.widget.style.colors.active_item = event['active'];
-    }
-    if (event['accent']) {
-      this.widget.style.colors.active_accent = event['accent'];
+      this.widget.style.colors.active_accent = this.lightenDarkenColor(event['active'], -25);
     }
   }
 
@@ -517,6 +541,7 @@ export class WidgetComponent implements OnInit {
     console.log('windowWidth', this.windowWidth);
     console.log('screenWidth', this.screenWidth);
     console.log('screenHeight', this.screenHeight);
+    this.textScroller();
   }
 
   private initWidget(completed, id: number): void {
@@ -528,7 +553,7 @@ export class WidgetComponent implements OnInit {
     this.widgetService.getWidget(id).subscribe((widget: Widget) => {
       if (widget) {
         widget.tracks.forEach((track) => {
-          track.sliderData = this.priceTransformer(track.prices); // set default current track's sliderData array based on track's prices
+          track.sliderData = PriceTransformer(track.prices); // set default current track's sliderData array based on track's prices
           track.sliderIndex = 0;  // set default index of active slide in current track slider's
           track.active = false;   // set default current track's status on trackChoose()
           track.hovered = false;  // set default current track's hovered event status
@@ -545,26 +570,27 @@ export class WidgetComponent implements OnInit {
         this.widget = {
           ...widget,
           style: {
-            width: '920px', // deprecated
-            height: '756px', // deprecated
+            width: '920px',
+            height: '756px',
             colors: {
               background: '#FFFFFF',
               text: '#4A4A4A',
-              active_item: '#fc6782',
-              active_accent: '#c4315e',
+              active_item: '#695FFC',
+              active_accent: this.lightenDarkenColor('#695FFC', -25),
             } as Colors,
           } as Style,        // add default Widget styles
           cart: cart ? cart : {
             totalCost: 0,
             cartItems: [],
           } as Cart,        // setup empty cart
-          editMode: true,
+          editMode: false,
         } as Widget;
         if (cart) {
           this.widget.tracks.map((track: Track, trackIndex: number) => {
             this.widget.cart.cartItems.forEach((cartItem: CartItem) => {
               cartItem.track.active = false;
               cartItem.track.hovered = false;
+              cartItem.track.play = false;
               if (track.id === cartItem.track.id) {
                 this.widget.tracks[trackIndex] = cartItem.track;
               }
@@ -574,6 +600,9 @@ export class WidgetComponent implements OnInit {
         if (this.widget.editMode) {
           this.settingsContent = {
             widgetID: id,
+            backgroundColor: this.widget.style.colors.background,
+            textColor: this.widget.style.colors.text,
+            activeColor: this.widget.style.colors.active_item,
           };
         }
         this.tracksBuffer = this.widget.tracks;
@@ -590,7 +619,10 @@ export class WidgetComponent implements OnInit {
   }
 
   private initEqualizerScreen() {
-    this.ctxCanvas = this.canvasWavesElRef.nativeElement.getContext('2d');
+    if (!this.ctxCanvas) {
+      this.ctxCanvas = this.canvasWavesElRef.nativeElement.getContext('2d');
+      this.ctxCanvas.transform(1, 0, 0, -1, 0, this.canvasWavesElRef.nativeElement.height);
+    }
     this.screenWidth = (document.getElementsByClassName('wi-screen') as HTMLCollection)[0].clientWidth;
     this.screenHeight = (document.getElementsByClassName('wi-screen') as HTMLCollection)[0].clientHeight;
     this.ctxCanvas.fillRect(0, 0,  this.screenWidth, this.screenHeight);
@@ -600,31 +632,15 @@ export class WidgetComponent implements OnInit {
   private animateEqualizer() {
     if (this && this.analyser) {
       this.analyser.getByteFrequencyData(this.freqArray);
-      // this.lines.forEach((line, i) => {
-      //   line.style.height = this.freqArray[i] / 2 + 'px';
-      // });
       let xPos = 0;
-
       const lineAmount = 68;
       const space = 2;
-
       this.ctxCanvas.clearRect(0, 0, this.screenWidth, this.screenHeight);
       for (let i = 0; i < lineAmount; i++) {
-        // const line = document.createElement('div');
-        // line.setAttribute('class', 'wave-line line_' + i);
-        // line.style.left = (xPos + 0) + 'px';
-        // line.style.width = width + 'px';
-        // this.lines.push(line);
-        // target.appendChild(line);
-
-        const barWidth = Math.round(this.screenWidth / 256);
-        const barHeight = Math.round(this.freqArray[i] / 2);
-        console.log(Math.round(barWidth));
-        console.log(Math.round(barHeight));
-
-        this.ctxCanvas.fillStyle = 'rgb(' + (barHeight + 100) + ', 50, 50)';
+        const barWidth = Math.ceil(this.screenWidth / ((this.screenWidth > this.breakPoint) ? 256 : 130));
+        const barHeight = Math.ceil(this.freqArray[i] / 2);
+        this.ctxCanvas.fillStyle = this.widget.style.colors.active_item;
         this.ctxCanvas.fillRect(xPos, 0, barWidth, barHeight);
-
         xPos += barWidth + space;
       }
     }
@@ -638,71 +654,22 @@ export class WidgetComponent implements OnInit {
     return JSON.parse(localStorage.getItem(key));
   }
 
-  private priceTransformer(INPUT_PRICES: {}): {}[] {
-    const OUTPUT_ARRAY = [];
-    for (const key in INPUT_PRICES) {
-      if (INPUT_PRICES.hasOwnProperty(key)) {
-        OUTPUT_ARRAY.push({
-          style: '',
-          right: LicensePriceMapper[key],
-          rightEnumVal: key,
-          price: INPUT_PRICES[key],
-          activeInModal: false,
-          addedToCart: false
-        });
-      }
-    }
-    return OUTPUT_ARRAY;
-  }
+  private textScroller() {
+    const trackNameContainerWidth = this.trackNameContainer.nativeElement.offsetWidth;
+    const trackNameContentWidth = this.trackNameContent.nativeElement.offsetWidth;
+    const trackNameContent = this.trackNameContent.nativeElement.innerHTML;
+    const trackNameFit: boolean = trackNameContainerWidth > trackNameContentWidth;
+    const coefficient = trackNameContainerWidth / trackNameContentWidth;
 
-  private createRightsDescriptions(array: object[]): string[] {
-    const rdArray = [];
-    array.forEach((item) => {
-      console.log(Object.values(item));
-      switch (Object.values(item)[1]) {
-        case 'MP3 Leasing': {
-          rdArray.push({
-            label: 'MP3 Leasing rights',
-            rights: Object.values(this.widget.producer.mp3Leasing),
-            activeInModal: false
-          });
-          break;
-        }
-        case 'Wav Leasing': {
-          rdArray.push({
-            label: 'Wav Leasing rights',
-            rights: Object.values(this.widget.producer.wavLeasing),
-            activeInModal: false
-          });
-          break;
-        }
-        case 'Wav Trackout': {
-          rdArray.push({
-            label: 'Wav Trackout rights',
-            rights: Object.values(this.widget.producer.wavTrackout),
-            activeInModal: false
-          });
-          break;
-        }
-        case 'Unlimited': {
-          rdArray.push({
-            label: 'Unlimited rights',
-            rights: Object.values(this.widget.producer.unlimited),
-            activeInModal: false
-          });
-          break;
-        }
-        case 'Exclusive': {
-          rdArray.push({
-            label: 'Exclusive rights',
-            rights: Object.values(this.widget.producer.exclusive),
-            activeInModal: false
-          });
-          break;
-        }
-      }
-    });
-    return rdArray;
+    if (coefficient < 1 && coefficient > 0.5) {
+      // init scroll
+      this.trackNameContent.nativeElement.innerHTML = trackNameContent + trackNameContent;
+    }
+    // console.log('trackNameContainer', trackNameContainerWidth);
+    // console.log('trackNameContentWidth', trackNameContentWidth);
+    // console.log('trackNameFit', trackNameFit);
+    // console.log('coefficient', coefficient);
+    // console.log('trackNameContent', trackNameContent);
   }
 
 }

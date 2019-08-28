@@ -1,17 +1,36 @@
 <div class="modal-wrapper">
   <div class="backdrop" (click)="modalClose()"></div>
 
-  <div class="modal buy-terms" *ngIf="modalContent.type === ModalTypes.TERMS">
-    <div class="close" (click)="modalClose()"><span></span><span></span></div>
+  <div class="modal buy-terms"
+       *ngIf="modalContent.type === ModalTypes.TERMS"
+       [ngStyle]="{backgroundColor: modalContent.style.colors.background}"
+  >
+    <div class="close" (click)="modalClose()">
+      <span [ngStyle]="{backgroundColor: modalContent.style.colors.text}"></span>
+      <span [ngStyle]="{backgroundColor: modalContent.style.colors.text}"></span>
+    </div>
     <div class="title">
       <div class="shield"
            [ngStyle]="{backgroundColor: modalContent.style.colors.active_item, borderColor: modalContent.style.colors.active_accent}"
-      ></div>
-      <div class="text">{{modalContent.title}}</div>
+      >
+      </div>
+      <div class="text"
+           [ngStyle]="{color: modalContent.style.colors.text}"
+      >
+        {{modalContent.title}}
+      </div>
     </div>
-    <div class="track-name">{{modalContent.artistName}} - {{modalContent.contentTerms.track.name}}</div>
+    <div class="track-name"
+         [ngStyle]="{color: modalContent.style.colors.text}"
+    >
+      {{modalContent.artistName}} - {{modalContent.contentTerms.track.name}}
+    </div>
     <div class="payment-types">
-      <div class="label">Payment methods:</div>
+      <div class="label"
+           [ngStyle]="{color: modalContent.style.colors.text}"
+      >
+        Payment methods:
+      </div>
       <div class="pt paypal"
            [ngStyle]="{backgroundColor: modalContent.style.colors.active_item}"
       ></div>
@@ -24,15 +43,27 @@
         <div
           class="button"
           *ngFor="let right of modalContent.contentTerms.sliderData; index as i"
-          [ngStyle]="{borderColor: right.activeInModal ? modalContent.style.colors.active_item : '#e6e6e6'}"
           (click)="pickLease(right, i)"
+          (mouseover)="right.hoverOnRight = true" (mouseleave)="right.hoverOnRight = false"
+          [ngStyle]="{
+          borderColor: right.activeInModal ? modalContent.style.colors.active_item : modalContent.style.colors.text,
+          backgroundColor: right.hoverOnRight === true  ? lightenDarkenColor(modalContent.style.colors.background, -50) : 'transparent'
+          }"
         >
           <div class="label"
-               [ngStyle]="{borderColor: right.activeInModal ? modalContent.style.colors.active_item : '#e6e6e6'}"
+               [ngStyle]="{
+               color: right.activeInModal ? modalContent.style.colors.active_item : modalContent.style.colors.text
+               }"
           >
             {{right.right}}
-            <div class="in-cart-icon" *ngIf="right.addedToCart"></div></div>
-          <div class="price">${{right.price}}.00</div>
+          </div>
+          <div class="price"
+               [ngStyle]="{
+               color: right.activeInModal ? modalContent.style.colors.active_item : modalContent.style.colors.text
+               }"
+          >
+            ${{right.price}}.00
+          </div>
         </div>
       </div>
       <div class="rt-content">
@@ -42,9 +73,12 @@
           *ngFor="let content of modalContent.contentTerms.rightsDescription"
           [@slideUpDown]
         >
-          <div class="label">{{content.label}}</div>
+          <div class="label" [ngStyle]="{color: modalContent.style.colors.text}">{{content.label}}</div>
           <ul class="rights">
-            <li class="right" *ngFor="let right of content.rights">
+            <li class="right"
+                *ngFor="let right of content.rights"
+                [ngStyle]="{color: modalContent.style.colors.text}"
+            >
               <span class="marker" [ngStyle]="{backgroundColor: modalContent.style.colors.active_item}"></span>
               {{right}}
             </li>
@@ -54,56 +88,80 @@
     </div>
     <button class="add2cart"
             (click)="addToCart()"
-            [ngStyle]="{backgroundColor: modalContent.style.colors.active_item}"
+            (mouseover)="hoverOnAddToCart = true" (mouseleave)="hoverOnAddToCart = false"
+            [ngStyle]="{
+            backgroundColor: hoverOnAddToCart === true  ? lightenDarkenColor(modalContent.style.colors.active_item, 25) : modalContent.style.colors.active_item,
+            color: modalContent.style.colors.background
+            }"
     >
       Add to cart
     </button>
   </div>
 
-  <div class="modal cart" *ngIf="modalContent.type === ModalTypes.CART">
-    <div class="close" (click)="modalClose()"><span></span><span></span></div>
+  <div class="modal cart"
+       *ngIf="modalContent.type === ModalTypes.CART"
+       [ngStyle]="{backgroundColor: modalContent.style.colors.background}"
+  >
+    <div class="close" (click)="modalClose()">
+      <span [ngStyle]="{backgroundColor: modalContent.style.colors.text}"></span>
+      <span [ngStyle]="{backgroundColor: modalContent.style.colors.text}"></span>
+    </div>
     <div class="title">
       <div class="shield"
            [ngStyle]="{backgroundColor: modalContent.style.colors.active_item, borderColor: modalContent.style.colors.active_accent}"
       ></div>
-      <div class="text">{{modalContent.title}}</div>
+      <div class="text"
+           [ngStyle]="{color: modalContent.style.colors.text}"
+      >
+        {{modalContent.title}}
+      </div>
     </div>
     <div class="cart-content" *ngIf="modalContent.cart.cartItems.length > 0">
-      <div class="cart-header">
-
-      </div>
+      <div class="cart-header"></div>
       <div class="cart-tracks">
         <div class="track"
              *ngFor="let cartItem of modalContent.cart.cartItems; index as indexTrack"
+             [ngStyle]="{borderColor: lightenDarkenColor(modalContent.style.colors.background, -50)}"
+             (mouseover)="cartItem.hoverOnTrack = true" (mouseleave)="cartItem.hoverOnTrack = false"
         >
           <div class="cover">
-            <img [src]="SDN_LINK_IMG + cartItem.track.lbImage" alt="">
+            <img [src]="SDN_LINK_IMG + cartItem.track.image" alt="">
+            <div class="fade" *ngIf="cartItem.hoverOnTrack"
+                 [ngStyle]="{backgroundColor: lightenDarkenColor(modalContent.style.colors.background, -50)}"
+                 (click)="deleteTrackFromCart(indexTrack)"
+            >
+            </div>
+            <div class="btn-delete"
+                 *ngIf="cartItem.hoverOnTrack"
+                 [ngStyle]="{backgroundColor: modalContent.style.colors.active_item}"
+                 (click)="deleteTrackFromCart(indexTrack)"
+            >
+            </div>
           </div>
-          <!--<div class="index">{{indexTrack + 1}}. </div>-->
           <div class="description">
             <div class="row">
               <div class="track-title">
-                <span>
+                <span [ngStyle]="{color: modalContent.style.colors.text}">
                   {{modalContent.artistName}} -
                   {{cartItem.track.name}} ({{LicensePriceMapper[cartItem.cartItemServer.right]}}):
                 </span>
               </div>
-              <div class="price">
+              <div class="price"
+                   [ngStyle]="{color: modalContent.style.colors.text}"
+              >
                 ${{cartItem.price}}.00
               </div>
             </div>
             <div class="row">
-              <div class="sub-title">
+              <div class="sub-title"
+                   [ngStyle]="{color: modalContent.style.colors.text}"
+              >
                 Promotional Offer:
               </div>
-              <div class="sub-price">
+              <div class="sub-price"
+                   [ngStyle]="{color: modalContent.style.colors.text}"
+              >
                 ${{cartItem.price}}.00
-              </div>
-            </div>
-            <div class="row delete">
-              <div class="del" (click)="deleteTrackFromCart(indexTrack)">
-                <span></span>
-                <span></span>
               </div>
             </div>
           </div>
@@ -111,12 +169,21 @@
       </div>
       <div class="cart-bottom">
         <div class="check-out">
-          <div class="total">Total: <span class="val">${{modalContent.cart.totalCost}}.00</span></div>
+          <div class="total"
+               [ngStyle]="{color: modalContent.style.colors.text}"
+          >
+            Total: <span class="val">${{modalContent.cart.totalCost}}.00</span>
+          </div>
           <button class="cta">Check out with PayPal</button>
         </div>
       </div>
     </div>
-    <div class="placeholder" *ngIf="modalContent.cart.cartItems.length <= 0">Cart is empty.</div>
+    <div class="placeholder"
+         *ngIf="modalContent.cart.cartItems.length <= 0"
+         [ngStyle]="{color: modalContent.style.colors.text}"
+    >
+      Cart is empty.
+    </div>
   </div>
 
 </div>
