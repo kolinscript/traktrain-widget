@@ -13,6 +13,7 @@ import { Howl, Howler } from 'howler';
   styleUrls: ['./widget.component.scss']
 })
 export class WidgetComponent implements OnInit {
+  @ViewChild('waves') canvasWavesElRef: ElementRef<HTMLCanvasElement>;
   @ViewChild('volumeDesktop') volumeContainerDesktop: ElementRef;
   @ViewChild('volumeMobile') volumeContainerMobile: ElementRef;
   @ViewChild('trackNameContainer') trackNameContainer: ElementRef;
@@ -54,6 +55,8 @@ export class WidgetComponent implements OnInit {
   lines = [];
   screenWidth: number;
   screenHeight: number;
+
+  private ctxCanvas: CanvasRenderingContext2D;
 
   constructor(
     private widgetService: WidgetService,
@@ -251,8 +254,8 @@ export class WidgetComponent implements OnInit {
           (event.offsetX * 100) /
           (this.volumeContainerDesktop.nativeElement.offsetWidth || this.volumeContainerMobile.nativeElement.offsetWidth)
         );
-        this.playerVolumeHowlerValue = +(Math.round((this.playerVolumePercent / 100 * 10)) / 10).toFixed(1);
-        this.playerHowl.volume(this.playerVolumeHowlerValue);
+        const volume = +(Math.round((this.playerVolumePercent / 100 * 10)) / 10).toFixed(1);
+        this.playerHowl.volume(volume);
         break;
       }
       case ('mousemove'): {
@@ -261,8 +264,8 @@ export class WidgetComponent implements OnInit {
             (event.offsetX * 100) /
             (this.volumeContainerDesktop.nativeElement.offsetWidth || this.volumeContainerMobile.nativeElement.offsetWidth)
           );
-          this.playerVolumeHowlerValue = +(Math.round((this.playerVolumePercent / 100 * 10)) / 10).toFixed(1);
-          this.playerHowl.volume(this.playerVolumeHowlerValue);
+          const volume = +(Math.round((this.playerVolumePercent / 100 * 10)) / 10).toFixed(1);
+          this.playerHowl.volume(volume);
         }
         break;
       }
@@ -303,12 +306,13 @@ export class WidgetComponent implements OnInit {
   public trackPlay(event?, track?: Track, trackIndex?: number): void {
     // console.log(this.widget.tracks.length);
     if (this.widget.tracks.length > 0) {
-      this.textScroller();
       if (trackIndex || trackIndex === 0) { this.playerActiveTrackIndex = trackIndex; } // обновление активного трека (если клик по листу)
       this.initCarousel(this.widget.tracks[this.playerActiveTrackIndex].sliderIndex, this.playerActiveTrackIndex);
       this.playerTrackName = this.widget.tracks[this.playerActiveTrackIndex].name;
       this.playerTrackTags = this.widget.tracks[this.playerActiveTrackIndex].tagsArr;
-      this.playerTracklbImage = this.widget.tracks[this.playerActiveTrackIndex].lbImage;
+      this.playerTracklbImage =
+        this.widget.tracks[this.playerActiveTrackIndex].image
+        || this.widget.tracks[this.playerActiveTrackIndex].lbImage;
       //
       if (this.widget.tracks[this.playerActiveTrackIndex].active === true) { // выбранный трек активный? - да
         if (this.widget.tracks[this.playerActiveTrackIndex].play === true) { // выбранный трек играет? - да
@@ -324,13 +328,11 @@ export class WidgetComponent implements OnInit {
         } else {                                            // выбранный трек играет? - нет
           if (this.playerProgressSec) {                     // выбранный трек играл раньше? - да
             this.playerHowl.seek(this.playerProgressSec);       // устанавливаем время запуска трека (текущее на момент установкии паузы)
-            this.playerHowl.volume(this.playerVolumeHowlerValue);
             this.playerHowl.play();                             // запускаем плеер
             this.playerPlay = true;
             this.widget.tracks[this.playerActiveTrackIndex].play = true;
           } else {                                          // выбранный трек играл раньше? - нет
             this.initPlayerHowl(this.playerActiveTrackIndex);   // инициализируем ховлер
-            this.playerHowl.volume(this.playerVolumeHowlerValue);
             this.playerHowl.play();                             // запускаем плеер
             this.playerPlay = true;
             this.widget.tracks[this.playerActiveTrackIndex].play = true;
@@ -351,7 +353,6 @@ export class WidgetComponent implements OnInit {
         this.widget.tracks.forEach((tr) => tr.play = false);
         this.widget.tracks.forEach((tr) => tr.active = false);
         this.initPlayerHowl(this.playerActiveTrackIndex);                    // инициализируем инстанс ховлера
-        this.playerHowl.volume(this.playerVolumeHowlerValue);
         this.playerHowl.play();
         this.playerPlay = true;
         this.widget.tracks[this.playerActiveTrackIndex].active = true;
@@ -365,7 +366,6 @@ export class WidgetComponent implements OnInit {
       if (this.playerHowl) {
         if (!this.playerPlay) {
           this.playerPlay = true;
-          this.playerHowl.volume(this.playerVolumeHowlerValue);
           this.playerHowl.play();
         } else {
           this.playerHowl.pause();
@@ -410,7 +410,8 @@ export class WidgetComponent implements OnInit {
         // console.log(this.freqArray);
       },
       onplay: () => {
-        // this.initEqualizerScreen();
+        this.initEqualizerScreen();
+        this.animateEqualizer();
         this.playerProgressInterval = setInterval(() => {
           this.playerProgressSec
             = (typeof this.playerHowl.seek() === 'number')
@@ -418,7 +419,7 @@ export class WidgetComponent implements OnInit {
             : this.playerHowl.seek();
           this.playerProgressPercent = ((this.playerProgressSec * 100) / this.playerHowl.duration());
           this.playerProgressMS = new Date(this.playerProgressSec * 1000).toISOString().substr(14, 5);
-          // this.animateEqualizer();
+          this.animateEqualizer();
         }, 100);
       },
       onseek: () => {
@@ -501,19 +502,12 @@ export class WidgetComponent implements OnInit {
 
   public settingsEvent(event): void {
     console.log(event);
-    if (event['background']) {
-      this.widget.style.colors.background = event['background'];
-    }
-    if (event['text']) {
-      this.widget.style.colors.text = event['text'];
-    }
     if (event['active']) {
       this.widget.style.colors.active_item = event['active'];
-      this.widget.style.colors.active_accent = this.lightenDarkenColor(event['active'], -25);
     }
-    // if (event['accent']) {
-    //   this.widget.style.colors.active_accent = event['accent'];
-    // }
+    if (event['accent']) {
+      this.widget.style.colors.active_accent = event['accent'];
+    }
   }
 
   public onResize(event): void {
@@ -523,7 +517,6 @@ export class WidgetComponent implements OnInit {
     console.log('windowWidth', this.windowWidth);
     console.log('screenWidth', this.screenWidth);
     console.log('screenHeight', this.screenHeight);
-    this.textScroller();
   }
 
   private initWidget(completed, id: number): void {
@@ -552,13 +545,13 @@ export class WidgetComponent implements OnInit {
         this.widget = {
           ...widget,
           style: {
-            width: '920px',
-            height: '756px',
+            width: '920px', // deprecated
+            height: '756px', // deprecated
             colors: {
               background: '#FFFFFF',
               text: '#4A4A4A',
-              active_item: '#695FFC',
-              active_accent: this.lightenDarkenColor('#695FFC', -25),
+              active_item: '#fc6782',
+              active_accent: '#c4315e',
             } as Colors,
           } as Style,        // add default Widget styles
           cart: cart ? cart : {
@@ -597,36 +590,43 @@ export class WidgetComponent implements OnInit {
   }
 
   private initEqualizerScreen() {
+    this.ctxCanvas = this.canvasWavesElRef.nativeElement.getContext('2d');
     this.screenWidth = (document.getElementsByClassName('wi-screen') as HTMLCollection)[0].clientWidth;
     this.screenHeight = (document.getElementsByClassName('wi-screen') as HTMLCollection)[0].clientHeight;
-    console.log('screenWidth', this.screenWidth);
-    console.log('screenHeight', this.screenHeight);
-    let xPos = 0;
-    const lineAmount = 68;
-    const space = 4;
-    const width = Math.round((this.screenWidth / lineAmount) + 0) - space;
-    const target = document.getElementsByClassName('waves')[0];
-    if (document.getElementsByClassName('wave-line').length === 0) {
-      for (let i = 0; i < lineAmount; i++) {
-        const line = document.createElement('div');
-        line.setAttribute('class', 'wave-line line_' + i);
-        line.style.left = (xPos + 0) + 'px';
-        line.style.width = width + 'px';
-        this.lines.push(line);
-        target.appendChild(line);
-        xPos += width + space;
-      }
-    }
+    this.ctxCanvas.fillRect(0, 0,  this.screenWidth, this.screenHeight);
     console.log('Equalizer screen initialized');
   }
 
   private animateEqualizer() {
     if (this && this.analyser) {
       this.analyser.getByteFrequencyData(this.freqArray);
-      this.lines.forEach((line, i) => {
-        line.style.height = this.freqArray[i] / 2 + 'px';
-      });
-      // requestAnimationFrame(this.animateEqualizer);
+      // this.lines.forEach((line, i) => {
+      //   line.style.height = this.freqArray[i] / 2 + 'px';
+      // });
+      let xPos = 0;
+
+      const lineAmount = 68;
+      const space = 2;
+
+      this.ctxCanvas.clearRect(0, 0, this.screenWidth, this.screenHeight);
+      for (let i = 0; i < lineAmount; i++) {
+        // const line = document.createElement('div');
+        // line.setAttribute('class', 'wave-line line_' + i);
+        // line.style.left = (xPos + 0) + 'px';
+        // line.style.width = width + 'px';
+        // this.lines.push(line);
+        // target.appendChild(line);
+
+        const barWidth = Math.round(this.screenWidth / 256);
+        const barHeight = Math.round(this.freqArray[i] / 2);
+        console.log(Math.round(barWidth));
+        console.log(Math.round(barHeight));
+
+        this.ctxCanvas.fillStyle = 'rgb(' + (barHeight + 100) + ', 50, 50)';
+        this.ctxCanvas.fillRect(xPos, 0, barWidth, barHeight);
+
+        xPos += barWidth + space;
+      }
     }
   }
 
@@ -636,74 +636,6 @@ export class WidgetComponent implements OnInit {
 
   private storageFetch(key): {} {
     return JSON.parse(localStorage.getItem(key));
-  }
-
-  public lightenDarkenColor(col, amt) {
-    let usePound = false;
-
-    if (col[0] === '#') {
-      col = col.slice(1);
-      usePound = true;
-    }
-
-    const num = parseInt(col, 16);
-
-    let r = (num >> 16) + amt;
-
-    if (r > 255) {
-      r = 255;
-    } else if  (r < 0) {
-      r = 0;
-    }
-
-    let b = ((num >> 8) & 0x00FF) + amt;
-
-    if (b > 255) {
-      b = 255;
-    } else if (b < 0) {
-      b = 0;
-    }
-
-    let g = (num & 0x0000FF) + amt;
-
-    if (g > 255) {
-      g = 255;
-    } else if (g < 0) {
-      g = 0;
-    }
-
-    return (usePound ? '#' : '') + (g | (b << 8) | (r << 16)).toString(16);
-  }
-
-
-  public hexToRGB(hex, alpha) {
-    const r = parseInt(hex.slice(1, 3), 16);
-    const g = parseInt(hex.slice(3, 5), 16);
-    const b = parseInt(hex.slice(5, 7), 16);
-
-    if (alpha) {
-      return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + alpha + ')';
-    } else {
-      return 'rgb(' + r + ', ' + g + ', ' + b + ')';
-    }
-  }
-
-  private textScroller() {
-    const trackNameContainerWidth = this.trackNameContainer.nativeElement.offsetWidth;
-    const trackNameContentWidth = this.trackNameContent.nativeElement.offsetWidth;
-    const trackNameContent = this.trackNameContent.nativeElement.innerHTML;
-    const trackNameFit: boolean = trackNameContainerWidth > trackNameContentWidth;
-    const coefficient = trackNameContainerWidth / trackNameContentWidth;
-
-    if (coefficient < 1 && coefficient > 0.5) {
-      // init scroll
-      this.trackNameContent.nativeElement.innerHTML = trackNameContent + trackNameContent;
-    }
-    console.log('trackNameContainer', trackNameContainerWidth);
-    console.log('trackNameContentWidth', trackNameContentWidth);
-    console.log('trackNameFit', trackNameFit);
-    console.log('coefficient', coefficient);
-    console.log('trackNameContent', trackNameContent);
   }
 
   private priceTransformer(INPUT_PRICES: {}): {}[] {
