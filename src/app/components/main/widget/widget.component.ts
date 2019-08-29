@@ -545,6 +545,7 @@ export class WidgetComponent implements OnInit {
   }
 
   private initWidget(completed, id: number): void {
+    console.log(document.getElementById('edit'));
     this.windowWidth = window.innerWidth;
     this.loadingWidget = true;
     const cart = this.storageFetch('cart') as Cart;
@@ -583,7 +584,9 @@ export class WidgetComponent implements OnInit {
             totalCost: 0,
             cartItems: [],
           } as Cart,        // setup empty cart
-          editMode: false,
+          editMode: document.getElementById('edit') !== null
+            ? document.getElementById('edit').getAttribute('value') === 'true'
+            : false,
         } as Widget;
         if (cart) {
           this.widget.tracks.map((track: Track, trackIndex: number) => {
