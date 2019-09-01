@@ -16,37 +16,42 @@
             margin: 0;
         }
         .wrapper {
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            width: 100vw;
-            height: 100vh;
+          overflow: hidden;
+          position: relative;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          flex-direction: column;
+          width: 100vw;
+          height: 100vh;
+          background: linear-gradient(-45deg, #EE7752, #E73C7E, #23A6D5, #23D5AB);
         }
         .wrapper>.frame-container {
-          overflow: hidden;
           display: flex;
           justify-content: center;
           align-items: center;
           border-radius: 2px;
-          /*width: 75%;*/
-          /*height: 94%;*/
-          width: 100%;
-          height: 100%;
-          background: linear-gradient(-45deg, #EE7752, #E73C7E, #23A6D5, #23D5AB);
+          width: 75%;
+          height: 94%;
+          border: 1px solid rgba(0, 0, 0, 0.2);
         }
         iframe {
           border: none;
-          width: 100%;
-          height: 100%;
+          overflow:hidden;
+          position:absolute;
+          height:100%;
+          width:100%;
+          top:0;
+          left:0;
+          right:0;
+          bottom:0;
         }
     </style>
 </head>
 <body>
 <div class="wrapper">
   <div class="frame-container">
-    <iframe src="http://0.0.0.0:4200/" allowfullscreen="">&nbsp;</iframe>
+    <iframe src="http://0.0.0.0:4200/" frameborder="0" height="100%" width="100%"></iframe>
   </div>
 </div>
 </body>
