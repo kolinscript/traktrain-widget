@@ -1,8 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ModalContent, ModalTypes } from '../../../models/modal.model';
-import { CartItem, LicensePriceMapper, SDN_LINK_IMG } from '../../../models/widget.model';
+import { CartItem, CartPayPal, LicensePriceMapper, SDN_LINK_IMG } from '../../../models/widget.model';
 import { Animations } from '../../../animations';
 import { LightenDarkenColor } from '../../../helpers';
+import { WidgetService } from '../../../services/widget.service';
 
 @Component({
   selector: 'app-modal',
@@ -23,7 +24,9 @@ export class ModalComponent implements OnInit {
   SDN_LINK_IMG = SDN_LINK_IMG;
   LicensePriceMapper = LicensePriceMapper;
 
-  constructor() { }
+  constructor(
+    private widgetService: WidgetService
+  ) { }
 
   /*
   * function common block
@@ -113,6 +116,19 @@ export class ModalComponent implements OnInit {
     this.modalContent.cart.cartItems[indexTrack].track.inCart = false;
     this.modalContent.cart.cartItems[indexTrack].track.hovered = false;
     this.modalContent.cart.cartItems.splice(indexTrack, 1);
+  }
+
+  public checkOutWithPayPal() {
+    const cart = {
+      cart: []
+    };
+    this.modalContent.cart.cartItems.forEach((item) => {
+      cart.cart.push(item.cartItemServer);
+    });
+    console.log(cart);
+    this.widgetService.sendCartToPayPal(cart).subscribe((res) => {
+      console.log(res);
+    });
   }
 
 }
