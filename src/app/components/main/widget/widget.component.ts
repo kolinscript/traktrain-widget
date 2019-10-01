@@ -76,7 +76,7 @@ export class WidgetComponent implements OnInit {
       // console.log(this.widget.tracks.map(t => (t.drumKit)));
       this.initPlayerHowl(this.playerActiveTrackIndex);
       this.initCarousel(this.widget.tracks[this.playerActiveTrackIndex].sliderIndex, this.playerActiveTrackIndex);
-    }, 9); // widgets id's: 2, 3, 5, 9(SESH) 13(Rio), 13319
+    }, 13); // widgets id's: 2, 3, 5, 9(SESH) 13(Rio), 13319
   }
 
   // todo highlight to components/shared folder

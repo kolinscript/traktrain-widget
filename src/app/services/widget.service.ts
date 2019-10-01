@@ -17,8 +17,8 @@ export class WidgetService {
     return this.http.get(`api/widget/${id}`).pipe(map(res => res as Widget));
   }
 
-  public sendCartToPayPal(cart: CartPayPal): Observable<any> {
-    return this.http.post('api/checkout-widget', cart).pipe(map(res => res as any));
+  public sendCartToPayPal(cart: CartPayPal): Observable<string> {
+    return this.http.post('api/checkout-widget', cart, {responseType: 'text'});
   }
 
 }
