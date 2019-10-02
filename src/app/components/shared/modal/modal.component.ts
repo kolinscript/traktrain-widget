@@ -1,8 +1,10 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { ModalContent, ModalTypes } from '../../../models/modal.model';
-import { CartItem, LicensePriceMapper, SDN_LINK_IMG } from '../../../models/widget.model';
+import { CartItem, CartPayPal, LicensePriceMapper, SDN_LINK_IMG } from '../../../models/widget.model';
 import { Animations } from '../../../animations';
 import { LightenDarkenColor } from '../../../helpers';
+import { WidgetService } from '../../../services/widget.service';
+import { FormBuilder, FormGroup, NgForm } from '@angular/forms';
 
 @Component({
   selector: 'app-modal',
@@ -22,8 +24,13 @@ export class ModalComponent implements OnInit {
   // variables CART
   SDN_LINK_IMG = SDN_LINK_IMG;
   LicensePriceMapper = LicensePriceMapper;
+  formGroupPayPal: FormGroup;
+  @ViewChild('formPayPal') formPayPal;
 
-  constructor() { }
+  constructor(
+    private widgetService: WidgetService,
+    private fb: FormBuilder
+  ) { }
 
   /*
   * function common block
@@ -106,6 +113,10 @@ export class ModalComponent implements OnInit {
   */
   private initCart() {
     this.modalContent.cart.cartItems.forEach(item => item.track.play = false);
+    this.formGroupPayPal = this.fb.group({
+      expType: 'light',
+      paykey: null
+    });
   }
 
   public deleteTrackFromCart(indexTrack: number) {
@@ -114,5 +125,30 @@ export class ModalComponent implements OnInit {
     this.modalContent.cart.cartItems[indexTrack].track.hovered = false;
     this.modalContent.cart.cartItems.splice(indexTrack, 1);
   }
+
+  public checkOutWithPayPal() {
+    const cart = {
+      cart: []
+    };
+    this.modalContent.cart.cartItems.forEach((item) => {
+      cart.cart.push(item.cartItemServer);
+    });
+    console.log(cart);
+    this.widgetService.sendCartToPayPal(cart).subscribe((res) => {
+      if (res) {
+        this.formGroupPayPal.get('paykey').setValue(res);
+        console.log(this.formGroupPayPal.value);
+        if (this.formGroupPayPal.valid) {
+          this.submitPayPal();
+        }
+      }
+    });
+  }
+
+  public submitPayPal() {
+    this.formPayPal.nativeElement.submit();
+  }
+
+  public checkOutWithStripe() {}
 
 }

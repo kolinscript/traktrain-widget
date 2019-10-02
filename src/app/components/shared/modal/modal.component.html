@@ -174,7 +174,33 @@
           >
             Total: <span class="val">${{modalContent.cart.totalCost}}.00</span>
           </div>
-          <button class="cta">Check out with PayPal</button>
+          <button class="cta stripe"
+                  *ngIf="modalContent.paymentInfo.stripeUserId"
+                  (click)="checkOutWithStripe()"
+                  (mouseover)="hoverOnStripe = true" (mouseleave)="hoverOnStripe = false"
+                  [ngStyle]="{backgroundColor: hoverOnStripe === true  ?
+                   lightenDarkenColor(modalContent.style.colors.active_item, 50) :
+                   modalContent.style.colors.active_item }"
+          >
+            Checkout via credit card
+          </button>
+          <button class="cta paypal" (click)="checkOutWithPayPal()">Check out with PayPal</button>
+          <form action="https://www.sandbox.paypal.com/webapps/adaptivepayment/flow/pay"
+                #formPayPal
+                method="post"
+                target="_blank"
+                [formGroup]="formGroupPayPal"
+                (ngSubmit)="submitPayPal()"
+          >
+            <input type="hidden"
+                   name="expType"
+                   formControlName="expType"
+            >
+            <input type="hidden"
+                   name="paykey"
+                   formControlName="paykey"
+            >
+          </form>
         </div>
       </div>
     </div>

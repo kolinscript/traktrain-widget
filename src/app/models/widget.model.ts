@@ -133,6 +133,10 @@ export interface CartItemServer {
   right: LicensePrice;
 }
 
+export interface CartPayPal {
+  cart: CartItemServer[];
+}
+
 export interface Style {
   width: string;
   height: string;

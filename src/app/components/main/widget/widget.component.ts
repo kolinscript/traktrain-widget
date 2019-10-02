@@ -76,7 +76,7 @@ export class WidgetComponent implements OnInit {
       // console.log(this.widget.tracks.map(t => (t.drumKit)));
       this.initPlayerHowl(this.playerActiveTrackIndex);
       this.initCarousel(this.widget.tracks[this.playerActiveTrackIndex].sliderIndex, this.playerActiveTrackIndex);
-    }, 9); // widgets id's: 2, 3, 5, 9(SESH) 13(Rio), 13319
+    }, 13); // widgets id's: 2, 3, 5, 9(SESH) 13(Rio), 13319
   }
 
   // todo highlight to components/shared folder
@@ -192,13 +192,13 @@ export class WidgetComponent implements OnInit {
   private disableInteraction(target: string) {
     if (target === 'carousel') {
       this.carouselMoving = true;
-      console.log('carousel INTERACTION DISABLED');
+      // console.log('carousel INTERACTION DISABLED');
       setTimeout(() => {
         this.carouselMoving = false;
       }, 500);
     } else if (target === 'track') {
       this.trackLoading = true;
-      console.log('track INTERACTION DISABLED');
+      // console.log('track INTERACTION DISABLED');
       setTimeout(() => {
         this.trackLoading = false;
       }, 800);
@@ -328,8 +328,6 @@ export class WidgetComponent implements OnInit {
         this.playerTracklbImage = this.widget.tracks[this.playerActiveTrackIndex].lbImage
           ?  this.widget.tracks[this.playerActiveTrackIndex].lbImage
           : this.widget.tracks[this.playerActiveTrackIndex].image;
-        //
-        console.log(this.playerTracklbImage);
         if (this.widget.tracks[this.playerActiveTrackIndex].active === true) { // выбранный трек активный? - да
           if (this.widget.tracks[this.playerActiveTrackIndex].play === true) { // выбранный трек играет? - да
             this.playerHowl.pause();                              // пауза ховлера
@@ -427,8 +425,6 @@ export class WidgetComponent implements OnInit {
         this.analyser.fftSize = 256;
         this.freqArray = new Uint8Array(bufferLength);
         Howler.masterGain.connect(this.analyser);
-        // console.log(this.analyser);
-        // console.log(this.freqArray);
       },
       onplay: () => {
         this.initEqualizerScreen();
@@ -495,6 +491,7 @@ export class WidgetComponent implements OnInit {
       type: ModalTypes.CART,
       artistName: this.widget.producer.artistName,
       cart: this.widget.cart,
+      paymentInfo: this.widget.producer.paymentInfo
     };
   }
 
@@ -583,7 +580,9 @@ export class WidgetComponent implements OnInit {
             totalCost: 0,
             cartItems: [],
           } as Cart,        // setup empty cart
-          editMode: document.getElementById('edit') !== null ? document.getElementById('edit').getAttribute('value') === 'true' : false,
+          editMode: document.getElementById('edit') !== null
+            ? document.getElementById('edit').getAttribute('value') === 'true'
+            : false,
         } as Widget;
         if (cart) {
           this.widget.tracks.map((track: Track, trackIndex: number) => {
@@ -621,12 +620,14 @@ export class WidgetComponent implements OnInit {
   private initEqualizerScreen() {
     if (!this.ctxCanvas) {
       this.ctxCanvas = this.canvasWavesElRef.nativeElement.getContext('2d');
+      this.screenWidth = (document.getElementsByClassName('wi-screen') as HTMLCollection)[0].clientWidth;
+      this.screenHeight = (document.getElementsByClassName('wi-screen') as HTMLCollection)[0].clientHeight;
+      this.canvasWavesElRef.nativeElement.width = this.screenWidth;
+      this.canvasWavesElRef.nativeElement.height = this.screenHeight;
       this.ctxCanvas.transform(1, 0, 0, -1, 0, this.canvasWavesElRef.nativeElement.height);
+      this.ctxCanvas.fillRect(0, 0,  this.screenWidth, this.screenHeight);
+      console.log('Equalizer screen initialized');
     }
-    this.screenWidth = (document.getElementsByClassName('wi-screen') as HTMLCollection)[0].clientWidth;
-    this.screenHeight = (document.getElementsByClassName('wi-screen') as HTMLCollection)[0].clientHeight;
-    this.ctxCanvas.fillRect(0, 0,  this.screenWidth, this.screenHeight);
-    console.log('Equalizer screen initialized');
   }
 
   private animateEqualizer() {
@@ -634,10 +635,10 @@ export class WidgetComponent implements OnInit {
       this.analyser.getByteFrequencyData(this.freqArray);
       let xPos = 0;
       const lineAmount = 68;
-      const space = 2;
+      const space = 3;
       this.ctxCanvas.clearRect(0, 0, this.screenWidth, this.screenHeight);
       for (let i = 0; i < lineAmount; i++) {
-        const barWidth = Math.ceil(this.screenWidth / ((this.screenWidth > this.breakPoint) ? 256 : 130));
+        const barWidth = Math.ceil((this.screenWidth - (lineAmount * space)) / lineAmount);
         const barHeight = Math.ceil(this.freqArray[i] / 2);
         this.ctxCanvas.fillStyle = this.widget.style.colors.active_item;
         this.ctxCanvas.fillRect(xPos, 0, barWidth, barHeight);

@@ -69,7 +69,7 @@ export function PriceTransformer(INPUT_PRICES: {}): {}[] {
 export function CreateRightsDescriptions(array: object[], right: any): string[] {
   const rdArray = [];
   array.forEach((item) => {
-    console.log(Object.values(item));
+    // console.log(Object.values(item));
     switch (Object.values(item)[1]) {
       case 'MP3 Leasing': {
         rdArray.push({
