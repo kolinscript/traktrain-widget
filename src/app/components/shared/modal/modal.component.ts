@@ -149,4 +149,6 @@ export class ModalComponent implements OnInit {
     this.formPayPal.nativeElement.submit();
   }
 
+  public checkOutWithStripe() {}
+
 }

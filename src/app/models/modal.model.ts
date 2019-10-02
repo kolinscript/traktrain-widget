@@ -11,6 +11,7 @@ export interface ModalContent {
   artistName?: string;
   contentTerms?: ContentTerms; // content for type TERMS
   cart?: Cart;                 // content for type CART
+  paymentInfo?: any;
 }
 
 export interface ContentTerms {

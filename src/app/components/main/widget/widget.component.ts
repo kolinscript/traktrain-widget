@@ -491,6 +491,7 @@ export class WidgetComponent implements OnInit {
       type: ModalTypes.CART,
       artistName: this.widget.producer.artistName,
       cart: this.widget.cart,
+      paymentInfo: this.widget.producer.paymentInfo
     };
   }
 
