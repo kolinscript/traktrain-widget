@@ -21,9 +21,11 @@ app.get('/api/widget', function(req, res) {
   const widget_link = `https://traktrain.com/api/wigdet/${widget_id}`;
   axios.get(widget_link)
     .then((widget) => {
+      console.log('W-I-D-G-E-T', widget);
       res.status(200).json({widget: widget});
     })
     .catch((error) => {
+      console.log('E-R-R-O-R', error);
       res.status(200).json({body: {error: {text: error}}});
     });
 });
