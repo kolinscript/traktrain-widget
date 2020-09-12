@@ -12,18 +12,14 @@ app.use(bodyParser.json());
 app.use('/', express.static(path.join(__dirname, './dist/traktrain-widget')));
 
 app.get('/api/widget/:id', function(req, res) {
-  console.log('R-E-Q', req);
   const widget_id = req.params.id;
   const widget_link = `https://traktrain.com/api/widget/${widget_id}`;
-  console.log('W-I-D-G-E-T--I-D', widget_id);
   axios.get(widget_link)
     .then((widget) => {
-      console.log('W-I-D-G-E-T', widget);
-      res.status(200).json({widget: widget});
+      res.status(200).json(widget.data);
     })
     .catch((error) => {
-      console.log('E-R-R-O-R', error);
-      res.status(200).json({body: {error: {text: error}}});
+      res.status(200).json({error: {text: error}});
     });
 });
 
