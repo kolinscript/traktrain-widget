@@ -1,6 +1,6 @@
 {
   "/api/*": {
-    "target": "https://test.traktrain.com/",
+    "target": "https://traktrain.com/",
     "changeOrigin": true,
     "secure": true
   }
