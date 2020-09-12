@@ -3,13 +3,13 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "node server.js",
     "start-ui": "ng serve --proxy-config proxy.conf.json --host 0.0.0.0",
     "start-local": "ng serve --proxy-config proxy.conf.json --host 192.168.1.53",
     "build": "ng build --prod",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
+    "start": "node server.js",
     "heroku-postbuild": "npm install && npm run build"
   },
   "private": true,

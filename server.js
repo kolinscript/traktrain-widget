@@ -9,12 +9,7 @@ const app                = express();
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-
 app.use('/', express.static(path.join(__dirname, './dist/traktrain-widget')));
-
-app.get('/*', function(req, res) {
-  res.sendFile(path.join(__dirname, './dist/traktrain-widget', 'index.html'));
-});
 
 app.get('/api/widget', function(req, res) {
   const widget_id = req.query.id;
@@ -29,6 +24,10 @@ app.get('/api/widget', function(req, res) {
       console.log('E-R-R-O-R', error);
       res.status(200).json({body: {error: {text: error}}});
     });
+});
+
+app.get('/*', function(req, res) {
+  res.sendFile(path.join(__dirname, './dist/traktrain-widget', 'index.html'));
 });
 
 app.listen(port, () => console.log('Api live on port', + port));
