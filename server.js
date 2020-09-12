@@ -14,7 +14,7 @@ app.use('/', express.static(path.join(__dirname, './dist/traktrain-widget')));
 app.get('/api/widget/:id', function(req, res) {
   console.log('R-E-Q', req);
   const widget_id = req.params.id;
-  const widget_link = `https://traktrain.com/api/wigdet/${widget_id}`;
+  const widget_link = `https://traktrain.com/api/widget/${widget_id}`;
   console.log('W-I-D-G-E-T--I-D', widget_id);
   axios.get(widget_link)
     .then((widget) => {
