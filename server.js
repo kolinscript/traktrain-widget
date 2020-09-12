@@ -19,6 +19,7 @@ app.get('/*', function(req, res) {
 app.get('/api/widget', function(req, res) {
   const widget_id = req.query.id;
   const widget_link = `https://traktrain.com/api/wigdet/${widget_id}`;
+  console.log('W-I-D-G-E-T--I-D', widget_id);
   axios.get(widget_link)
     .then((widget) => {
       console.log('W-I-D-G-E-T', widget);
