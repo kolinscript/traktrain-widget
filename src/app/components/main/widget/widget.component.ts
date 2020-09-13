@@ -76,7 +76,7 @@ export class WidgetComponent implements OnInit {
       // console.log(this.widget.tracks.map(t => (t.drumKit)));
       this.initPlayerHowl(this.playerActiveTrackIndex);
       this.initCarousel(this.widget.tracks[this.playerActiveTrackIndex].sliderIndex, this.playerActiveTrackIndex);
-    }, 13); // widgets id's: 2, 3, 5, 9(SESH) 13(Rio), 13319
+    }, 9); // widgets id's: 2, 3, 5, 9(SESH) 13(Rio), 13319
   }
 
   // todo highlight to components/shared folder
@@ -466,7 +466,6 @@ export class WidgetComponent implements OnInit {
 
   public trackAddToCart(event, track: Track, trackIndex: number): void {
     track.hovered = false;
-    this.modalOpen = true;
     this.modalContent = {
       style: this.widget.style,
       title: 'BUY TERMS',
@@ -480,11 +479,11 @@ export class WidgetComponent implements OnInit {
         rightsDescription: CreateRightsDescriptions(track.sliderData, this.widget.producer),
       },
     };
+    this.modalOpen = true;
   }
 
   public cartOpen(): void {
     console.log(this.widget.cart);
-    this.modalOpen = true;
     this.modalContent = {
       style: this.widget.style,
       title: 'CART',
@@ -493,6 +492,7 @@ export class WidgetComponent implements OnInit {
       cart: this.widget.cart,
       paymentInfo: this.widget.producer.paymentInfo
     };
+    this.modalOpen = true;
   }
 
   public modalEvent(event): void {
