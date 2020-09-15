@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { Colors, Style, Track, Widget, SDN_LINK_IMG, SDN_LINK_MP3, CartItem, Cart } from '../../../models/widget.model';
+import { Colors, Style, Track, Widget, CDN_LINK_IMG, CDN_LINK_MP3, CartItem, Cart } from '../../../models/widget.model';
 import { CreateRightsDescriptions, HexToRGB, LightenDarkenColor, PriceTransformer } from '../../../helpers';
 import { WidgetService } from '../../../services/widget.service';
 import { ModalService } from '../../../services/modal.service';
@@ -21,8 +21,8 @@ export class WidgetComponent implements OnInit {
   @ViewChild('volumeMobile') volumeContainerMobile: ElementRef;
   @ViewChild('trackNameContainer') trackNameContainer: ElementRef;
   @ViewChild('trackNameContent') trackNameContent: ElementRef;
-  SDN_LINK_IMG = SDN_LINK_IMG;
-  SDN_LINK_MP3 = SDN_LINK_MP3;
+  CDN_LINK_IMG = CDN_LINK_IMG;
+  CDN_LINK_MP3 = CDN_LINK_MP3;
   widget: Widget;
   loadingWidget: boolean;
   windowWidth: number;
@@ -415,7 +415,8 @@ export class WidgetComponent implements OnInit {
     this.playerProgressMS = '00:00';
     this.playerDurationMS = '00:00';
     this.playerHowl = new Howl({
-      src: [SDN_LINK_MP3 + this.widget.tracks[trackIndex].link],
+      // html5: true,
+      src: [CDN_LINK_MP3 + this.widget.tracks[trackIndex].link],
       onload: () => {
         this.playerDurationMS = new Date(Math.round(this.playerHowl.duration()) * 1000).toISOString().substr(14, 5);
         // equalizer
@@ -580,9 +581,10 @@ export class WidgetComponent implements OnInit {
             totalCost: 0,
             cartItems: [],
           } as Cart,        // setup empty cart
-          editMode: document.getElementById('edit') !== null
-            ? document.getElementById('edit').getAttribute('value') === 'true'
-            : false,
+          // editMode: document.getElementById('edit') !== null
+          //   ? document.getElementById('edit').getAttribute('value') === 'true'
+          //   : false,
+          editMode: true,
         } as Widget;
         if (cart) {
           this.widget.tracks.map((track: Track, trackIndex: number) => {

@@ -14,7 +14,7 @@ app.use('/', express.static(path.join(__dirname, './dist/traktrain-widget')));
 app.get('/api/widget/:id', function(req, res) {
   const widget_id = req.params.id;
   const widget_link = `https://traktrain.com/api/widget/${widget_id}`;
-  axios.get(widget_link, { headers: {'Referrer': 'https://test.traktrain.com', 'Origin': 'traktrain.com'} })
+  axios.get(widget_link)
     .then((widget) => {
       res.status(200).json(widget.data);
     })

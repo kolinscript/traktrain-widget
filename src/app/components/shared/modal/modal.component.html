@@ -125,7 +125,7 @@
              (mouseover)="cartItem.hoverOnTrack = true" (mouseleave)="cartItem.hoverOnTrack = false"
         >
           <div class="cover">
-            <img [src]="SDN_LINK_IMG + cartItem.track.image" alt="">
+            <img [src]="CDN_LINK_IMG + cartItem.track.image" alt="">
             <div class="fade" *ngIf="cartItem.hoverOnTrack"
                  [ngStyle]="{backgroundColor: lightenDarkenColor(modalContent.style.colors.background, -50)}"
                  (click)="deleteTrackFromCart(indexTrack)"

@@ -56,7 +56,7 @@
        [ngStyle]="{backgroundColor: lightenDarkenColor(widget.style.colors.background, -50)}"
   >
     <div class="screen">
-      <div class="banner" [ngStyle]="{'background-image':'url(' + SDN_LINK_IMG + '' + playerTracklbImage + ')'}"></div>
+      <div class="banner" [ngStyle]="{'background-image':'url(' + CDN_LINK_IMG + '' + playerTracklbImage + ')'}"></div>
       <canvas #waves></canvas>
     </div>
   </div>
@@ -113,7 +113,7 @@
       >
         <div class="track-info" (click)="trackPlay($event, track, indexTrack)">
           <div class="track-cover">
-            <img [src]="SDN_LINK_IMG + '/48x48/' + track.image" alt="">
+            <img [src]="CDN_LINK_IMG + '/48x48/' + track.image" alt="">
             <div class="fade" *ngIf="track.play || track.hovered"></div>
             <div class="play-pause" *ngIf="track.hovered" [ngClass]="{'pause': track.play}">
               <span

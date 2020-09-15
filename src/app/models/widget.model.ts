@@ -1,5 +1,5 @@
-export const SDN_LINK_MP3 = 'https://d2lvs3zi8kbddv.cloudfront.net/';
-export const SDN_LINK_IMG = 'https://d369yr65ludl8k.cloudfront.net/';
+export const CDN_LINK_MP3 = 'https://d2lvs3zi8kbddv.cloudfront.net/';
+export const CDN_LINK_IMG = 'https://d369yr65ludl8k.cloudfront.net/';
 
 export enum LicensePrice {
   mp3LeasePrice = 'mp3LeasePrice',

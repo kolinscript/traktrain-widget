@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { ModalContent, ModalTypes } from '../../../models/modal.model';
-import { CartItem, CartPayPal, LicensePriceMapper, SDN_LINK_IMG } from '../../../models/widget.model';
+import { CartItem, CartPayPal, LicensePriceMapper, CDN_LINK_IMG } from '../../../models/widget.model';
 import { Animations } from '../../../animations';
 import { LightenDarkenColor } from '../../../helpers';
 import { WidgetService } from '../../../services/widget.service';
@@ -22,7 +22,7 @@ export class ModalComponent implements OnInit {
   // variables TERMS
   pickedLease: any;
   // variables CART
-  SDN_LINK_IMG = SDN_LINK_IMG;
+  CDN_LINK_IMG = CDN_LINK_IMG;
   LicensePriceMapper = LicensePriceMapper;
   formGroupPayPal: FormGroup;
   @ViewChild('formPayPal') formPayPal;

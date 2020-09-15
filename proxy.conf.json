@@ -1,6 +1,6 @@
 {
   "/api/*": {
-    "target": "https://traktrain.com/",
+    "target": "http://localhost:5000/",
     "changeOrigin": true,
     "secure": true
   }
