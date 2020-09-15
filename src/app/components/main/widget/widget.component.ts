@@ -376,7 +376,8 @@ export class WidgetComponent implements OnInit {
           this.widget.tracks[this.playerActiveTrackIndex].play = true;
           setTimeout(() => {
             this.elRef.nativeElement.querySelector('.active ').focus();
-            this.elRef.nativeElement.querySelector('.active').scrollIntoView({behavior: 'smooth'});
+            document.documentElement.scrollTop = this.elRef.nativeElement.querySelector('.active').offsetTop;
+            // this.elRef.nativeElement.querySelector('.active').scrollIntoView({behavior: 'smooth'});
           }, 100);
         }
       } else {
@@ -581,10 +582,10 @@ export class WidgetComponent implements OnInit {
             totalCost: 0,
             cartItems: [],
           } as Cart,        // setup empty cart
-          // editMode: document.getElementById('edit') !== null
-          //   ? document.getElementById('edit').getAttribute('value') === 'true'
-          //   : false,
-          editMode: true,
+          editMode: document.getElementById('edit') !== null
+            ? document.getElementById('edit').getAttribute('value') === 'true'
+            : false,
+          // editMode: true,
         } as Widget;
         if (cart) {
           this.widget.tracks.map((track: Track, trackIndex: number) => {
