@@ -376,7 +376,7 @@ export class WidgetComponent implements OnInit {
           this.widget.tracks[this.playerActiveTrackIndex].play = true;
           setTimeout(() => {
             this.elRef.nativeElement.querySelector('.active ').focus();
-            document.documentElement.scrollTop = this.elRef.nativeElement.querySelector('.active').offsetTop;
+            // todo fix scroll attended to iframe's' parent
             // this.elRef.nativeElement.querySelector('.active').scrollIntoView({behavior: 'smooth'});
           }, 100);
         }
